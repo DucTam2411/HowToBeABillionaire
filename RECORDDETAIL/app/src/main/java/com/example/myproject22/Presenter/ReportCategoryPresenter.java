@@ -3,7 +3,6 @@ package com.example.myproject22.Presenter;
 public class ReportCategoryPresenter {
     ReportCategoryInterface anInterface;
 
-
     public ReportCategoryPresenter(ReportCategoryInterface anInterface) {
         this.anInterface = anInterface;
     }
@@ -14,5 +13,21 @@ public class ReportCategoryPresenter {
 
     public void getBundleData(){
         anInterface.GetBundleData();
+    }
+
+    public void loadRecycleView(){
+        anInterface.LoadRecycleView();
+    }
+
+    public void fetchIncomeInServer(){
+        anInterface.FetchIncomeInServer();
+    }
+
+    public  void fetchOutcomeInServer(){
+        anInterface.FetchOutcomeInServer();
+    }
+
+    public void loadData(){
+        anInterface.LoadData();
     }
 }

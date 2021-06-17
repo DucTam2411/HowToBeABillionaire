@@ -25,6 +25,7 @@ import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.TimeZone;
 
 import io.alterac.blurkit.BlurKit;
@@ -70,8 +71,9 @@ public class DayItemAdapter extends RecyclerView.Adapter<DayItemAdapter.ViewHold
         cal.setTime(days.get(position).getDate());
         int dow = cal.get(Calendar.DAY_OF_WEEK);
 
-        Calendar total_cal = Calendar.getInstance(TimeZone.getDefault());
-        int dow_current = total_cal.get(Calendar.DAY_OF_WEEK);
+        Calendar total_cal = Calendar.getInstance();
+        Date currentdate = total_cal.getTime();
+        Date date = days.get(position).getDate();
 
         formater = new SimpleDateFormat("dd.MM.yyyy");
         tvDayDetail.setText(formater.format(days.get(position).date));
@@ -82,7 +84,7 @@ public class DayItemAdapter extends RecyclerView.Adapter<DayItemAdapter.ViewHold
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 cardView.setCardBackgroundColor(context.getColor(R.color.teal_200));
             }
-        } else if(dow == dow_current){
+        } else if(DayItem.CalculateDateUse(date,currentdate) == 0){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 cardView.setCardBackgroundColor(context.getColor(R.color.teal_200));
             }

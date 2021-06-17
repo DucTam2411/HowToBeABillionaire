@@ -2,6 +2,7 @@ package com.example.myproject22.Presenter;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.view.View;
 
 public interface AddingMoneyInterface {
     //Set component
@@ -19,9 +20,19 @@ public interface AddingMoneyInterface {
     //Load Image from Camera of Gallery
     public void ChooseImage();
 
+    //Take image from camera and gallery
+    public void TakeImageFromGallery();
+    public void TakeImageFromCamera();
+
     //Capture record and play audio
     public void CaptureRecord();
     public void CaptureAudio();
+
+    //Record and Audio
+    public void StartRecord();
+    public void StopRecord();
+    public void StartAudio();
+    public void StopAudio();
 
     //Check valid number
     public void IsValidNumber(CharSequence s);
@@ -45,4 +56,12 @@ public interface AddingMoneyInterface {
     public void GetNoMoneyData();
     public void GetNoCategoryData();
 
+    //Hide Keyboard
+    public void HideKeyboard(View view);
+
+    //Fetch category from server
+    public void FetchIncomeCategory();
+    public void FetchOutcomeCategory();
+
+    public void ResetSound();
 }

@@ -46,4 +46,10 @@ public class DayItem {
     public void setDateString(String dateString) {
         DateString = dateString;
     }
+
+    public static int CalculateDateUse(Date fromDate, Date toDate){
+        if(fromDate==null||toDate==null)
+            return 0;
+        return (int)( (toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24));
+    }
 }

@@ -15,6 +15,19 @@ public class ReportCategoryDetailPresenter {
         anInterface.GetBundleData();
     }
 
-    public void loadRecycleView(){anInterface.LoadRecycleView();}
+    public void loadTotalArray(){
+        anInterface.LoadTotalArray();
+    }
 
+    public void fetchIncomeFromServer(){
+        anInterface.FetchIncomeDetailInServer();
+    }
+
+    public void fetchOutcomeFromServer(){
+        anInterface.FetchOutcomeDetailInServer();
+    }
+
+    public void loadData(){
+        anInterface.LoadData();
+    }
 }

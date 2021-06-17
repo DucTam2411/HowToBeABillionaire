@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Base64;
+import android.view.View;
 
 import com.example.myproject22.R;
 import com.google.android.material.button.MaterialButton;
@@ -97,5 +98,48 @@ public class AddingMoneyPresentent {
         }
 
         anInterface.SavingMoneyData(money,description,category_id,image,audio);
+    }
+
+    public static byte[] encodeTobase64(Bitmap image) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+        byte[] byteArray = stream.toByteArray();
+        return byteArray;
+    }
+
+    public void hideKeyBoard(View view){
+        anInterface.HideKeyboard(view);
+    }
+
+    public void startRecord(){
+        anInterface.StartRecord();
+    }
+
+    public void stopRecord(){
+        anInterface.StopRecord();
+    }
+
+    public void startAudio(){
+        anInterface.StartAudio();
+    }
+
+    public void stopAudio(){
+        anInterface.StopAudio();
+    }
+
+    public void takeImageFromCamera(){
+        anInterface.TakeImageFromCamera();
+    }
+
+    public void takeImageFromGallery(){
+        anInterface.TakeImageFromGallery();
+    }
+
+    public void fetchIncomeCategoryFromServer(){
+        anInterface.FetchIncomeCategory();
+    }
+
+    public void fetchOutcomeCategoryFromServer(){
+        anInterface.FetchOutcomeCategory();
     }
 }

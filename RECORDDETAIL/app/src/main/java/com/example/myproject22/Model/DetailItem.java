@@ -3,6 +3,7 @@ package com.example.myproject22.Model;
 import java.util.Date;
 
 public class DetailItem {
+    private int _ID_DETAIL;
     private Double _MONEY;
     private String _DESCRIPTION;
     private String _DATE;
@@ -11,6 +12,17 @@ public class DetailItem {
     private String _IMAGE;
     private String _IMAGECATEGORY;
     private String _AUDIO;
+
+    public DetailItem(Double _MONEY, String _DESCRIPTION, String _DATE, String _NAME, String _IMAGE, String _IMAGECATEGORY, String _AUDIO, Date _DATEFULL) {
+        this._MONEY = _MONEY;
+        this._DESCRIPTION = _DESCRIPTION;
+        this._DATE = _DATE;
+        this._NAME = _NAME;
+        this._IMAGE = _IMAGE;
+        this._IMAGECATEGORY = _IMAGECATEGORY;
+        this._AUDIO = _AUDIO;
+        this._DATEFULL = _DATEFULL;
+    }
 
     public Date get_DATEFULL() {
         return _DATEFULL;
@@ -22,17 +34,9 @@ public class DetailItem {
 
     private Date _DATEFULL;
 
-    public DetailItem(Double _MONEY, String _DESCRIPTION, String _DATE, String _NAME, int _TYPE, String _IMAGE, String _AUDIO) {
-        this._MONEY = _MONEY;
-        this._DESCRIPTION = _DESCRIPTION;
-        this._DATE = _DATE;
-        this._NAME = _NAME;
-        this._TYPE = _TYPE;
-        this._IMAGE = _IMAGE;
-        this._AUDIO = _AUDIO;
-    }
 
-    public DetailItem(Double _MONEY, String _DESCRIPTION, String _DATE, String _NAME, int _TYPE, String _IMAGE, String _IMAGECATEGORY, String _AUDIO, Date _DATEFULL) {
+    public DetailItem(int _ID_DETAIL,Double _MONEY, String _DESCRIPTION, String _DATE, String _NAME, int _TYPE, String _IMAGE, String _IMAGECATEGORY, String _AUDIO, Date _DATEFULL) {
+        this._ID_DETAIL = _ID_DETAIL;
         this._MONEY = _MONEY;
         this._DESCRIPTION = _DESCRIPTION;
         this._DATE = _DATE;
@@ -106,5 +110,13 @@ public class DetailItem {
 
     public void set_IMAGECATEGORY(String _IMAGECATEGORY) {
         this._IMAGECATEGORY = _IMAGECATEGORY;
+    }
+
+    public int get_ID_DETAIL() {
+        return _ID_DETAIL;
+    }
+
+    public void set_ID_DETAIL(int _ID_DETAIL) {
+        this._ID_DETAIL = _ID_DETAIL;
     }
 }

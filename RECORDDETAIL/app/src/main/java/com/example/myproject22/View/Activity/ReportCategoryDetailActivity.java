@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -70,12 +71,12 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_report_category_detail);
 
         presenter = new ReportCategoryDetailPresenter(this);
         presenter.setInit();
         presenter.getBundleData();
-        presenter.loadRecycleView();
 
     }
 
@@ -90,7 +91,8 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
         incomedetail = new ArrayList<>();
         outcomedetail = new ArrayList<>();
         totaldetail = new ArrayList<>();
-        LoadData();
+
+        presenter.loadData();
     }
 
     @Override
@@ -113,10 +115,6 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
     }
 
     @Override
-    public void LoadRecycleView() {
-
-    }
-
     public void FetchIncomeDetailInServer() {
         StringRequest request = new StringRequest(Request.Method.POST,
                 urlString + "getIncomeDetailByDate.php", new Response.Listener<String>() {
@@ -134,6 +132,7 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject object = jsonArray.getJSONObject(i);
 
+                                String sid = object.getString("ID_INCOMEDETAIL");
                                 String smoney = object.getString("MONEY");
                                 String description = object.getString("DESCRIPTION");
                                 String sdate = object.getString("DATE");
@@ -145,6 +144,8 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
                                 SimpleDateFormat curFormater = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
                                 Date dateObj = curFormater.parse(sdate);
 
+                                int id_detail = Integer.parseInt(sid);
+
                                 Double money = Double.parseDouble(smoney);
                                 String[] splitdate = sdate.split(" ");
                                 String stime = splitdate[1];
@@ -153,7 +154,7 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
                                 String url_image_category = imagecategory.equals("null") ? "NULL" : urlImageCategory + imagecategory;
                                 String url_audio = audio.equals("null") ? "NULL" : urlAudio + audio;
 
-                                DetailItem item = new DetailItem(money, description, stime, name, 1, url_image, url_image_category, url_audio, dateObj);
+                                DetailItem item = new DetailItem(id_detail,money, description, stime, name, 1, url_image, url_image_category, url_audio, dateObj);
                                 incomedetail.add(item);
 
                             }
@@ -163,7 +164,7 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
                     e.printStackTrace();
                 }
                 if (outcomedetail.size() > 0 || isOutcome == true) {
-                    LoadTotalArray();
+                    presenter.loadTotalArray();
                     progressBar.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
                 }
@@ -186,6 +187,7 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
         requestQueue.add(request);
     }
 
+    @Override
     public void FetchOutcomeDetailInServer() {
         StringRequest request = new StringRequest(Request.Method.POST,
                 urlString + "getOutcomeDetailByDate.php", new Response.Listener<String>() {
@@ -203,6 +205,7 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject object = jsonArray.getJSONObject(i);
 
+                                String sid = object.getString("ID_OUTCOMEDETAIL");
                                 String smoney = object.getString("MONEY");
                                 String description = object.getString("DESCRIPTION");
                                 String sdate = object.getString("DATE");
@@ -214,6 +217,8 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
                                 SimpleDateFormat curFormater = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
                                 Date dateObj = curFormater.parse(sdate);
 
+                                int id_detail = Integer.parseInt(sid);
+
                                 Double money = Double.parseDouble(smoney);
                                 String[] splitdate = sdate.split(" ");
                                 String stime = splitdate[1];
@@ -222,7 +227,7 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
                                 String url_image_category = image_category.equals("null") ? "NULL" : urlImageCategory + image_category;
                                 String url_audio = audio.equals("null") ? "NULL" : urlAudio + audio;
 
-                                DetailItem item = new DetailItem(money, description, stime, name, -1, url_image,url_image_category, url_audio, dateObj);
+                                DetailItem item = new DetailItem(id_detail,money, description, stime, name, -1, url_image,url_image_category, url_audio, dateObj);
                                 outcomedetail.add(item);
                             }
                         }
@@ -255,19 +260,19 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
         requestQueue.add(request);
     }
 
-    Runnable a = new Runnable() {
-        @Override
-        public void run() {
-            FetchIncomeDetailInServer();
-            FetchOutcomeDetailInServer();
-        }
-    };
-
+    @Override
     public void LoadData() {
         Handler handler = new Handler();
-        handler.post(a);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                presenter.fetchIncomeFromServer();
+                presenter.fetchOutcomeFromServer();
+            }
+        }, 1000);
     }
 
+    @Override
     public void LoadTotalArray() {
         int i = 0, j = 0;
         int m = incomedetail.size();
@@ -295,7 +300,7 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
         }
 
         while (j < n) {
-            totaldetail.add(totaldetail.get(j));
+            totaldetail.add(outcomedetail.get(j));
             j++;
         }
 

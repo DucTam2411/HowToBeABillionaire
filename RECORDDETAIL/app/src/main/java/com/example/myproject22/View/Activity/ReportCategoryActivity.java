@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -46,17 +47,21 @@ import static com.example.myproject22.Model.ConnectionClass.urlString;
 
 public class ReportCategoryActivity extends AppCompatActivity implements ReportCategoryInterface {
 
+    //Component
     private RecyclerView recyclerView;
     private GridLayoutManager gridLayoutManager;
     private Toolbar toolbar;
     private ProgressBar progressBar;
 
+    //Get Id_income, Id_outcome
     private int id_income;
     private int id_outcome;
 
+    //Check id_income, id_outcome (check to make sure income data and outcome data already get in layout)
     private Boolean isIncome = false;
     private Boolean isOutcome = false;
 
+    //Create array list to control income list and outcome from server
     private ArrayList<DayItem> incomeDate = new ArrayList<>();
     private ArrayList<DayItem> outcomeDate = new ArrayList<>();
     private ArrayList<DayItem> categoryDate = new ArrayList<>();
@@ -67,6 +72,7 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_report);
 
         presenter = new ReportCategoryPresenter(this);
@@ -79,14 +85,20 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
     @Override
     protected void onResume() {
         super.onResume();
+
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.INVISIBLE);
+
+        //Return isIncome and isOutcome when reload
         isIncome = false;
         isOutcome = false;
+
+        //Return array list
         outcomeDate = new ArrayList<>();
         incomeDate = new ArrayList<>();
         categoryDate = new ArrayList<>();
-        LoadData();
+
+        presenter.loadData();
     }
 
     @Override
@@ -156,6 +168,7 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
 
     }
 
+    @Override
     public void FetchIncomeInServer() {
         StringRequest request = new StringRequest(Request.Method.POST,
                 urlString + "getNumberRecordIncomeByDate.php", new Response.Listener<String>() {
@@ -193,9 +206,8 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
                 }
 
                 if (outcomeDate.size() > 0 || isOutcome == true) {
-                    LoadRecycleView();
+                    presenter.loadRecycleView();
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(ReportCategoryActivity.this, "1", Toast.LENGTH_SHORT).show();
                     recyclerView.setVisibility(View.VISIBLE);
                 }
             }
@@ -216,6 +228,7 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
         requestQueue.add(request);
     }
 
+    @Override
     public void FetchOutcomeInServer() {
         StringRequest request = new StringRequest(Request.Method.POST,
                 urlString + "getNumberRecordOutcomeByDate.php", new Response.Listener<String>() {
@@ -250,9 +263,8 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
                     e.printStackTrace();
                 }
                 if (incomeDate.size() > 0 || isIncome == true) {
-                    LoadRecycleView();
+                    presenter.loadRecycleView();
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(ReportCategoryActivity.this, "2", Toast.LENGTH_SHORT).show();
                     recyclerView.setVisibility(View.VISIBLE);
                 }
             }
@@ -273,16 +285,15 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
         requestQueue.add(request);
     }
 
-    Runnable a = new Runnable() {
-        @Override
-        public void run() {
-            FetchIncomeInServer();
-            FetchOutcomeInServer();
-        }
-    };
-
+    @Override
     public void LoadData() {
         Handler handler = new Handler();
-        handler.post(a);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                presenter.fetchIncomeInServer();
+                presenter.fetchOutcomeInServer();
+            }
+        }, 1000);
     }
 }

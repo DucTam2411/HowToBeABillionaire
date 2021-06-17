@@ -96,6 +96,7 @@ import io.alterac.blurkit.BlurLayout;
 
 import static com.example.myproject22.Model.ConnectionClass.urlString;
 import static com.example.myproject22.Presenter.AddingMoneyPresentent.convertByteToString;
+import static com.example.myproject22.Presenter.AddingMoneyPresentent.encodeTobase64;
 import static com.example.myproject22.Presenter.AddingMoneyPresentent.isNumeric;
 
 public class AddingActivity extends AppCompatActivity implements AddingMoneyInterface {
@@ -109,13 +110,15 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     //Component về record và audio
     private ImageButton btnPlay;
     private ImageButton btnRecord;
-    WaveVisualizer mVisualizer;
-    BlurLayout blurLayout;
-    MediaPlayer mediaPlayer;
-    Boolean isRecord = false;
-    Boolean isPlaying = false;
-    MediaRecorder mediaRecorder;
-    String recordFile = "NO";
+    private WaveVisualizer mVisualizer;
+    private BlurLayout blurLayout;
+    private MediaPlayer mediaPlayer;
+    private Boolean isRecord = false;
+    private Boolean isPlaying = false;
+    private MediaRecorder mediaRecorder;
+    private String recordFile = "NO";
+    private long starttime = 0;
+    private long stoptime = 0;
 
     //Component về list category
     private RecyclerView categoryRecycler;
@@ -221,7 +224,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    hideKeyboard(v);
+                    addingMoneyPresentent.hideKeyBoard(v);
                 }
             }
         });
@@ -231,7 +234,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    hideKeyboard(v);
+                    addingMoneyPresentent.hideKeyBoard(v);
                 }
             }
         });
@@ -298,17 +301,16 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     public void LoadCategory() {
         progressBar1.setVisibility(View.VISIBLE);
         progressBar2.setVisibility(View.VISIBLE);
-        new Handler().postDelayed(category_runable, 3000);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                addingMoneyPresentent.fetchIncomeCategoryFromServer();
+                addingMoneyPresentent.fetchOutcomeCategoryFromServer();
+            }
+        }, 3000);
     }
 
-    Runnable category_runable = new Runnable() {
-        @Override
-        public void run() {
-            FetchIncomeCategory();
-            FetchOutcomeCategory();
-        }
-    };
-
+    @Override
     public void FetchIncomeCategory() {
         StringRequest request = new StringRequest(Request.Method.POST,
                 urlString + "getIncomeCategory.php", new Response.Listener<String>() {
@@ -334,7 +336,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                             arrayList.add(categoryClass);
                         }
 
-                        CategoryAdapter adapter = new CategoryAdapter(arrayList, bottomSheetBehavior, tvChooseImage, btnAddCategory, id_user);
+                        CategoryAdapter adapter = new CategoryAdapter(AddingActivity.this, arrayList, bottomSheetBehavior, tvChooseImage, btnAddCategory, id_user);
                         categoryRecycler.setAdapter(adapter);
 
                         LinearLayoutManager layoutManager = new LinearLayoutManager(AddingActivity.this);
@@ -365,6 +367,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         requestQueue.add(request);
     }
 
+    @Override
     public void FetchOutcomeCategory() {
         StringRequest request = new StringRequest(Request.Method.POST,
                 urlString + "getOutcomeCategory.php", new Response.Listener<String>() {
@@ -393,7 +396,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                         LinearLayoutManager layoutManager1 = new LinearLayoutManager(AddingActivity.this);
                         layoutManager1.setOrientation(RecyclerView.HORIZONTAL);
 
-                        CategoryAdapter adapter1 = new CategoryAdapter(arrayList1, bottomSheetBehavior, tvChooseImage, btnAddCategory, id_user);
+                        CategoryAdapter adapter1 = new CategoryAdapter(AddingActivity.this, arrayList1, bottomSheetBehavior, tvChooseImage, btnAddCategory, id_user);
                         categoryRecycler1.setAdapter(adapter1);
                         categoryRecycler1.setLayoutManager(layoutManager1);
                         categoryRecycler1.setVisibility(View.VISIBLE);
@@ -421,6 +424,16 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         };
         RequestQueue requestQueue = Volley.newRequestQueue(AddingActivity.this);
         requestQueue.add(request);
+    }
+
+    @Override
+    public void ResetSound() {
+        if (isRecord == true) {
+            addingMoneyPresentent.stopRecord();
+        }
+        if (isPlaying == true) {
+            addingMoneyPresentent.stopAudio();
+        }
     }
 
     @Override
@@ -490,29 +503,6 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     protected void onStop() {
         blurLayout.pauseBlur();
         super.onStop();
-    }
-
-    public void PauseClicked(View view) {
-        if (mediaPlayer.isPlaying()) {
-            mediaPlayer.pause();
-            mVisualizer.setVisibility(View.INVISIBLE);
-            btnPlay.setImageDrawable(getResources().getDrawable(R.drawable.icon_play, null));
-
-
-        } else {
-            mediaPlayer.start();
-            mVisualizer.setVisibility(View.VISIBLE);
-            btnPlay.setImageDrawable(getResources().getDrawable(R.drawable.icon_pause, null));
-
-        }
-    }
-
-    public void AddImageClicked(View view) {
-        ((ImageButton) view).setImageDrawable(getDrawable(R.drawable.avatar));
-        ((ImageButton) view).setScaleType(ImageView.ScaleType.CENTER_CROP);
-        ((ImageButton) view).setScaleX(1);
-        ((ImageButton) view).setScaleY(1);
-
     }
 
     @Override
@@ -594,7 +584,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
             @Override
             public void onClick(View v) {
                 if (CheckPermissionImage()) {
-                    TakeImageFromCamera();
+                    addingMoneyPresentent.takeImageFromCamera();
                     dialog.cancel();
                 }
             }
@@ -604,7 +594,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
             @Override
             public void onClick(View v) {
                 if (CheckPermissionRead()) {
-                    TakeImageFromGallery();
+                    addingMoneyPresentent.takeImageFromGallery();
                     dialog.cancel();
                 }
             }
@@ -615,10 +605,10 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     public void CaptureRecord() {
         if (isRecord) {
             //Stop recording
-            StopRecord();
+            addingMoneyPresentent.stopRecord();
         } else {
             if (CheckPermissionRecord()) {
-                StartRecord();
+                addingMoneyPresentent.startRecord();
             } else {
                 Toast.makeText(this, "Not permission granted", Toast.LENGTH_SHORT).show();
             }
@@ -629,14 +619,15 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     public void CaptureAudio() {
         if (!recordFile.equals("NO")) {
             if (isPlaying) {
-                StopAudio();
+                addingMoneyPresentent.stopAudio();
             } else {
-                StartAudio();
+                addingMoneyPresentent.startAudio();
             }
         } else {
             Toast.makeText(this, "No Audio is saving now", Toast.LENGTH_SHORT).show();
         }
     }
+
     @Override
     public void IsValidNumber(CharSequence s) {
         if (s.length() > 15) {
@@ -729,11 +720,9 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         return audio;
     }
 
-    private long starttime = 0;
-    private long stoptime = 0;
-
     //Stop record
-    private void StopRecord() {
+    @Override
+    public void StopRecord() {
         mediaRecorder.stop();
         stoptime = System.nanoTime();
         mediaRecorder.release();
@@ -745,7 +734,8 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     }
 
     //Start record
-    private void StartRecord() {
+    @Override
+    public void StartRecord() {
 
         String recordPath = AddingActivity.this.getExternalFilesDir("/").getAbsolutePath();
         SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss", Locale.forLanguageTag("vi_VN"));
@@ -774,7 +764,8 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     }
 
     //Start audio
-    private void StartAudio() {
+    @Override
+    public void StartAudio() {
         mediaPlayer = new MediaPlayer();
         Boolean isSDPresent = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
         if (isSDPresent) {
@@ -807,7 +798,8 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     }
 
     //Stop audio
-    private void StopAudio() {
+    @Override
+    public void StopAudio() {
         mediaPlayer.release();
         mediaPlayer = null;
         isPlaying = false;
@@ -816,13 +808,17 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         Toast.makeText(this, "Stop current record", Toast.LENGTH_SHORT).show();
     }
 
-    private void TakeImageFromGallery() {
+    //Take image from gallery
+    @Override
+    public void TakeImageFromGallery() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, PERMISSION_EXTERNAL_STORAGE);
     }
 
-    private void TakeImageFromCamera() {
+    //Take image from camera
+    @Override
+    public void TakeImageFromCamera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, PERMISSION_IMAGE);
     }
@@ -1220,17 +1216,16 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         requestQueue.add(request);
     }
 
-    public static byte[] encodeTobase64(Bitmap image) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 80, stream);
-        byte[] byteArray = stream.toByteArray();
-        return byteArray;
-    }
-
-    public void hideKeyboard(View view) {
+    @Override
+    public void HideKeyboard(View view) {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        ResetSound();
+    }
 }
 

@@ -51,6 +51,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.myproject22.Model.ConnectionClass.urlString;
+import static com.example.myproject22.Presenter.AddingCategoryPresenter.encodeTobase64;
 import static com.example.myproject22.Presenter.AddingMoneyPresentent.convertByteToString;
 
 public class AddingCategoryActivity extends AppCompatActivity implements AddingCategoryInterface {
@@ -89,7 +90,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    hideKeyboard(v);
+                    presentent.hideKeyboard(v);
                 }
             }
         });
@@ -147,7 +148,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
             @Override
             public void onClick(View v) {
                 if (CheckPermissionImage()) {
-                    TakeImageFromCamera();
+                    presentent.takeImageFromCamera();
                     dialog.cancel();
                 }
             }
@@ -157,7 +158,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
             @Override
             public void onClick(View v) {
                 if (CheckPermissionRead()) {
-                    TakeImageFromGallery();
+                    presentent.takeImageFromGallery();
                     dialog.cancel();
                 }
             }
@@ -212,7 +213,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         switch (requestCode) {
             case PERMISSION_IMAGE: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    TakeImageFromCamera();
+                    presentent.takeImageFromCamera();
                 } else {
                     Toast.makeText(AddingCategoryActivity.this, "Camera permission not Granted", Toast.LENGTH_SHORT).show();
                 }
@@ -220,7 +221,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
             }
             case PERMISSION_EXTERNAL_STORAGE: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    TakeImageFromGallery();
+                    presentent.takeImageFromGallery();
                 } else {
                     Toast.makeText(AddingCategoryActivity.this, "Read external permission not Granted", Toast.LENGTH_SHORT).show();
                 }
@@ -229,13 +230,15 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         }
     }
 
-    private void TakeImageFromGallery() {
+    @Override
+    public void TakeImageFromGallery() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, PERMISSION_EXTERNAL_STORAGE);
     }
 
-    private void TakeImageFromCamera() {
+    @Override
+    public void TakeImageFromCamera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, PERMISSION_IMAGE);
     }
@@ -274,12 +277,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         }
     }
 
-    public static byte[] encodeTobase64(Bitmap image) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 80, stream);
-        byte[] byteArray = stream.toByteArray();
-        return byteArray;
-    }
+
 
     @Override
     public Boolean IsNullImage(Bitmap bitmap) {
@@ -403,7 +401,8 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         requestQueue.add(request);
     }
 
-    public void hideKeyboard(View view) {
+    @Override
+    public void HideKeyboard(View view) {
         InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }

@@ -1,6 +1,7 @@
 package com.example.myproject22.Presenter;
 
 import android.graphics.Bitmap;
+import android.view.View;
 import android.widget.RadioGroup;
 
 public interface AddingCategoryInterface {
@@ -10,6 +11,8 @@ public interface AddingCategoryInterface {
     public void ChooseImage();
     public Boolean CheckPermissionImage();
     public Boolean CheckPermissionRead();
+    public void TakeImageFromGallery();
+    public void TakeImageFromCamera();
 
     //Check image null
     public Boolean IsNullImage(Bitmap bitmap);
@@ -24,5 +27,9 @@ public interface AddingCategoryInterface {
 
     public void GetBundleData();
 
+    //Saving new category
     public void SavingNewCategory();
+
+    //Hide Keyboard
+    public void HideKeyboard(View view);
 }

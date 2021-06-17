@@ -9,4 +9,11 @@ public interface ReportCategoryInterface {
 
     //Load RecycleView
     public void LoadRecycleView();
+
+    //Fetch data income, outcome from server
+    public void FetchIncomeInServer();
+    public void FetchOutcomeInServer();
+
+    //Load layout
+    public void LoadData();
 }

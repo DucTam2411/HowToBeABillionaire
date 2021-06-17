@@ -1,5 +1,6 @@
 package com.example.myproject22.Util;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.myproject22.Model.CategoryClass;
+import com.example.myproject22.Presenter.AddingMoneyInterface;
 import com.example.myproject22.R;
 import com.example.myproject22.View.AddingCategoryActivity;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -23,37 +25,18 @@ import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 
-public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
+public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder>  {
 
     ArrayList<CategoryClass> categoryList;
     BottomSheetBehavior bottomSheetBehavior;
     TextView tvChooseItem;
     MaterialButton btnAddCategory;
     int id_user;
+    Context context;
 
-    public CategoryAdapter(ArrayList<CategoryClass> categoryList, BottomSheetBehavior bottomSheetBehavior, TextView tvChooseItem) {
-        this.categoryList = categoryList;
-        this.bottomSheetBehavior = bottomSheetBehavior;
-        this.tvChooseItem = tvChooseItem;
-    }
-
-    public CategoryAdapter(ArrayList<CategoryClass> categoryList, BottomSheetBehavior bottomSheetBehavior) {
-        this.categoryList = categoryList;
-        this.bottomSheetBehavior = bottomSheetBehavior;
-    }
-
-    public CategoryAdapter(ArrayList<CategoryClass> categoryList) {
-        this.categoryList = categoryList;
-    }
-
-    public CategoryAdapter(ArrayList<CategoryClass> categoryList, BottomSheetBehavior bottomSheetBehavior, TextView tvChooseItem, MaterialButton btnAddCategory) {
-        this.categoryList = categoryList;
-        this.bottomSheetBehavior = bottomSheetBehavior;
-        this.tvChooseItem = tvChooseItem;
-        this.btnAddCategory = btnAddCategory;
-    }
-
-    public CategoryAdapter(ArrayList<CategoryClass> categoryList, BottomSheetBehavior bottomSheetBehavior, TextView tvChooseItem, MaterialButton btnAddCategory, int id_user) {
+    public CategoryAdapter(Context context,ArrayList<CategoryClass> categoryList, BottomSheetBehavior bottomSheetBehavior,
+                           TextView tvChooseItem, MaterialButton btnAddCategory, int id_user) {
+        this.context = context;
         this.categoryList = categoryList;
         this.bottomSheetBehavior = bottomSheetBehavior;
         this.tvChooseItem = tvChooseItem;
@@ -104,6 +87,9 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             public void onClick(View v) {
                 if (bottomSheetBehavior != null)
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                if(context instanceof AddingMoneyInterface){
+                    ((AddingMoneyInterface) context).ResetSound();
+                }
                 Intent intent = new Intent(v.getContext(), AddingCategoryActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putInt("ID_USER", id_user);

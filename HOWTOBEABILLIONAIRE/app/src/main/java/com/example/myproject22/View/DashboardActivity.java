@@ -164,6 +164,10 @@ public class DashboardActivity extends AppCompatActivity implements DashboardInt
             id_outcome = bundle.getInt("ID_OUTCOME");
         }
 
+        id_user = 1;
+        id_income = 1;
+        id_outcome= 1;
+
     }
 
     @Override
@@ -239,7 +243,6 @@ public class DashboardActivity extends AppCompatActivity implements DashboardInt
             public void onResponse(String response) {
                 try{
                     JSONObject jsonObject = new JSONObject(response);
-                    Toast.makeText(DashboardActivity.this,response,Toast.LENGTH_SHORT).show();
                     String success = jsonObject.getString("success");
 
                     JSONArray jsonArray = jsonObject.getJSONArray("data");

@@ -16,8 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyProject22">
-        <activity android:name=".View.Activity.ReportCategoryDetailActivity"></activity>
-        <!-- Phan report cua Son -->
+        <activity android:name=".View.Activity.RecordDetailActivity"/>
+        <activity android:name=".View.Activity.ReportCategoryDetailActivity" /> <!-- Phan report cua Son -->
         <activity android:name=".View.Activity.ReportCategoryActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
