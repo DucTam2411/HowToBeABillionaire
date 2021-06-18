@@ -10,9 +10,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -46,9 +48,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -110,89 +114,44 @@ public class IncomeCategoryGraphFragment extends Fragment {
         }
     }
 
+    public static long CalculateDateUse(Date fromDate, Date toDate){
+        if(fromDate==null||toDate==null)
+            return 0;
+        return (long)( (toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24));
+    }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        FetchIncome();
 
         pieChart = view.findViewById(R.id.pie_chart);
+        pieChart.setVisibility(View.INVISIBLE);
 
-        HorizontalBarChart weekchart = view.findViewById(R.id.weekChart1);
+        weekchart = view.findViewById(R.id.weekChart1);
+        weekchart.setVisibility(View.INVISIBLE);
 
-        ArrayList<BarEntry> dataList = new ArrayList<>();
-        ArrayList<String> danhMucList = new ArrayList<>();
-
-
-        dataList.add(new BarEntry(0, 5211221f));
-        dataList.add(new BarEntry(1, 1212122f));
-        dataList.add(new BarEntry(2, 1221212f));
-        dataList.add(new BarEntry(3, 1212122f));
-        dataList.add(new BarEntry(4, 1212122f));
-        dataList.add(new BarEntry(5, 1212122f));
-        dataList.add(new BarEntry(6, 1121212f));
-        dataList.add(new BarEntry(7, 1221212f));
-        dataList.add(new BarEntry(8, 1212212f));
-        dataList.add(new BarEntry(8, 1221212f));
-        dataList.add(new BarEntry(8, 1221212f));
-
-
-
-        danhMucList.add("AA");
-        danhMucList.add("BB");
-        danhMucList.add("BB");
-        danhMucList.add("BB");
-        danhMucList.add("BB");
-        danhMucList.add("BB");
-        danhMucList.add("BB");
-        danhMucList.add("BB");
-        danhMucList.add("BB");
-        danhMucList.add("BB");
-        danhMucList.add("BB");
-
-        BarDataSet barDataSet = new BarDataSet(dataList, "Tiền theo tháng");
-        barDataSet.setColors(ColorTemplate.LIBERTY_COLORS);
-        barDataSet.setValueTextColor(Color.WHITE);
-        barDataSet.setValueTextSize(20f);
-        barDataSet.setValueTypeface(Typeface.MONOSPACE);
-        BarData barData = new BarData(barDataSet);
-
-
-        barData.setBarWidth(0.5f);
-        weekchart.setFitBars(true);
-        weekchart.setData(barData);
-        weekchart.getDescription().setText("");
-        weekchart.setHighlightFullBarEnabled(true);
-
-        YAxis yAxis = weekchart.getAxisLeft();
-        yAxis.setTextColor(Color.WHITE);
-        yAxis.setTextSize(12);
-
-
-        // set XAxis value formater
-        XAxis xAxis = weekchart.getXAxis();
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(danhMucList));
-
-        xAxis.setTextColor(Color.WHITE);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setTextSize(16f);
-        xAxis.setDrawAxisLine(false);
-        xAxis.setDrawGridLines(true);
-        xAxis.setGranularity(1f);
-        xAxis.setDrawLabels(true);
-        xAxis.setLabelCount(danhMucList.size());
-
-        Legend l2 = weekchart.getLegend();
-        l2.setTextColor(Color.WHITE);
-        l2.setTextSize(15);
-
-
-        ArrayList<String>weeks = new ArrayList<>();
-
-        for(int i=0 ;i< 12; i++) {
-            weeks.add("Tuần 1.1.2020");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar c1 = Calendar.getInstance();
+        try {
+            Date date = dateFormat.parse(dateStart);
+            c1.setTime(date);
+        }catch (ParseException e)
+        {
+            e.printStackTrace();
         }
+        c1.roll(Calendar.DATE,8);
+        String c2 = dateFormat.format(c1);
+
+
+
+
+
+        ArrayList<String> weeks = new ArrayList<>();
+
+
+        
 
         RecyclerView weekRecycler = view.findViewById(R.id.week_recycler);
         WeekItemAdapter adapter = new WeekItemAdapter(weeks, getContext());
@@ -203,6 +162,19 @@ public class IncomeCategoryGraphFragment extends Fragment {
         weekRecycler.setLayoutManager(layoutManager1);
     }
 
+    Runnable run_income = new Runnable() {
+        @Override
+        public void run() {
+            FetchIncome();
+        }
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        new Handler().postDelayed(run_income, 1000);
+    }
 
     public void FetchIncome() {
         StringRequest request = new StringRequest(Request.Method.POST,
@@ -221,17 +193,7 @@ public class IncomeCategoryGraphFragment extends Fragment {
 
                             String name = object.getString("NAME");
                             Double money = object.getDouble("TOTAL");
-                           // String date = object.getString("date");
 
-                           /* SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-                            try{
-                            Date day = fmt.parse(date);
-
-
-                            }
-                            catch (ParseException pe){
-                                pe.printStackTrace();
-                            }*/
                             IncomeClass incomeClass = new IncomeClass(name, money);
                             income.add(incomeClass);
                         }
@@ -240,6 +202,7 @@ public class IncomeCategoryGraphFragment extends Fragment {
                     e.printStackTrace();
                 }
                 dataPiechart();
+                dataBarchart();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -261,6 +224,7 @@ public class IncomeCategoryGraphFragment extends Fragment {
     }
     private PieChart pieChart;
 
+
     public void dataPiechart(){
         int m = income.size();
         if(m > 0)
@@ -272,6 +236,8 @@ public class IncomeCategoryGraphFragment extends Fragment {
                 PieEntry incomePE = new PieEntry(item.getMoney().floatValue(), item.getCategory());
                 Entries.add(incomePE);
             }
+
+            //thiet ke pie chart
             PieDataSet dataSet = new PieDataSet(Entries, "Danh mục");
             dataSet.setColors(ColorTemplate.LIBERTY_COLORS); // lib is best until now
             PieData data = new PieData(dataSet);
@@ -280,6 +246,7 @@ public class IncomeCategoryGraphFragment extends Fragment {
             data.setValueTextColor(Color.WHITE);
             data.setValueTypeface(Typeface.MONOSPACE);
             data.setValueFormatter(new PercentFormatter(pieChart));
+
             pieChart.setDrawHoleEnabled(true);
             pieChart.setData(data);
             pieChart.setUsePercentValues(true); // set precent
@@ -288,6 +255,7 @@ public class IncomeCategoryGraphFragment extends Fragment {
             pieChart.setCenterTextSize(14f);
             pieChart.setCenterTextTypeface(Typeface.MONOSPACE);
             pieChart.getDescription().setEnabled(false);
+
             Legend l = pieChart.getLegend();
             l.setTextColor(Color.WHITE);
             l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
@@ -299,22 +267,69 @@ public class IncomeCategoryGraphFragment extends Fragment {
 
             pieChart.animateY(1200, Easing.EaseInBack);
             pieChart.animate();
+
+           pieChart.setVisibility(View.VISIBLE);
         }
     }
+    private HorizontalBarChart weekchart;
 
-    /*public void dataBarchart()
+    public void dataBarchart()
     {
         int m = income.size();
         if(m > 0){
             ArrayList<BarEntry> dataList = new ArrayList<>();
+            ArrayList<String> danhMucList = new ArrayList<>();
             for(int i =0; i < m; i++){
                 IncomeClass item = income.get(i);
-                BarEntry incomeBE = BarEntry(i, item.getMoney().floatValue());
-
+                float a = (float)i;
+                float b = item.getMoney().floatValue();
+                String c = item.getCategory();
+                BarEntry incomeBE = new BarEntry(a, b);
+                dataList.add(incomeBE);
+                danhMucList.add(c);
             }
 
+
+
+            BarDataSet barDataSet = new BarDataSet(dataList, "Tiền theo tháng");
+            barDataSet.setColors(ColorTemplate.LIBERTY_COLORS);
+            barDataSet.setValueTextColor(Color.WHITE);
+            barDataSet.setValueTextSize(20f);
+            barDataSet.setValueTypeface(Typeface.MONOSPACE);
+            BarData barData = new BarData(barDataSet);
+
+            barData.setBarWidth(0.2f);
+            weekchart.setFitBars(true);
+            weekchart.setData(barData);
+            weekchart.getDescription().setText("");
+            weekchart.setHighlightFullBarEnabled(true);
+
+            YAxis yAxis = weekchart.getAxisLeft();
+            yAxis.setTextColor(Color.WHITE);
+            yAxis.setTextSize(10);
+
+            // set XAxis value formater
+            XAxis xAxis = weekchart.getXAxis();
+            xAxis.setValueFormatter(new IndexAxisValueFormatter(danhMucList));
+
+            xAxis.setTextColor(Color.WHITE);
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis.setTextSize(12f);
+            xAxis.setDrawAxisLine(false);
+            xAxis.setDrawGridLines(true);
+            xAxis.setGranularity(1f);
+            xAxis.setDrawLabels(true);
+            xAxis.setLabelCount(danhMucList.size());
+
+            Legend l2 = weekchart.getLegend();
+            l2.setTextColor(Color.WHITE);
+            l2.setTextSize(15);
+
+
+            weekchart.setVisibility(View.VISIBLE);
+
         }
-    }*/
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

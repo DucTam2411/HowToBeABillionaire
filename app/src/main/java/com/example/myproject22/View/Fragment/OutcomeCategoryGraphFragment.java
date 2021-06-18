@@ -263,7 +263,7 @@ public class OutcomeCategoryGraphFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                dataPiechart();
+                //dataPiechart();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -285,7 +285,7 @@ public class OutcomeCategoryGraphFragment extends Fragment {
     }
     private PieChart pieChart;
 
-    public void dataPiechart(){
+    /*public void dataPiechart(){
         int m = outcome.size();
         if(m > 0)
         {
@@ -324,6 +324,6 @@ public class OutcomeCategoryGraphFragment extends Fragment {
             pieChart.animateY(1200, Easing.EaseInBack);
             pieChart.animate();
         }
-    }
+    }*/
 
 }
