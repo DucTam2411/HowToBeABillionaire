@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -54,6 +55,14 @@ import com.example.myproject22.Util.CategoryAdapter;
 import com.gauravk.audiovisualizer.visualizer.WaveVisualizer;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.button.MaterialButton;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.karumi.dexter.listener.single.PermissionListener;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -70,6 +79,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -441,64 +451,6 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
             }
         }
     }
-
-    @Override
-    public Boolean CheckPermissionRecord() {
-        if (ContextCompat.checkSelfPermission(AddingActivity.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(AddingActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            ActivityCompat.requestPermissions(AddingActivity.this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_AUDIO);
-            return false;
-        }
-    }
-
-    @Override
-    public Boolean CheckPermissionImage() {
-        if (ContextCompat.checkSelfPermission(AddingActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            ActivityCompat.requestPermissions(AddingActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_IMAGE);
-            return false;
-        }
-    }
-
-    @Override
-    public Boolean CheckPermissionRead() {
-        if (ContextCompat.checkSelfPermission(AddingActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            ActivityCompat.requestPermissions(AddingActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_EXTERNAL_STORAGE);
-            return false;
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions, @NonNull @NotNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        switch (requestCode) {
-            case PERMISSION_IMAGE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                        grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    TakeImageFromCamera();
-                } else {
-                    Toast.makeText(AddingActivity.this, "Camera permission not Granted", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            }
-            case PERMISSION_EXTERNAL_STORAGE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    TakeImageFromGallery();
-                } else {
-                    Toast.makeText(AddingActivity.this, "Read external permission not Granted", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            }
-        }
-
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -589,20 +541,57 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         ivCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (CheckPermissionImage()) {
-                    addingMoneyPresentent.takeImageFromCamera();
-                    dialog.cancel();
-                }
+                Dexter.withContext(AddingActivity.this).withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
+                        if(multiplePermissionsReport.areAllPermissionsGranted())
+                        {
+                            addingMoneyPresentent.takeImageFromCamera();
+                        }
+                        else{
+                            Toast.makeText(AddingActivity.this, "All permissions are not granted", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent();
+                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", getPackageName(), null);
+                            intent.setData(uri);
+                            startActivity(intent);
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
+                        permissionToken.continuePermissionRequest();
+                    }
+                }).check();
+                dialog.cancel();
             }
         });
 
         ivGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (CheckPermissionRead()) {
-                    addingMoneyPresentent.takeImageFromGallery();
-                    dialog.cancel();
-                }
+                Dexter.withContext(AddingActivity.this).withPermission(Manifest.permission.READ_EXTERNAL_STORAGE).withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+                        addingMoneyPresentent.takeImageFromGallery();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+                        Toast.makeText(AddingActivity.this, "Permission is not granted", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
+                        permissionToken.continuePermissionRequest();
+                    }
+                }).check();
+                dialog.cancel();
             }
         });
     }
@@ -613,12 +602,28 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
             //Stop recording
             addingMoneyPresentent.stopRecord();
         } else {
-            if (CheckPermissionRecord()) {
-                DeleteRecord();
-                addingMoneyPresentent.startRecord();
-            } else {
-                Toast.makeText(this, "Not permission granted", Toast.LENGTH_SHORT).show();
-            }
+            Dexter.withContext(AddingActivity.this).withPermissions(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
+                @Override
+                public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
+                    if(multiplePermissionsReport.areAllPermissionsGranted()){
+                        DeleteRecord();
+                        addingMoneyPresentent.startRecord();
+                    }
+                    else{
+                        Toast.makeText(AddingActivity.this, "All permissions are not granted", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        startActivity(intent);
+                    }
+                }
+
+                @Override
+                public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
+                    permissionToken.continuePermissionRequest();
+                }
+            }).check();
         }
     }
 

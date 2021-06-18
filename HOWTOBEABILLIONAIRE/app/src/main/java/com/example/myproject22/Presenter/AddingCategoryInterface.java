@@ -12,8 +12,6 @@ public interface AddingCategoryInterface {
 
     //Load Image from Camera of Gallery
     public void ChooseImage();
-    public Boolean CheckPermissionImage();
-    public Boolean CheckPermissionRead();
     public void TakeImageFromGallery();
     public void TakeImageFromCamera();
     public File createImageFile() throws IOException;

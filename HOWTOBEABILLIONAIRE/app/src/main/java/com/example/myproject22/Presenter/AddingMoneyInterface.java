@@ -14,11 +14,6 @@ public interface AddingMoneyInterface {
     //Load income and spending category
     public void LoadCategory();
 
-    //Check Permission
-    public Boolean CheckPermissionRecord();
-    public Boolean CheckPermissionImage();
-    public Boolean CheckPermissionRead();
-
     //Load Image from Camera of Gallery
     public void ChooseImage();
 
