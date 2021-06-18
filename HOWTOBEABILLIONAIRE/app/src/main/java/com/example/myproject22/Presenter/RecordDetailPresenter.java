@@ -69,4 +69,8 @@ public class RecordDetailPresenter {
     public void setReleaseMedia(){
         anInterface.SetRealseMedia();
     }
+
+    public void loadDataToLayoutNoAudio(){
+        anInterface.LoadDataToLayoutNoAudio();
+    }
 }

@@ -100,11 +100,20 @@ public class RecordItemAdapter extends RecyclerView.Adapter<RecordItemAdapter.Vi
         String audio_url = item.get_AUDIO();
         if(audio_url.equals("NULL")){
             ivSetAudio.setVisibility(View.INVISIBLE);
-            ivCategory.setEnabled(false);
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext(), RecordDetailActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("IS_CATEGORY", item.get_TYPE());
+                    bundle.putInt("ID_DETAIL", item.get_ID_DETAIL());
+                    intent.putExtras(bundle);
+                    v.getContext().startActivity(intent);
+                }
+            });
         }else{
             ivSetAudio.setVisibility(View.VISIBLE);
-            ivCategory.setEnabled(true);
-            ivCategory.setOnClickListener(new View.OnClickListener() {
+            cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), RecordDetailActivity.class);

@@ -201,6 +201,26 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         tvTime.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void LoadDataToLayoutNoAudio() {
+        String sMoney = String.valueOf(item.get_MONEY());
+        String isPlus = isCategory == 1 ? "+ " : "- ";
+        tvMoney.setText(isPlus + " " + sMoney);
+        tvDescription.setText(item.get_DESCRIPTION());
+        tvNameCategory.setText(item.get_NAME());
+
+        String[] splitdate = item.get_DATE().split(" ");
+        tvTime.setText(splitdate[1] + " ngày " + splitdate[0]);
+
+        if (!item.get_IMAGE().equals("NULL")) {
+            Glide.with(RecordDetailActivity.this).load(item.get_IMAGE()).into(ivImage);
+        }
+
+        progressBar.setVisibility(View.GONE);
+        linearLayout.setVisibility(View.VISIBLE);
+        tvTime.setVisibility(View.VISIBLE);
+    }
+
 
     @Override
     public void FetchIncomeDataFromServer() {
@@ -247,9 +267,14 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
                     e.printStackTrace();
                 }
 
-                presenter.loadDataToLayout();
-                presenter.prepareMedia(item.get_AUDIO());
-                isLoading = false;
+                if(item.get_AUDIO().equals("NULL")){
+                    presenter.loadDataToLayoutNoAudio();
+                }
+                else{
+                    presenter.loadDataToLayout();
+                    presenter.prepareMedia(item.get_AUDIO());
+                    isLoading = false;
+                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -312,9 +337,16 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
                     e.printStackTrace();
                 }
 
-                presenter.loadDataToLayout();
-                presenter.prepareMedia(item.get_AUDIO());
-                isLoading = false;
+
+                if(item.get_AUDIO().equals("NULL")){
+                    presenter.loadDataToLayoutNoAudio();
+                }
+                else{
+                    presenter.loadDataToLayout();
+                    presenter.prepareMedia(item.get_AUDIO());
+                    isLoading = false;
+                }
+
             }
         }, new Response.ErrorListener() {
             @Override

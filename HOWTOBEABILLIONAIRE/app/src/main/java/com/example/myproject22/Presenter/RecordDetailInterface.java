@@ -12,6 +12,7 @@ public interface RecordDetailInterface {
 
     //Load Data to Layout
     public void LoadDataToLayout();
+    public void LoadDataToLayoutNoAudio();
 
     //Fetch Data from server
     public  void FetchIncomeDataFromServer();
