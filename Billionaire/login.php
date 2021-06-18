@@ -15,7 +15,19 @@ if(isset($_POST['username']) && isset($_POST['password'])){
             $dbuser = row['USERNAME'];
             $dbpassword = row['PASSWORD'];
             if($dbuser == $username && password_verify($password, $dbpassword)){
-                echo "Login Success";
+                $result = array();
+                $result['data'] = array();
+
+                $select = "SELECT * FROM user WHERE USERNAME = '$username' ";
+                $reponse = mysqli_query($connect, $select);
+
+                while($row = mysqli_fetch_row($reponse)){
+                    $index['ID_USER'] = $row['0'];
+                    array_push($result['data'], $index);
+                }
+
+                $result["success"] = "Login Success";
+                echo json_encode($result);
                 mysqli_close($connect);
             }
             else{

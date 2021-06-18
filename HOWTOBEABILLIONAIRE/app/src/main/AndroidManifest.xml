@@ -18,22 +18,28 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyProject22">
-        <activity android:name=".View.AddingCategoryActivity"
-            android:parentActivityName=".View.AddingActivity"/>
-        <activity android:name=".View.AddingActivity" />
-        <activity android:name=".View.DashboardActivity">
+        <activity android:name=".View.Activity.RecordDetailActivity"
+            android:parentActivityName=".View.Activity.ReportCategoryDetailActivity"/>
+        <activity android:name=".View.Activity.ReportCategoryDetailActivity" /> <!-- Phan report cua Son -->
+        <activity android:name=".View.Activity.ReportCategoryActivity">
+        </activity>
+        <activity android:name=".View.Activity.AddingCategoryActivity"
+            android:parentActivityName=".View.Activity.AddingActivity"/>
+        <activity android:name=".View.Activity.AddingActivity"/>
+        <activity android:name=".View.Activity.ReportCategoryGraphActivity" /> <!-- phan cua Quan -->
+        <!-- Giao dien chinh -->
+        <activity android:name=".View.Activity.DashboardActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".View.GoalActivity" />
-        <activity android:name=".View.SavingActivity"></activity>
+        </activity> <!-- Phan cua Tam -->
+        <activity android:name=".View.Activity.GoalActivity" />
+        <activity android:name=".View.Activity.SavingActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
@@ -48,7 +54,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
-
     </application>
 
 </manifest>

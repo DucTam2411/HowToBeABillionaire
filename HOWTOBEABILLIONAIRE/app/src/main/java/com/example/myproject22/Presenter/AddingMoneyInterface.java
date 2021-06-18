@@ -1,6 +1,5 @@
 package com.example.myproject22.Presenter;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.view.View;
 

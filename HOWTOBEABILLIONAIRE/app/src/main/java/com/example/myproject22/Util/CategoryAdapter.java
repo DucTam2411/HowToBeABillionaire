@@ -2,14 +2,12 @@ package com.example.myproject22.Util;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,7 +16,7 @@ import com.bumptech.glide.Glide;
 import com.example.myproject22.Model.CategoryClass;
 import com.example.myproject22.Presenter.AddingMoneyInterface;
 import com.example.myproject22.R;
-import com.example.myproject22.View.AddingCategoryActivity;
+import com.example.myproject22.View.Activity.AddingCategoryActivity;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -34,7 +32,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     int id_user;
     Context context;
 
-    public CategoryAdapter(Context context,ArrayList<CategoryClass> categoryList, BottomSheetBehavior bottomSheetBehavior,
+    public CategoryAdapter(Context context, ArrayList<CategoryClass> categoryList, BottomSheetBehavior bottomSheetBehavior,
                            TextView tvChooseItem, MaterialButton btnAddCategory, int id_user) {
         this.context = context;
         this.categoryList = categoryList;

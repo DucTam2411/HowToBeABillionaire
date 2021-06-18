@@ -46,7 +46,7 @@ public class FormatImage {
     public static byte[] BitmapToByte(Bitmap bitmap) {
         //
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
         byte[] compressed = compress(byteArray);
         return compressed;

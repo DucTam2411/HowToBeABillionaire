@@ -1,14 +1,8 @@
 package com.example.myproject22.Presenter;
 
-import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
-
-import com.example.myproject22.R;
-import com.google.android.material.button.MaterialButton;
 
 import java.io.ByteArrayOutputStream;
 
