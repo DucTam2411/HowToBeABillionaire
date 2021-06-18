@@ -2,10 +2,12 @@ package com.example.myproject22.View;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -15,6 +17,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
@@ -42,6 +45,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -106,6 +110,8 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     private ImageButton btnImage;
     private TextView tvImage;
     private Bitmap bmImage;
+    private File photoFile = null;
+    String mCurrentPhotoPath;
 
     //Component về record và audio
     private ImageButton btnPlay;
@@ -434,6 +440,29 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         if (isPlaying == true) {
             addingMoneyPresentent.stopAudio();
         }
+        DeleteImage();
+        DeleteRecord();
+    }
+
+    @Override
+    public void DeleteRecord() {
+        if (!recordFile.equals("NO")) {
+            String recordPath = AddingActivity.this.getExternalFilesDir("/").getAbsolutePath();
+            String folder = recordPath + "/" + recordFile;
+            File file = new File(folder);
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+    }
+
+    @Override
+    public void DeleteImage() {
+        if (photoFile != null) {
+            if (photoFile.exists()) {
+                photoFile.delete();
+            }
+        }
     }
 
     @Override
@@ -449,11 +478,10 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
 
     @Override
     public Boolean CheckPermissionImage() {
-        if (ContextCompat.checkSelfPermission(AddingActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(AddingActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(AddingActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
-            ActivityCompat.requestPermissions(AddingActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_IMAGE);
+            ActivityCompat.requestPermissions(AddingActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_IMAGE);
             return false;
         }
     }
@@ -474,7 +502,8 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
 
         switch (requestCode) {
             case PERMISSION_IMAGE: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     TakeImageFromCamera();
                 } else {
                     Toast.makeText(AddingActivity.this, "Camera permission not Granted", Toast.LENGTH_SHORT).show();
@@ -482,7 +511,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 break;
             }
             case PERMISSION_EXTERNAL_STORAGE: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     TakeImageFromGallery();
                 } else {
                     Toast.makeText(AddingActivity.this, "Read external permission not Granted", Toast.LENGTH_SHORT).show();
@@ -608,6 +637,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
             addingMoneyPresentent.stopRecord();
         } else {
             if (CheckPermissionRecord()) {
+                DeleteRecord();
                 addingMoneyPresentent.startRecord();
             } else {
                 Toast.makeText(this, "Not permission granted", Toast.LENGTH_SHORT).show();
@@ -819,8 +849,39 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     //Take image from camera
     @Override
     public void TakeImageFromCamera() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, PERMISSION_IMAGE);
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        try {
+            photoFile = createImageFile();
+        } catch (IOException e) {
+            Toast.makeText(AddingActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        Log.i("Mayank", photoFile.getAbsolutePath());
+
+        // Continue only if the File was successfully created
+        if (photoFile != null) {
+            Uri photoURI = FileProvider.getUriForFile(this,
+                    "com.example.myproject22.provider",
+                    photoFile);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            startActivityForResult(takePictureIntent, PERMISSION_IMAGE);
+        }
+    }
+
+    @Override
+    public File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     @Override
@@ -851,8 +912,9 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                     btnImage.setScaleX(1.0f);
                     btnImage.setScaleY(1.0f);
                     tvImage.setVisibility(View.GONE);
-                    bmImage = (Bitmap) data.getExtras().get("data");
+                    bmImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
                     btnImage.setImageBitmap(bmImage);
+
                 }
             }
         }
@@ -961,6 +1023,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 if (response.equals("Add new income detailed success")) {
                     Intent intent = new Intent(AddingActivity.this, DashboardActivity.class);
                     startActivity(intent);
+                    ResetSound();
                     finish();
                 }
             }
@@ -999,6 +1062,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 if (response.equals("Add new income detailed success")) {
                     Intent intent = new Intent(AddingActivity.this, DashboardActivity.class);
                     startActivity(intent);
+                    ResetSound();
                     finish();
                 }
             }
@@ -1037,6 +1101,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 if (response.equals("Add new income detailed success")) {
                     Intent intent = new Intent(AddingActivity.this, DashboardActivity.class);
                     startActivity(intent);
+                    ResetSound();
                     finish();
                 }
             }
@@ -1075,6 +1140,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 if (response.equals("Add new outcome detailed success")) {
                     Intent intent = new Intent(AddingActivity.this, DashboardActivity.class);
                     startActivity(intent);
+                    ResetSound();
                     finish();
                 }
             }
@@ -1114,6 +1180,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 if (response.equals("Add new outcome detailed success")) {
                     Intent intent = new Intent(AddingActivity.this, DashboardActivity.class);
                     startActivity(intent);
+                    ResetSound();
                     finish();
                 }
             }
@@ -1152,6 +1219,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 if (response.equals("Add new outcome detailed success")) {
                     Intent intent = new Intent(AddingActivity.this, DashboardActivity.class);
                     startActivity(intent);
+                    ResetSound();
                     finish();
                 }
             }
@@ -1190,6 +1258,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 if (response.equals("Add new outcome detailed success")) {
                     Intent intent = new Intent(AddingActivity.this, DashboardActivity.class);
                     startActivity(intent);
+                    ResetSound();
                     finish();
                 }
             }
@@ -1227,5 +1296,6 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         super.onBackPressed();
         ResetSound();
     }
+
 }
 

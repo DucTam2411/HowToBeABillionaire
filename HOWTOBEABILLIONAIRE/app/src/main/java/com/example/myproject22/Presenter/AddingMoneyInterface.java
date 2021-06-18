@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.view.View;
 
+import java.io.File;
+import java.io.IOException;
+
 public interface AddingMoneyInterface {
     //Set component
     public void SetInit();
@@ -64,4 +67,8 @@ public interface AddingMoneyInterface {
     public void FetchOutcomeCategory();
 
     public void ResetSound();
+
+    public void DeleteRecord();
+    public void DeleteImage();
+    public File createImageFile() throws IOException;
 }

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.app.Activity;
@@ -15,6 +16,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,8 +47,11 @@ import com.example.myproject22.R;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,6 +69,9 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
     TextView tv;
     ImageButton btnSaving;
     ProgressBar progressBar;
+
+    private File photoFile = null;
+    String mCurrentPhotoPath;
 
     Bitmap bmImage;
     int id_user;
@@ -177,21 +185,19 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
     public void SavingNewCategory() {
         String name = etCategory.getText().toString().trim();
         String image = GetStringImage();
-        if(isCategory == 1){
-            UploadIncomeCategoryToServer(name, id_user,image);
-        }
-        else{
-            UploadOutcomeCategoryToServer(name,id_user,image);
+        if (isCategory == 1) {
+            UploadIncomeCategoryToServer(name, id_user, image);
+        } else {
+            UploadOutcomeCategoryToServer(name, id_user, image);
         }
     }
 
     @Override
     public Boolean CheckPermissionImage() {
-        if (ContextCompat.checkSelfPermission(AddingCategoryActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(AddingCategoryActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(AddingCategoryActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
-            ActivityCompat.requestPermissions(AddingCategoryActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_IMAGE);
+            ActivityCompat.requestPermissions(AddingCategoryActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_IMAGE);
             return false;
         }
     }
@@ -212,16 +218,17 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
 
         switch (requestCode) {
             case PERMISSION_IMAGE: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    presentent.takeImageFromCamera();
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    TakeImageFromCamera();
                 } else {
                     Toast.makeText(AddingCategoryActivity.this, "Camera permission not Granted", Toast.LENGTH_SHORT).show();
                 }
                 break;
             }
             case PERMISSION_EXTERNAL_STORAGE: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    presentent.takeImageFromGallery();
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    TakeImageFromGallery();
                 } else {
                     Toast.makeText(AddingCategoryActivity.this, "Read external permission not Granted", Toast.LENGTH_SHORT).show();
                 }
@@ -237,10 +244,42 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         startActivityForResult(photoPickerIntent, PERMISSION_EXTERNAL_STORAGE);
     }
 
+    //Take image from camera
     @Override
     public void TakeImageFromCamera() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, PERMISSION_IMAGE);
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        try {
+            photoFile = createImageFile();
+        } catch (IOException e) {
+            Toast.makeText(AddingCategoryActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        Log.i("Mayank", photoFile.getAbsolutePath());
+
+        // Continue only if the File was successfully created
+        if (photoFile != null) {
+            Uri photoURI = FileProvider.getUriForFile(this,
+                    "com.example.myproject22.provider",
+                    photoFile);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            startActivityForResult(takePictureIntent, PERMISSION_IMAGE);
+        }
+    }
+
+    @Override
+    public File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     @Override
@@ -278,7 +317,6 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
     }
 
 
-
     @Override
     public Boolean IsNullImage(Bitmap bitmap) {
         if (bitmap == null) {
@@ -311,10 +349,9 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
     public void CheckRadioButtonCategory(RadioGroup radioGroup, int idChecked) {
         int checkRadio = radioGroup.getCheckedRadioButtonId();
 
-        if(checkRadio == R.id.rbtnIncome){
+        if (checkRadio == R.id.rbtnIncome) {
             isCategory = 1;
-        }
-        else{
+        } else {
             isCategory = -1;
         }
     }
@@ -323,25 +360,24 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
     public Boolean IsNullName() {
         String name = etCategory.getText().toString().trim();
 
-        if(name.equals("")){
+        if (name.equals("")) {
             Toast.makeText(AddingCategoryActivity.this, "Vui lòng nhập tên danh mục", Toast.LENGTH_SHORT).show();
             progressBar.setVisibility(View.GONE);
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
-    public void UploadIncomeCategoryToServer(String name, int id_user, String image){
+    public void UploadIncomeCategoryToServer(String name, int id_user, String image) {
         StringRequest request = new StringRequest(Request.Method.POST,
                 urlString + "insertIncomeCategory.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 progressBar.setVisibility(View.GONE);
-                if(response.equals("Add new income category success")){
+                if (response.equals("Add new income category success")) {
                     Toast.makeText(AddingCategoryActivity.this, response, Toast.LENGTH_SHORT).show();
+                    DeleteImage();
                     finish();
-                }
-                else{
+                } else {
                     Toast.makeText(AddingCategoryActivity.this, "Tên danh mục đã tồn tại. Vui lòng chọn tên danh mục khác.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -366,17 +402,17 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         requestQueue.add(request);
     }
 
-    public void UploadOutcomeCategoryToServer(String name, int id_user, String image){
+    public void UploadOutcomeCategoryToServer(String name, int id_user, String image) {
         StringRequest request = new StringRequest(Request.Method.POST,
                 urlString + "insertOutcomeCategory.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 progressBar.setVisibility(View.GONE);
-                if(response.equals("Add new outcome category success")){
+                if (response.equals("Add new outcome category success")) {
                     Toast.makeText(AddingCategoryActivity.this, response, Toast.LENGTH_SHORT).show();
+                    DeleteImage();
                     finish();
-                }
-                else{
+                } else {
                     Toast.makeText(AddingCategoryActivity.this, "Tên danh mục đã tồn tại. Vui lòng chọn tên danh mục khác.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -403,7 +439,22 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
 
     @Override
     public void HideKeyboard(View view) {
-        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    @Override
+    public void DeleteImage() {
+        if (photoFile != null) {
+            if (photoFile.exists()) {
+                photoFile.delete();
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        DeleteImage();
     }
 }

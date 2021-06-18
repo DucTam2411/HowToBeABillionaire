@@ -4,6 +4,9 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.RadioGroup;
 
+import java.io.File;
+import java.io.IOException;
+
 public interface AddingCategoryInterface {
     public void SetInit();
 
@@ -13,6 +16,9 @@ public interface AddingCategoryInterface {
     public Boolean CheckPermissionRead();
     public void TakeImageFromGallery();
     public void TakeImageFromCamera();
+    public File createImageFile() throws IOException;
+    public void DeleteImage();
+
 
     //Check image null
     public Boolean IsNullImage(Bitmap bitmap);
