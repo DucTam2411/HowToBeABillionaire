@@ -969,8 +969,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new income detailed success")) {
-                    Intent intent = new Intent(AddingActivity.this, DashboardActivity.class);
-                    startActivity(intent);
+                    ResetSound();
                     finish();
                 }
             }
@@ -1008,8 +1007,6 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new income detailed success")) {
-                    Intent intent = new Intent(AddingActivity.this, DashboardActivity.class);
-                    startActivity(intent);
                     ResetSound();
                     finish();
                 }
@@ -1047,8 +1044,6 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new income detailed success")) {
-                    Intent intent = new Intent(AddingActivity.this, DashboardActivity.class);
-                    startActivity(intent);
                     ResetSound();
                     finish();
                 }
@@ -1086,8 +1081,6 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new income detailed success")) {
-                    Intent intent = new Intent(AddingActivity.this, DashboardActivity.class);
-                    startActivity(intent);
                     ResetSound();
                     finish();
                 }
@@ -1125,8 +1118,6 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new outcome detailed success")) {
-                    Intent intent = new Intent(AddingActivity.this, DashboardActivity.class);
-                    startActivity(intent);
                     ResetSound();
                     finish();
                 }
@@ -1165,8 +1156,6 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new outcome detailed success")) {
-                    Intent intent = new Intent(AddingActivity.this, DashboardActivity.class);
-                    startActivity(intent);
                     ResetSound();
                     finish();
                 }
@@ -1204,8 +1193,6 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new outcome detailed success")) {
-                    Intent intent = new Intent(AddingActivity.this, DashboardActivity.class);
-                    startActivity(intent);
                     ResetSound();
                     finish();
                 }
@@ -1243,8 +1230,6 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new outcome detailed success")) {
-                    Intent intent = new Intent(AddingActivity.this, DashboardActivity.class);
-                    startActivity(intent);
                     ResetSound();
                     finish();
                 }

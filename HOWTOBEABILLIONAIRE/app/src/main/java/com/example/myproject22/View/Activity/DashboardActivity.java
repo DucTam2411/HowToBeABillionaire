@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.example.myproject22.R;
 
@@ -26,6 +27,7 @@ public class DashboardActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_dashboard);
 
+        GetBundleData();
 
         BlurKit.init(this);
         ImageButton btnAddRecord = findViewById(R.id.btnNewRecord);
@@ -77,9 +79,18 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
-
-
+    public void GetBundleData(){
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        id_user = bundle.getInt("ID_USER");
+        id_income = bundle.getInt("ID_INCOME");
+        id_outcome = bundle.getInt("ID_OUTCOME");
+    }
 
     @Override
     protected void onStart() {

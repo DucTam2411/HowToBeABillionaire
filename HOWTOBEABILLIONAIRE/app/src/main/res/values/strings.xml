@@ -21,4 +21,7 @@
     <string name="category_income">Tiền thu</string>
     <string name="category_outcome">Tiền chi</string>
 
+    <string name="signup">Create a new account? <u>Sign up</u></string>
+    <string name="login">Already has a account? <u>Sign in</u></string>
+
 </resources>
