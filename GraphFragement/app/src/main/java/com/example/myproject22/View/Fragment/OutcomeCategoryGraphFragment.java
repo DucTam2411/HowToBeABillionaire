@@ -134,6 +134,8 @@ public class OutcomeCategoryGraphFragment extends Fragment implements WeekOutcom
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+
         pb3 = view.findViewById(R.id.pb3);
         pb4 = view.findViewById(R.id.pb4);
         pb3.bringToFront();
@@ -189,6 +191,10 @@ public class OutcomeCategoryGraphFragment extends Fragment implements WeekOutcom
                 LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity());
                 layoutManager1.setOrientation(RecyclerView.HORIZONTAL);
                 weekRecycler.setLayoutManager(layoutManager1);
+
+                String datestart = weeks.get(weeks.size() -1).getDatestart();
+                String dateend = weeks.get(weeks.size() -1).getDateend();
+                FetchOutcomeFromServer(datestart,dateend);
 
             }
         }, new Response.ErrorListener() {
@@ -251,6 +257,7 @@ public class OutcomeCategoryGraphFragment extends Fragment implements WeekOutcom
 
     @Override
     public void FetchOutcomeFromServer(String datestart, String dateend) {
+        outcome = new ArrayList<>();
         StringRequest request = new StringRequest(Request.Method.POST,
                 urlString + "getOutcomeByDate.php", new Response.Listener<String>() {
             @Override
@@ -258,7 +265,7 @@ public class OutcomeCategoryGraphFragment extends Fragment implements WeekOutcom
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
-
+                    Log.i("test",response);
                     JSONArray jsonArray = jsonObject.getJSONArray("data");
 
                     if (success.equals("1")) {
@@ -304,6 +311,7 @@ public class OutcomeCategoryGraphFragment extends Fragment implements WeekOutcom
     }
 
     public void dataPiechart(){
+        pieChart.invalidate();
         int m = outcome.size();
         if(m > 0)
         {
@@ -348,6 +356,7 @@ public class OutcomeCategoryGraphFragment extends Fragment implements WeekOutcom
     }
 
     public void dataBarchart() {
+        weekchart.invalidate();
         int m = outcome.size();
         if (m > 0) {
             ArrayList<BarEntry> dataList = new ArrayList<>();

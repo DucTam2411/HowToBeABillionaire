@@ -1,11 +1,13 @@
 package com.example.myproject22.Util;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +24,7 @@ public class  WeekIncomeAdapter extends  RecyclerView.Adapter<WeekIncomeAdapter.
     ArrayList<WeekItem> weeks = new ArrayList<>();
     Context context;
     EventListener listener; //Gọi hàm từ fragment
+    private static long mLastClickTime = 0;
 
     public WeekIncomeAdapter(ArrayList<WeekItem> weeks, Context context,  EventListener listener) {
         this.weeks = weeks;
@@ -33,18 +36,16 @@ public class  WeekIncomeAdapter extends  RecyclerView.Adapter<WeekIncomeAdapter.
     @Override
     public WeekIncomeAdapter.ViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
         MaterialCardView cardView = ((MaterialCardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item_week, parent, false));
+
         return new WeekIncomeAdapter.ViewHolder(cardView);
+
     }
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull WeekIncomeAdapter.ViewHolder holder, int position) {
         MaterialCardView cardView = holder.cardView;
 
-        if(position == weeks.size() - 1){
-            String datestart = weeks.get(position).getDatestart();
-            String dateend = weeks.get(position).getDateend();
-            listener.FetchIncomeFromServer(datestart,dateend);
-        }
+
 
         TextView week = ((TextView) cardView.findViewById(R.id.tvWeek));
         week.setText(weeks.get(position).getName());
@@ -52,23 +53,15 @@ public class  WeekIncomeAdapter extends  RecyclerView.Adapter<WeekIncomeAdapter.
         String datestart = weeks.get(position).getDatestart();
         String dateend = weeks.get(position).getDateend();
 
-        int m = weeks.size();
-
-
-
-        int i;
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(SystemClock.elapsedRealtime() - mLastClickTime < 1000)
+                { return;}
+                mLastClickTime = SystemClock.elapsedRealtime();
                listener.FetchIncomeFromServer(datestart,dateend);
-               cardView.setEnabled(false);
-               
             }
         });
-
-
-
-
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.example.myproject22.Util;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ public class WeekOutcomeAdapter extends  RecyclerView.Adapter<WeekOutcomeAdapter
     ArrayList<WeekItem> weeks = new ArrayList<>();
     Context context;
     WeekOutcomeAdapter.EventListener listener; //Gọi hàm từ fragment
+    private static long mLastClickTime = 0;
 
     public WeekOutcomeAdapter(ArrayList<WeekItem> weeks, Context context, WeekOutcomeAdapter.EventListener listener) {
         this.weeks = weeks;
@@ -39,12 +41,6 @@ public class WeekOutcomeAdapter extends  RecyclerView.Adapter<WeekOutcomeAdapter
     public void onBindViewHolder(@NonNull @NotNull WeekOutcomeAdapter.ViewHolder holder, int position) {
         MaterialCardView cardView = holder.cardView;
 
-        if(position == weeks.size() - 1){
-            String datestart = weeks.get(position).getDatestart();
-            String dateend = weeks.get(position).getDateend();
-            listener.FetchOutcomeFromServer(datestart,dateend);
-        }
-
         TextView week = ((TextView) cardView.findViewById(R.id.tvWeek));
         week.setText(weeks.get(position).getName());
 
@@ -54,8 +50,10 @@ public class WeekOutcomeAdapter extends  RecyclerView.Adapter<WeekOutcomeAdapter
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(SystemClock.elapsedRealtime() - mLastClickTime < 1000)
+                { return;}
+                mLastClickTime = SystemClock.elapsedRealtime();
                 listener.FetchOutcomeFromServer(datestart,dateend);
-                cardView.setEnabled(false);
             }
         });
     }

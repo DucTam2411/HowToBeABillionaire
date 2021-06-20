@@ -70,9 +70,6 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
 
     private int id_user = 1;
     private int id_income = 1;
-    /*private String dateStart = "2021-06-09";
-    private String dateEnd = "2021-6-19";*/
-
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -181,6 +178,11 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
                 layoutManager1.setOrientation(RecyclerView.HORIZONTAL);
                 weekRecycler.setLayoutManager(layoutManager1);
 
+
+                String datestart = weeks.get(weeks.size() -1).getDatestart();
+                String dateend = weeks.get(weeks.size() -1).getDateend();
+                FetchIncomeFromServer(datestart,dateend);
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -241,6 +243,7 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
     }
 
     public void dataPiechart() {
+        pieChart.invalidate();
         int m = income.size();
         if (m > 0) {
             ArrayList<PieEntry> Entries = new ArrayList<>();
@@ -288,6 +291,7 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
     }
 
     public void dataBarchart() {
+        weekchart.invalidate();
         int m = income.size();
         if (m > 0) {
             ArrayList<BarEntry> dataList = new ArrayList<>();

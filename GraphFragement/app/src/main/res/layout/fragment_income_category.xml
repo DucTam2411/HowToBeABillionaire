@@ -5,6 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ProgressBar
+        android:id="@+id/pb1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="160dp"
+        android:layout_marginStart="160dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"/>
+
+    <ProgressBar
+        android:id="@+id/pb2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="460dp"
+        android:layout_marginStart="160dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"/>
+
     <ImageView
         android:id="@+id/imageView8"
         android:layout_width="match_parent"
@@ -51,11 +71,7 @@
                 app:layout_constraintTop_toTopOf="parent" >
 
 
-                <ProgressBar
-                    android:id="@+id/pb1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="visible"/>
+
             </com.github.mikephil.charting.charts.PieChart>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -93,13 +109,7 @@
                 app:layout_constraintTop_toTopOf="parent" >
 
 
-                <ProgressBar
-                    android:id="@+id/pb2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="192dp"
-                    android:layout_marginTop="608dp"
-                    android:visibility="visible"/>
+
             </com.github.mikephil.charting.charts.HorizontalBarChart>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
