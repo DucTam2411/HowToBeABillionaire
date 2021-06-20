@@ -1,6 +1,7 @@
 package com.example.myproject22.Presenter;
 
 import android.graphics.Bitmap;
+import android.view.View;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,6 +70,10 @@ public class SignUpPresenter {
 
     public void textViewClick() {
         anInterface.TextViewClick();
+    }
+
+    public void hideKeyboard(View view){
+        anInterface.HideKeyboard(view);
     }
 
     public void uploadUserToServer(String username, String password, String email,

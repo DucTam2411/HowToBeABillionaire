@@ -1,5 +1,7 @@
 package com.example.myproject22.Presenter;
 
+import android.view.View;
+
 public interface LoginInterface {
     //Set init
     public void SetInIt();
@@ -11,6 +13,8 @@ public interface LoginInterface {
     //Handle Click Event
     public void BtnSignIn();
     public void TextViewClick();
+    public void TextViewForgetClick();
+    public void HideKeyboard(View view);
 
     //Login From Server
     public void LoginFromServer(String username, String password);

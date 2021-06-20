@@ -1,6 +1,7 @@
 package com.example.myproject22.Presenter;
 
 import android.graphics.Bitmap;
+import android.view.View;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +29,7 @@ public interface SignUpInterface {
     //Handle Click Event
     public void BtnSignUp();
     public void TextViewClick();
+    public void HideKeyboard(View view);
 
     //Get data from server
     public void UploadUserToServer(String username, String password, String email,

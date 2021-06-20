@@ -1,5 +1,7 @@
 package com.example.myproject22.Presenter;
 
+import android.view.View;
+
 public class LoginPresenter {
     private LoginInterface anInterface;
 
@@ -27,6 +29,15 @@ public class LoginPresenter {
     public void textViewClick(){
         anInterface.TextViewClick();
     }
+
+    public void textViewForgetClick(){
+        anInterface.TextViewForgetClick();
+    }
+
+    public void hideKeyboard(View view){
+        anInterface.HideKeyboard(view);
+    }
+
     public void loginFromServer(String username, String password){
         anInterface.LoginFromServer(username,password);
     }

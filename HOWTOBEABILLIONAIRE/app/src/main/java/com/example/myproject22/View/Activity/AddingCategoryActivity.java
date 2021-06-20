@@ -184,7 +184,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
                         permissionToken.continuePermissionRequest();
                     }
                 }).check();
-                dialog.cancel();
+                dialog.dismiss();
             }
         });
 
@@ -212,7 +212,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
                         permissionToken.continuePermissionRequest();
                     }
                 }).check();
-                dialog.cancel();
+                dialog.dismiss();
             }
         });
     }

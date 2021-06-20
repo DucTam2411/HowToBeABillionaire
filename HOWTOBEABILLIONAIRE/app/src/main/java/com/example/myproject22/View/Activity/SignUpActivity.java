@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.VoiceInteractor;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -20,6 +21,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -126,6 +128,51 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
             @Override
             public void onClick(View v) {
                 presenter.textViewClick();
+            }
+        });
+
+        et_username.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    presenter.hideKeyboard(v);
+                }
+            }
+        });
+
+        et_fullname.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    presenter.hideKeyboard(v);
+                }
+            }
+        });
+
+        et_salary.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    presenter.hideKeyboard(v);
+                }
+            }
+        });
+
+        et_email.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    presenter.hideKeyboard(v);
+                }
+            }
+        });
+
+        et_password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    presenter.hideKeyboard(v);
+                }
             }
         });
     }
@@ -253,7 +300,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
                         permissionToken.continuePermissionRequest();
                     }
                 }).check();
-                dialog.cancel();
+                dialog.dismiss();
             }
         });
 
@@ -276,7 +323,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
                         permissionToken.continuePermissionRequest();
                     }
                 }).check();
-                dialog.cancel();
+                dialog.dismiss();
             }
         });
     }
@@ -517,6 +564,12 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
         Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void HideKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
 }

@@ -563,7 +563,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                         permissionToken.continuePermissionRequest();
                     }
                 }).check();
-                dialog.cancel();
+                dialog.dismiss();
             }
         });
 
@@ -591,7 +591,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                         permissionToken.continuePermissionRequest();
                     }
                 }).check();
-                dialog.cancel();
+                dialog.dismiss();
             }
         });
     }
