@@ -812,7 +812,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         snackbar.setAction("STOP RECORD", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                StopRecord();
+                addingMoneyPresentent.stopRecord();
             }
         });
         snackbar.show();
@@ -844,7 +844,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
             snackbar.setAction("STOP AUDIO", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    StopAudio();
+                    addingMoneyPresentent.stopAudio();
                 }
             });
             snackbar.show();
@@ -903,7 +903,6 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
             snackbar.show();
             /*Toast.makeText(AddingActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();*/
         }
-        Log.i("Mayank", photoFile.getAbsolutePath());
 
         // Continue only if the File was successfully created
         if (photoFile != null) {
@@ -971,10 +970,10 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     //Convert 3gp to byte[] (file name from recordFile)
     @Override
     public byte[] Convert3gbToByte() {
-        if(!recordFile.equals("NO"))
+        if(isRecord == true)
         {
             Log.i("TEST", recordFile);
-            StopRecord();
+            addingMoneyPresentent.stopRecord();
         }
         byte[] audio = null;
         String outputFile = AddingActivity.this.getExternalFilesDir("/").getAbsolutePath() + "/" + recordFile;
