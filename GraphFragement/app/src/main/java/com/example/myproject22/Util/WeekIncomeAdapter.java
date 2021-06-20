@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-public class WeekIncomeAdapter extends  RecyclerView.Adapter<WeekIncomeAdapter.ViewHolder> {
+public class  WeekIncomeAdapter extends  RecyclerView.Adapter<WeekIncomeAdapter.ViewHolder> {
     ArrayList<WeekItem> weeks = new ArrayList<>();
     Context context;
     EventListener listener; //Gọi hàm từ fragment
@@ -52,12 +52,23 @@ public class WeekIncomeAdapter extends  RecyclerView.Adapter<WeekIncomeAdapter.V
         String datestart = weeks.get(position).getDatestart();
         String dateend = weeks.get(position).getDateend();
 
+        int m = weeks.size();
+
+
+
+        int i;
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                listener.FetchIncomeFromServer(datestart,dateend);
+               cardView.setEnabled(false);
+               
             }
         });
+
+
+
+
     }
 
     @Override

@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -111,6 +112,8 @@ public class OutcomeCategoryGraphFragment extends Fragment implements WeekOutcom
         }
     }
 
+    private ProgressBar pb3;
+    private ProgressBar pb4;
     private ArrayList<WeekItem> weeks = new ArrayList<>();
     private RecyclerView weekRecycler;
     private WeekOutcomeAdapter adapter;
@@ -131,159 +134,19 @@ public class OutcomeCategoryGraphFragment extends Fragment implements WeekOutcom
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        PieChart pieChart;
+        pb3 = view.findViewById(R.id.pb3);
+        pb4 = view.findViewById(R.id.pb4);
+        pb3.bringToFront();
+        pb4.bringToFront();
+
         pieChart = view.findViewById(R.id.pie_chart);
-        ArrayList<PieEntry> entries = new ArrayList<>();
-        entries.add(new PieEntry(0.2f, "Nhà hàng "));
-        entries.add(new PieEntry(0.2f, "Mua sắm"));
-        entries.add(new PieEntry(0.2f, "Tiền điện"));
-        entries.add(new PieEntry(0.2f, "Tiền nước"));
+        pieChart.setVisibility(View.INVISIBLE);
 
-        PieDataSet dataSet = new PieDataSet(entries, "Danh mục");
-        dataSet.setColors(ColorTemplate.LIBERTY_COLORS); // lib is best until now
-        PieData data = new PieData(dataSet);
-        data.setDrawValues(false); // no text
-        data.setValueTextSize(16f);
-        data.setValueTextColor(Color.WHITE);
-        data.setValueTypeface(Typeface.MONOSPACE);
-        data.setValueFormatter(new PercentFormatter(pieChart));
+        weekchart = view.findViewById(R.id.weekChart1);
+        weekchart.setVisibility(View.INVISIBLE);
 
-
-        //pieChart.setHoleRadius(0);
-        pieChart.setDrawHoleEnabled(true);
-        pieChart.setData(data);
-        pieChart.setUsePercentValues(true); // set precent
-
-        pieChart.setEntryLabelColor(Color.BLACK);
-        pieChart.setCenterText("Tiền chi");
-        pieChart.setCenterTextSize(14f);
-        pieChart.setCenterTextTypeface(Typeface.MONOSPACE);
-        pieChart.getDescription().setEnabled(false);
-
-
-        Legend l = pieChart.getLegend();
-        l.setTextColor(Color.WHITE);
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
-        l.setOrientation(Legend.LegendOrientation.VERTICAL);
-        l.setWordWrapEnabled(true);
-        l.setDrawInside(true);
-        l.setEnabled(true);
-
-        pieChart.animateY(1200, Easing.EaseInBack);
-        pieChart.animate();
-
-
-        HorizontalBarChart weekchart = view.findViewById(R.id.weekChart1);
-
-        ArrayList<BarEntry> dataList = new ArrayList<>();
-        ArrayList<String> danhMucList = new ArrayList<>();
-
-
-        dataList.add(new BarEntry(0, 5211221f));
-        dataList.add(new BarEntry(1, 1212122f));
-        dataList.add(new BarEntry(2, 1221212f));
-        dataList.add(new BarEntry(3, 1221212f));
-
-
-        danhMucList.add("Nhà hàng");
-        danhMucList.add("Di động");
-        danhMucList.add("Mua sắm");
-        danhMucList.add("Bim bim");
-
-        BarDataSet barDataSet = new BarDataSet(dataList, "Tiền theo tháng");
-        barDataSet.setColors(ColorTemplate.LIBERTY_COLORS);
-        barDataSet.setValueTextColor(Color.WHITE);
-        barDataSet.setValueTextSize(20f);
-        barDataSet.setValueTypeface(Typeface.MONOSPACE);
-        BarData barData = new BarData(barDataSet);
-
-
-        barData.setBarWidth(0.5f);
-        weekchart.setFitBars(true);
-        weekchart.setData(barData);
-        weekchart.getDescription().setText("");
-        weekchart.setHighlightFullBarEnabled(true);
-
-        YAxis yAxis = weekchart.getAxisLeft();
-        yAxis.setTextColor(Color.WHITE);
-        yAxis.setTextSize(12);
-
-
-        // set XAxis value formater
-        XAxis xAxis = weekchart.getXAxis();
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(danhMucList));
-
-        xAxis.setTextColor(Color.WHITE);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setTextSize(14f);
-        xAxis.setDrawAxisLine(false);
-        xAxis.setDrawGridLines(true);
-        xAxis.setGranularity(1f);
-        xAxis.setDrawLabels(true);
-        xAxis.setLabelCount(danhMucList.size());
-
-        Legend l2 = weekchart.getLegend();
-        l2.setTextColor(Color.WHITE);
-        l2.setTextSize(15);
-
-        ArrayList<WeekItem>weeks = new ArrayList<>();
-
-        for(int i=0 ;i< 12; i++) {
-            WeekItem item = new WeekItem("Tuần 1.1.2020", "1-1-1", "1-1-1");
-            weeks.add(item);
-        }
-
-
-        RecyclerView weekRecycler = view.findViewById(R.id.week_recycler);
-        WeekItemAdapter adapter = new WeekItemAdapter(weeks, getContext());
-
-        weekRecycler.setAdapter(adapter);
-        LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity());
-        layoutManager1.setOrientation(RecyclerView.HORIZONTAL);
-        weekRecycler.setLayoutManager(layoutManager1);
+        weekRecycler = view.findViewById(R.id.week_recycler);
     }
-
-    /*public void dataPiechart(){
-        int m = outcome.size();
-        if(m > 0)
-        {
-            ArrayList<PieEntry> Entries = new ArrayList<>();
-            for(int i =0; i < m; i++)
-            {
-                OutcomeClass item = outcome.get(i);
-                PieEntry outcomePE = new PieEntry(item.getMoney().floatValue(), item.getCategory());
-                Entries.add(outcomePE);
-            }
-            PieDataSet dataSet = new PieDataSet(Entries, "Danh mục");
-            dataSet.setColors(ColorTemplate.LIBERTY_COLORS); // lib is best until now
-            PieData data = new PieData(dataSet);
-            data.setDrawValues(false); // no text
-            data.setValueTextSize(16f);
-            data.setValueTextColor(Color.WHITE);
-            data.setValueTypeface(Typeface.MONOSPACE);
-            data.setValueFormatter(new PercentFormatter(pieChart));
-            pieChart.setDrawHoleEnabled(true);
-            pieChart.setData(data);
-            pieChart.setUsePercentValues(true); // set precent
-            pieChart.setEntryLabelColor(Color.BLACK);
-            pieChart.setCenterText("Tiền thu");
-            pieChart.setCenterTextSize(14f);
-            pieChart.setCenterTextTypeface(Typeface.MONOSPACE);
-            pieChart.getDescription().setEnabled(false);
-            Legend l = pieChart.getLegend();
-            l.setTextColor(Color.WHITE);
-            l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-            l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
-            l.setOrientation(Legend.LegendOrientation.VERTICAL);
-            l.setWordWrapEnabled(true);
-            l.setDrawInside(true);
-            l.setEnabled(true);
-
-            pieChart.animateY(1200, Easing.EaseInBack);
-            pieChart.animate();
-        }
-    }*/
 
     @Override
     public void onResume() {
@@ -412,7 +275,14 @@ public class OutcomeCategoryGraphFragment extends Fragment implements WeekOutcom
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                //dataPiechart();
+                if(outcome.size() > 0) {
+                    dataPiechart();
+                    dataBarchart();
+                }
+                else
+                {
+                    InvisibleChart();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -431,5 +301,111 @@ public class OutcomeCategoryGraphFragment extends Fragment implements WeekOutcom
         };
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         requestQueue.add(request);
+    }
+
+    public void dataPiechart(){
+        int m = outcome.size();
+        if(m > 0)
+        {
+            ArrayList<PieEntry> Entries = new ArrayList<>();
+            for(int i =0; i < m; i++)
+            {
+                OutcomeClass item = outcome.get(i);
+                PieEntry outcomePE = new PieEntry(item.getMoney().floatValue(), item.getCategory());
+                Entries.add(outcomePE);
+            }
+            PieDataSet dataSet = new PieDataSet(Entries, "Danh mục");
+            dataSet.setColors(ColorTemplate.LIBERTY_COLORS); // lib is best until now
+            PieData data = new PieData(dataSet);
+            data.setDrawValues(false); // no text
+            data.setValueTextSize(16f);
+            data.setValueTextColor(Color.WHITE);
+            data.setValueTypeface(Typeface.MONOSPACE);
+            data.setValueFormatter(new PercentFormatter(pieChart));
+            pieChart.setDrawHoleEnabled(true);
+            pieChart.setData(data);
+            pieChart.setUsePercentValues(true); // set precent
+            pieChart.setEntryLabelColor(Color.BLACK);
+            pieChart.setCenterText("Tiền thu");
+            pieChart.setCenterTextSize(14f);
+            pieChart.setCenterTextTypeface(Typeface.MONOSPACE);
+            pieChart.getDescription().setEnabled(false);
+            Legend l = pieChart.getLegend();
+            l.setTextColor(Color.WHITE);
+            l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+            l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+            l.setOrientation(Legend.LegendOrientation.VERTICAL);
+            l.setWordWrapEnabled(true);
+            l.setDrawInside(true);
+            l.setEnabled(true);
+
+            pieChart.animateY(1200, Easing.EaseInBack);
+            pieChart.animate();
+
+            pb3.setVisibility(View.GONE);
+            pieChart.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void dataBarchart() {
+        int m = outcome.size();
+        if (m > 0) {
+            ArrayList<BarEntry> dataList = new ArrayList<>();
+            ArrayList<String> danhMucList = new ArrayList<>();
+            for (int i = 0; i < m; i++) {
+                OutcomeClass item = outcome.get(i);
+                float a = (float) i;
+                float b = item.getMoney().floatValue();
+                String c = item.getCategory();
+                BarEntry outcomeBE = new BarEntry(a, b);
+                dataList.add(outcomeBE);
+                danhMucList.add(c);
+            }
+
+            BarDataSet barDataSet = new BarDataSet(dataList, "Tiền theo tháng");
+            barDataSet.setColors(ColorTemplate.LIBERTY_COLORS);
+            barDataSet.setValueTextColor(Color.WHITE);
+            barDataSet.setValueTextSize(20f);
+            barDataSet.setValueTypeface(Typeface.MONOSPACE);
+            BarData barData = new BarData(barDataSet);
+
+            barData.setBarWidth(0.2f);
+            weekchart.setFitBars(true);
+            weekchart.setData(barData);
+            weekchart.getDescription().setText("");
+            weekchart.setHighlightFullBarEnabled(true);
+
+            YAxis yAxis = weekchart.getAxisLeft();
+            yAxis.setTextColor(Color.WHITE);
+            yAxis.setTextSize(10);
+
+            // set XAxis value formater
+            XAxis xAxis = weekchart.getXAxis();
+            xAxis.setValueFormatter(new IndexAxisValueFormatter(danhMucList));
+
+            xAxis.setTextColor(Color.WHITE);
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis.setTextSize(12f);
+            xAxis.setDrawAxisLine(false);
+            xAxis.setDrawGridLines(true);
+            xAxis.setGranularity(1f);
+            xAxis.setDrawLabels(true);
+            xAxis.setLabelCount(danhMucList.size());
+
+            Legend l2 = weekchart.getLegend();
+            l2.setTextColor(Color.WHITE);
+            l2.setTextSize(15);
+
+            pb4.setVisibility(View.GONE);
+            weekchart.setVisibility(View.VISIBLE);
+
+
+
+        }
+    }
+
+    public void InvisibleChart(){
+        pieChart.setVisibility(View.INVISIBLE);
+        weekchart.setVisibility(View.INVISIBLE);
     }
 }

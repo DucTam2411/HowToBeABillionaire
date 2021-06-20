@@ -70,8 +70,8 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
 
     private int id_user = 1;
     private int id_income = 1;
-    private String dateStart = "2021-06-09";
-    private String dateEnd = "2021-6-19";
+    /*private String dateStart = "2021-06-09";
+    private String dateEnd = "2021-6-19";*/
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -261,6 +261,7 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
             data.setValueFormatter(new PercentFormatter(pieChart));
 
             pieChart.setDrawHoleEnabled(true);
+
             pieChart.setData(data);
             pieChart.setUsePercentValues(true); // set precent
             pieChart.setEntryLabelColor(Color.BLACK);

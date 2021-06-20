@@ -55,6 +55,7 @@ public class WeekOutcomeAdapter extends  RecyclerView.Adapter<WeekOutcomeAdapter
             @Override
             public void onClick(View v) {
                 listener.FetchOutcomeFromServer(datestart,dateend);
+                cardView.setEnabled(false);
             }
         });
     }
