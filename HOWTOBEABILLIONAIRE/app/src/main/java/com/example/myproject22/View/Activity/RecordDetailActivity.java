@@ -1,6 +1,7 @@
 package com.example.myproject22.View.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -31,6 +32,8 @@ import com.example.myproject22.Model.DetailItem;
 import com.example.myproject22.Presenter.RecordDetailInterface;
 import com.example.myproject22.Presenter.RecordDetailPresenter;
 import com.example.myproject22.R;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,6 +75,7 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
     private BlurLayout blurLayout_2;
     private LinearLayout linearLayout;
     private ProgressBar progressBar;
+    private CoordinatorLayout mSnackbarLayout;
 
     private DetailItem item;
 
@@ -163,6 +167,7 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         progressBar.bringToFront();
         mediaPlayer = new MediaPlayer();
         seekBar.setMax(100);
+        mSnackbarLayout = findViewById(R.id.cl_snackbar);
 
         progressBar.setVisibility(View.VISIBLE);
         tvTime.setVisibility(View.INVISIBLE);
@@ -279,7 +284,10 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(RecordDetailActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+                /*Toast.makeText(RecordDetailActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
             }
         }) {
             @Override
@@ -351,7 +359,10 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(RecordDetailActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+                /*Toast.makeText(RecordDetailActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
             }
         }) {
             @Override
@@ -387,7 +398,10 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
             tvEnd.setText(presenter.getTimeMedia(mediaPlayer.getDuration()));
             isLoading = false;
         } catch (IOException e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(mSnackbarLayout,e.getMessage(),Snackbar.LENGTH_SHORT);
+            snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+            snackbar.show();
+            /*Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();*/
         }
     }
 

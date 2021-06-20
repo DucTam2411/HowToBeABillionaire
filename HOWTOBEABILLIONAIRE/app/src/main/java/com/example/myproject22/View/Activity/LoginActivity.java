@@ -2,6 +2,7 @@ package com.example.myproject22.View.Activity;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -28,7 +29,10 @@ import com.example.myproject22.Model.DayItem;
 import com.example.myproject22.Presenter.LoginInterface;
 import com.example.myproject22.Presenter.LoginPresenter;
 import com.example.myproject22.R;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,10 +60,12 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
     //Component
     private TextInputEditText et_username;
     private TextInputEditText et_password;
+    private TextInputLayout til_password;
     private Button btnLogin;
     private TextView tvSignUp;
     private TextView tvForget;
     private ProgressBar pb_signin;
+    private CoordinatorLayout mSnackbarLayout;
 
     //Presenter
     private LoginPresenter presenter;
@@ -120,7 +126,9 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         btnLogin = findViewById(R.id.btnLogin);
         tvSignUp = findViewById(R.id.tvRegister);
         tvForget = findViewById(R.id.tvForget);
+        til_password = findViewById(R.id.til_password);
         pb_signin = findViewById(R.id.pb_signin);
+        mSnackbarLayout = findViewById(R.id.cl_snackbar);
     }
 
     @Override
@@ -197,7 +205,10 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
                             }
                         }
                     } else {
-                        Toast.makeText(LoginActivity.this, success, Toast.LENGTH_SHORT).show();
+                        Snackbar snackbar = Snackbar.make(mSnackbarLayout,success,Snackbar.LENGTH_SHORT);
+                        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                        snackbar.show();
+                        /*Toast.makeText(LoginActivity.this, success, Toast.LENGTH_SHORT).show();*/
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -206,7 +217,10 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+                /*Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
                 pb_signin.setVisibility(View.GONE);
             }
         }) {
@@ -341,15 +355,23 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
                     public void onResponse(String response) {
                         Log.i("TESTFORGOT",response);
                         pb_forgot.setVisibility(View.GONE);
-                        Toast.makeText(LoginActivity.this, response, Toast.LENGTH_SHORT).show();
                         if (response.equals("Update password success")) {
+                            Toast.makeText(LoginActivity.this, response, Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
+                        }
+                        else{
+                            Snackbar snackbar = Snackbar.make(mSnackbarLayout,response,Snackbar.LENGTH_SHORT);
+                            snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                            snackbar.show();
                         }
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                        snackbar.show();
+                        /*Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
                         pb_signin.setVisibility(View.GONE);
                     }
                 }) {

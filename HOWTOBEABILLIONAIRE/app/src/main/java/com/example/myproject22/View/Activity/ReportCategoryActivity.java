@@ -2,6 +2,7 @@ package com.example.myproject22.View.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +30,8 @@ import com.example.myproject22.Presenter.ReportCategoryInterface;
 import com.example.myproject22.Presenter.ReportCategoryPresenter;
 import com.example.myproject22.R;
 import com.example.myproject22.Util.DayItemAdapter;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,6 +55,7 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
     private GridLayoutManager gridLayoutManager;
     private Toolbar toolbar;
     private ProgressBar progressBar;
+    private CoordinatorLayout mSnackbarLayout;
 
     //Get Id_income, Id_outcome
     private int id_income;
@@ -89,6 +93,7 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
         recyclerView.setVisibility(View.INVISIBLE);
         toolbar = findViewById(R.id.toolbar2);
         progressBar = findViewById(R.id.pbReportCategory);
+        mSnackbarLayout = findViewById(R.id.cl_snackbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("     Nhật ký thu chi");
         getSupportActionBar().setIcon(R.drawable.yoyoyo);
@@ -194,7 +199,10 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(ReportCategoryActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+                /*Toast.makeText(ReportCategoryActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
             }
         }) {
             @Override
@@ -251,7 +259,10 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(ReportCategoryActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+                /*Toast.makeText(ReportCategoryActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
             }
         }) {
             @Override

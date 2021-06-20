@@ -28,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -42,6 +43,8 @@ import com.android.volley.toolbox.Volley;
 import com.example.myproject22.Presenter.AddingCategoryInterface;
 import com.example.myproject22.Presenter.AddingCategoryPresenter;
 import com.example.myproject22.R;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -68,21 +71,22 @@ import static com.example.myproject22.Presenter.AddingMoneyPresentent.convertByt
 
 public class AddingCategoryActivity extends AppCompatActivity implements AddingCategoryInterface {
 
-    EditText etCategory;
-    RadioGroup rgCategory;
-    RadioButton rbtnIncome;
-    RadioButton rbtnOutcome;
-    ImageButton btnImage;
-    TextView tv;
-    ImageButton btnSaving;
-    ProgressBar progressBar;
+    private EditText etCategory;
+    private RadioGroup rgCategory;
+    private RadioButton rbtnIncome;
+    private RadioButton rbtnOutcome;
+    private ImageButton btnImage;
+    private TextView tv;
+    private ImageButton btnSaving;
+    private ProgressBar progressBar;
+    private CoordinatorLayout mSnackbarLayout;
 
     private File photoFile = null;
-    String mCurrentPhotoPath;
+    private String mCurrentPhotoPath;
 
-    Bitmap bmImage;
-    int id_user;
-    int isCategory = 1;
+    private Bitmap bmImage;
+    private int id_user;
+    private int isCategory = 1;
 
     //Const mặc định để xét permission
     private static final int PERMISSION_IMAGE = 1000;
@@ -143,6 +147,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         tv = findViewById(R.id.tvCategory);
         rgCategory = findViewById(R.id.rgCategory);
         progressBar = findViewById(R.id.pbCategory);
+        mSnackbarLayout = findViewById(R.id.cl_snackbar);
     }
 
     @Override
@@ -170,7 +175,10 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
                             presentent.takeImageFromCamera();
                         }
                         else{
-                            Toast.makeText(AddingCategoryActivity.this, "All permissions are not granted", Toast.LENGTH_SHORT).show();
+                            Snackbar snackbar = Snackbar.make(mSnackbarLayout,"All permissions are not granted",Snackbar.LENGTH_SHORT);
+                            snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                            snackbar.show();
+                            /*Toast.makeText(AddingCategoryActivity.this, "All permissions are not granted", Toast.LENGTH_SHORT).show();*/
                             Intent intent = new Intent();
                             intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                             Uri uri = Uri.fromParts("package", getPackageName(), null);
@@ -199,7 +207,10 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
 
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                        Toast.makeText(AddingCategoryActivity.this, "Permission is not granted", Toast.LENGTH_SHORT).show();
+                        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Permission is not granted",Snackbar.LENGTH_SHORT);
+                        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                        snackbar.show();
+                        /*Toast.makeText(AddingCategoryActivity.this, "Permission is not granted", Toast.LENGTH_SHORT).show();*/
                         Intent intent = new Intent();
                         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                         Uri uri = Uri.fromParts("package", getPackageName(), null);
@@ -250,9 +261,11 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         try {
             photoFile = createImageFile();
         } catch (IOException e) {
-            Toast.makeText(AddingCategoryActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(mSnackbarLayout,e.getMessage(),Snackbar.LENGTH_SHORT);
+            snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+            snackbar.show();
+            /*Toast.makeText(AddingCategoryActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();*/
         }
-        Log.i("Mayank", photoFile.getAbsolutePath());
 
         // Continue only if the File was successfully created
         if (photoFile != null) {
@@ -327,7 +340,10 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
 
     @Override
     public void GetNoImage() {
-        Toast.makeText(AddingCategoryActivity.this, "Vui lòng chọn hình ảnh cho danh mục.", Toast.LENGTH_SHORT).show();
+        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Vui lòng chọn hình ảnh cho danh mục.",Snackbar.LENGTH_SHORT);
+        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+        snackbar.show();
+        /*Toast.makeText(AddingCategoryActivity.this, "Vui lòng chọn hình ảnh cho danh mục.", Toast.LENGTH_SHORT).show();*/
         progressBar.setVisibility(View.GONE);
     }
 
@@ -360,7 +376,10 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         String name = etCategory.getText().toString().trim();
 
         if (name.equals("")) {
-            Toast.makeText(AddingCategoryActivity.this, "Vui lòng nhập tên danh mục", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Vui lòng chọn hình ảnh cho danh mục.",Snackbar.LENGTH_SHORT);
+            snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+            snackbar.show();
+            /*Toast.makeText(AddingCategoryActivity.this, "Vui lòng nhập tên danh mục", Toast.LENGTH_SHORT).show();*/
             progressBar.setVisibility(View.GONE);
             return true;
         } else return false;
@@ -377,13 +396,19 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
                     DeleteImage();
                     finish();
                 } else {
-                    Toast.makeText(AddingCategoryActivity.this, "Tên danh mục đã tồn tại. Vui lòng chọn tên danh mục khác.", Toast.LENGTH_SHORT).show();
+                    Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Tên danh mục đã tồn tại. Vui lòng chọn tên danh mục khác.",Snackbar.LENGTH_SHORT);
+                    snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                    snackbar.show();
+                    /*Toast.makeText(AddingCategoryActivity.this, "Tên danh mục đã tồn tại. Vui lòng chọn tên danh mục khác.", Toast.LENGTH_SHORT).show();*/
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(AddingCategoryActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+                /*Toast.makeText(AddingCategoryActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
                 progressBar.setVisibility(View.GONE);
             }
         }) {
@@ -412,13 +437,19 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
                     DeleteImage();
                     finish();
                 } else {
-                    Toast.makeText(AddingCategoryActivity.this, "Tên danh mục đã tồn tại. Vui lòng chọn tên danh mục khác.", Toast.LENGTH_SHORT).show();
+                    Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Tên danh mục đã tồn tại. Vui lòng chọn tên danh mục khác.",Snackbar.LENGTH_SHORT);
+                    snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                    snackbar.show();
+                    /*Toast.makeText(AddingCategoryActivity.this, "Tên danh mục đã tồn tại. Vui lòng chọn tên danh mục khác.", Toast.LENGTH_SHORT).show();*/
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(AddingCategoryActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+                /*Toast.makeText(AddingCategoryActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
                 progressBar.setVisibility(View.GONE);
             }
         }) {

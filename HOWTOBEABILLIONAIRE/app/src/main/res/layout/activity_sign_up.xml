@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="130dp"
-                android:layout_marginTop="250dp"
+                android:layout_marginTop="300dp"
                 android:visibility="invisible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -48,6 +48,7 @@
                 app:endIconMode="clear_text"
                 app:errorEnabled="true"
                 app:counterEnabled="true"
+                android:layout_marginTop="10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvSignup">
 
@@ -67,6 +68,7 @@
                 android:hint="FULLNAME"
                 app:endIconMode="clear_text"
                 app:errorEnabled="true"
+                android:layout_marginTop="10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/til_user">
 
@@ -85,6 +87,7 @@
                 android:hint="SALARY"
                 app:endIconMode="clear_text"
                 app:errorEnabled="true"
+                android:layout_marginTop="10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/til_fullname">
 
@@ -103,6 +106,7 @@
                 android:hint="EMAIL"
                 app:errorEnabled="true"
                 app:endIconMode="clear_text"
+                android:layout_marginTop="10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/til_salary">
 
@@ -123,6 +127,7 @@
                 app:counterEnabled="true"
                 app:endIconMode="password_toggle"
                 app:errorEnabled="true"
+                android:layout_marginTop="10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/til_email">
 
@@ -139,16 +144,18 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/til_password" />
 
             <Button
                 android:id="@+id/btnSignup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_marginStart="50dp"
                 android:text="SIGN UP"
                 android:textSize="20sp"
+                android:layout_marginTop="10dp"
                 app:layout_constraintStart_toEndOf="@id/ibtn_user"
                 app:layout_constraintTop_toBottomOf="@id/til_password" />
 
@@ -159,11 +166,21 @@
                 android:layout_marginStart="50dp"
                 android:text="@string/login"
                 android:textSize="16sp"
+                android:layout_marginTop="10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ibtn_user" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </io.alterac.blurkit.BlurLayout>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/cl_snackbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

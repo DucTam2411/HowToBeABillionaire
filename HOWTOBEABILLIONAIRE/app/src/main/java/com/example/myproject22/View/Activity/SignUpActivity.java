@@ -3,6 +3,7 @@ package com.example.myproject22.View.Activity;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.FileProvider;
 
 import android.Manifest;
@@ -42,6 +43,8 @@ import com.example.myproject22.Model.UserClass;
 import com.example.myproject22.Presenter.SignUpInterface;
 import com.example.myproject22.Presenter.SignUpPresenter;
 import com.example.myproject22.R;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -88,6 +91,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
     private ImageButton ibtn_user;
     private TextView tv_login;
     private ProgressBar pb_signup;
+    private CoordinatorLayout mSnackbarLayout;
 
     //Image
     private File photoFile = null;
@@ -188,6 +192,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
         ibtn_user = findViewById(R.id.ibtn_user);
         tv_login = findViewById(R.id.tvRegister);
         pb_signup = findViewById(R.id.pb_signup);
+        mSnackbarLayout = findViewById(R.id.cl_snackbar);
     }
 
     @Override
@@ -342,9 +347,11 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
         try {
             photoFile = presenter.createImageFile();
         } catch (IOException e) {
-            Toast.makeText(SignUpActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(mSnackbarLayout,e.getMessage(),Snackbar.LENGTH_SHORT);
+            snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+            snackbar.show();
+            /*Toast.makeText(SignUpActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();*/
         }
-        Log.i("Mayank", photoFile.getAbsolutePath());
 
         // Continue only if the File was successfully created
         if (photoFile != null) {
@@ -428,7 +435,10 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
 
     @Override
     public void DenyPermission() {
-        Toast.makeText(SignUpActivity.this, "Permission is not granted", Toast.LENGTH_SHORT).show();
+        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Permission is not granted",Snackbar.LENGTH_SHORT);
+        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+        snackbar.show();
+        /*Toast.makeText(SignUpActivity.this, "Permission is not granted", Toast.LENGTH_SHORT).show();*/
         Intent intent = new Intent();
         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         Uri uri = Uri.fromParts("package", getPackageName(), null);
@@ -483,7 +493,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
                 ConnectionClass.urlString + "signUp.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Toast.makeText(SignUpActivity.this, response, Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(SignUpActivity.this, response, Toast.LENGTH_SHORT).show();*/
                 pb_signup.setVisibility(View.GONE);
                 Log.i("TESTER", response);
                 if (response.equals("Sign Up success")) {
@@ -491,11 +501,19 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
                     startActivity(intent);
                     finish();
                 }
+                else{
+                    Snackbar snackbar = Snackbar.make(mSnackbarLayout,response,Snackbar.LENGTH_SHORT);
+                    snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                    snackbar.show();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(SignUpActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+                /*Toast.makeText(SignUpActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
                 pb_signup.setVisibility(View.GONE);
             }
         }){
@@ -526,7 +544,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
                 ConnectionClass.urlString + "signUpNoImage.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Toast.makeText(SignUpActivity.this, response, Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(SignUpActivity.this, response, Toast.LENGTH_SHORT).show();*/
                 pb_signup.setVisibility(View.GONE);
                 Log.i("TESTER1", response);
                 if (response.equals("Sign Up success")) {
@@ -534,11 +552,19 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
                     startActivity(intent);
                     finish();
                 }
+                else{
+                    Snackbar snackbar = Snackbar.make(mSnackbarLayout,response,Snackbar.LENGTH_SHORT);
+                    snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                    snackbar.show();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(SignUpActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+                /*Toast.makeText(SignUpActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
                 pb_signup.setVisibility(View.GONE);
             }
         }){
@@ -572,4 +598,9 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        TextViewClick();
+    }
 }

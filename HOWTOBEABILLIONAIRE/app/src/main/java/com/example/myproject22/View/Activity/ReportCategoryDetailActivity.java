@@ -2,6 +2,7 @@ package com.example.myproject22.View.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +31,8 @@ import com.example.myproject22.Presenter.ReportCategoryDetailPresenter;
 import com.example.myproject22.R;
 import com.example.myproject22.Util.DayItemAdapter;
 import com.example.myproject22.Util.RecordItemAdapter;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,6 +56,7 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
     private Toolbar toolbar;
     private ProgressBar progressBar;
     private TextView tvDate;
+    private CoordinatorLayout mSnackbarLayout;
 
     private String dateString;
     private int id_income;
@@ -88,6 +92,7 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
         progressBar = findViewById(R.id.pbDetailReport);
         toolbar.setVisibility(View.INVISIBLE);
         recyclerView.setVisibility(View.INVISIBLE);
+        mSnackbarLayout = findViewById(R.id.cl_snackbar);
     }
 
     @Override
@@ -157,7 +162,10 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(ReportCategoryDetailActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+                /*Toast.makeText(ReportCategoryDetailActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
             }
         }) {
             @Override
@@ -230,7 +238,10 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(ReportCategoryDetailActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+                /*Toast.makeText(ReportCategoryDetailActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
             }
         }) {
             @Override
