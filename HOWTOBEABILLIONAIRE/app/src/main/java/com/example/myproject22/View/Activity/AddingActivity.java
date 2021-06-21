@@ -58,6 +58,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -130,6 +131,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     private EditText etMoney;
     private SeekBar seekBar;
     private EditText etDescription;
+    private TextInputLayout til_money;
 
     private ImageButton btnSaving;
     private ProgressBar progressBar3;
@@ -250,9 +252,6 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (etMoney.isEnabled() == false) {
-                    etMoney.setEnabled(true);
-                }
             }
         });
 
@@ -476,12 +475,26 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     }
 
     @Override
-    public void GetNoMoneyData() {
-        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Nhập thông tin về tiền!",Snackbar.LENGTH_SHORT);
-        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-        snackbar.show();
-        /*Toast.makeText(getApplicationContext(), "Nhập thông tin về tiền!", Toast.LENGTH_SHORT).show();*/
-        progressBar3.setVisibility(View.GONE);
+    public Boolean GetNoMoneyData(String money) {
+        if(money.isEmpty()){
+            til_money.setError("Nhập thông tin tiền");
+            progressBar3.setVisibility(View.GONE);
+            return false;
+        }
+        else if(!money.matches("[0-9]+")){
+            til_money.setError("Nhập chính xác tiền");
+            progressBar3.setVisibility(View.GONE);
+            return false;
+        }
+        else if(money.length() > 15){
+            til_money.setError("Số tiền nhập quá lớn");
+            progressBar3.setVisibility(View.GONE);
+            return false;
+        }
+        else{
+            til_money.setError(null);
+            return true;
+        }
     }
 
     @Override
@@ -510,6 +523,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         progressBar1 = findViewById(R.id.progress1);
         progressBar2 = findViewById(R.id.progress2);
         etMoney = findViewById(R.id.editTextNumber2);
+        til_money = findViewById(R.id.til_money);
         etDescription = findViewById(R.id.editTextTextMultiLine);
         progressBar3 = findViewById(R.id.progress3);
         mSnackbarLayout = findViewById(R.id.cl_snackbar);
@@ -677,17 +691,15 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     @Override
     public void IsValidNumber(CharSequence s) {
         if (s.length() > 15) {
-            Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Số tiền quá lớn.",Snackbar.LENGTH_SHORT);
-            snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-            snackbar.show();
+            til_money.setError("Số tiền quá lớn.");
             /*Toast.makeText(AddingActivity.this, "Số tiền quá lớn.", Toast.LENGTH_SHORT).show();*/
             isMax = false;
-            etMoney.setEnabled(false);
-            etMoney.setText("");
             seekBar.setProgress(0);
         } else if (s.length() > 0) {
+            til_money.setError(null);
             etMoney.setSelection(s.length());
             if (isNumeric(s.toString())) {
+                til_money.setError(null);
                 long progress = Long.parseLong(s.toString());
                 if (progress > 5000000) {
                     isMax = true;
@@ -699,9 +711,9 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                         int value = progress_int;
                         seekBar.setProgress(value);
                     }
-
                 }
             } else {
+                til_money.setError("Vui lòng nhập chính xác tiền");
                 etMoney.setText("");
             }
         }

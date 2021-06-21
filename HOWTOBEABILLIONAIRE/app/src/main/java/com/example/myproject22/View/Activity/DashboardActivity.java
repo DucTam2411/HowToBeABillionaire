@@ -56,6 +56,14 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
+        ImageButton btnGraphTest = findViewById(R.id.btnGraphTest);
+        btnGraphTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnGraphTestClick();
+            }
+        });
+
 
         MotionLayout a = findViewById(R.id.motion1);
         a.setTransitionListener(new MotionLayout.TransitionListener() {
@@ -142,6 +150,18 @@ public class DashboardActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putInt("ID_USER", id_user);
         bundle.putInt("ID_SAVING", id_saving);
+        intent.putExtras(bundle);
+
+        startActivity(intent);
+    }
+
+    public void btnGraphTestClick(){
+        Intent intent = new Intent(DashboardActivity.this, ReportCategoryGraphActivity.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("ID_USER", id_user);
+        bundle.putInt("ID_INCOME", id_income);
+        bundle.putInt("ID_OUTCOME", id_outcome);
         intent.putExtras(bundle);
 
         startActivity(intent);

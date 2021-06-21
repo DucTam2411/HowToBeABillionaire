@@ -62,12 +62,22 @@
                 app:layout_constraintStart_toEndOf="@+id/imageView11"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView8"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginTop="15dp"
+                app:errorEnabled="true"
+                app:errorTextColor="@color/white">
             <EditText
                 android:id="@+id/etCategory"
                 style="@style/Widget.AppCompat.EditText"
-                android:layout_width="250dp"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:ems="10"
                 android:fontFamily="@font/athiti"
                 android:inputType="textCapSentences|textAutoCorrect"
@@ -75,10 +85,8 @@
                 android:singleLine="false"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="30sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView8" />
+                android:textSize="24sp" />
+            </com.google.android.material.textfield.TextInputLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </io.alterac.blurkit.BlurLayout>

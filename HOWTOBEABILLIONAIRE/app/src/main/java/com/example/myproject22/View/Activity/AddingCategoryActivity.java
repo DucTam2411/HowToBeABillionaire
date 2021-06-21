@@ -45,6 +45,7 @@ import com.example.myproject22.Presenter.AddingCategoryPresenter;
 import com.example.myproject22.R;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -75,6 +76,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
     private RadioGroup rgCategory;
     private RadioButton rbtnIncome;
     private RadioButton rbtnOutcome;
+    private TextInputLayout til_category;
     private ImageButton btnImage;
     private TextView tv;
     private ImageButton btnSaving;
@@ -110,6 +112,9 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     presentent.hideKeyboard(v);
+                }
+                else{
+                    til_category.setError(null);
                 }
             }
         });
@@ -148,6 +153,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         rgCategory = findViewById(R.id.rgCategory);
         progressBar = findViewById(R.id.pbCategory);
         mSnackbarLayout = findViewById(R.id.cl_snackbar);
+        til_category = findViewById(R.id.til_category);
     }
 
     @Override
@@ -379,14 +385,16 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
     public Boolean IsNullName() {
         String name = etCategory.getText().toString().trim();
 
-        if (name.equals("")) {
-            Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Vui lòng chọn hình ảnh cho danh mục.",Snackbar.LENGTH_SHORT);
-            snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-            snackbar.show();
+        if (name.isEmpty())
+        {
+            til_category.setError("Vui lòng nhập tên cho danh mục.");
             /*Toast.makeText(AddingCategoryActivity.this, "Vui lòng nhập tên danh mục", Toast.LENGTH_SHORT).show();*/
             progressBar.setVisibility(View.GONE);
             return true;
-        } else return false;
+        } else {
+            til_category.setError(null);
+            return false;
+        }
     }
 
     public void UploadIncomeCategoryToServer(String name, int id_user, String image) {

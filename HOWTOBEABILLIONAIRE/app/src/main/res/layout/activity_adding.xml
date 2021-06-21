@@ -92,22 +92,33 @@
                 app:layout_constraintStart_toEndOf="@+id/seekBar"
                 app:layout_constraintTop_toTopOf="@+id/seekBar" />
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView8"
+                app:errorEnabled="true"
+                app:counterEnabled="true"
+                app:counterMaxLength="15"
+                app:errorTextColor="@color/white"
+                app:counterTextColor="@color/white"
+                android:layout_marginTop="10dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <EditText
                 android:id="@+id/editTextNumber2"
                 style="@style/Widget.AppCompat.EditText"
-                android:layout_width="250dp"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:ems="10"
                 android:fontFamily="@font/athiti"
                 android:inputType="textMultiLine|number"
                 android:singleLine="false"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="30sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView8" />
+                android:textSize="24sp" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <ImageView
                 android:id="@+id/imageView5"

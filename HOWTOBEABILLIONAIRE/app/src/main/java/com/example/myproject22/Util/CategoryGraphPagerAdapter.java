@@ -32,9 +32,9 @@ public class CategoryGraphPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new IncomeCategoryGraphFragment();
+                return new IncomeCategoryGraphFragment(this.id_user, this.id_income);
             case 1:
-                return new OutcomeCategoryGraphFragment();
+                return new OutcomeCategoryGraphFragment(this.id_user, this.id_outcome);
         }
         return null;
     }

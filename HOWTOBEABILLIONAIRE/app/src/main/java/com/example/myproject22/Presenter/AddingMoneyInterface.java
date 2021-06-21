@@ -50,7 +50,7 @@ public interface AddingMoneyInterface {
     public void SavingMoneyData(String money, String description, int category_id, String image, String audio);
 
     //If money not numeric or category, toast user
-    public void GetNoMoneyData();
+    public Boolean GetNoMoneyData(String money);
     public void GetNoCategoryData();
 
     //Hide Keyboard

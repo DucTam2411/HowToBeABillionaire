@@ -80,8 +80,7 @@ public class AddingMoneyPresentent {
 
     public void savingMoneyData(String money, String description, int category_id, String image, String audio){
         //Check valid money
-        if(isNumeric(money) == false){
-            anInterface.GetNoMoneyData();
+        if(!anInterface.GetNoMoneyData(money)){
             return;
         }
 
