@@ -193,15 +193,18 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
                                 int id_user = object.getInt("ID_USER");
                                 int id_income = object.getInt("ID_INCOME");
                                 int id_outcome = object.getInt("ID_OUTCOME");
+                                int id_saving = object.getInt("ID_SAVING");
 
                                 Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                                 Bundle bundle = new Bundle();
                                 bundle.putInt("ID_USER", id_user);
                                 bundle.putInt("ID_INCOME", id_income);
                                 bundle.putInt("ID_OUTCOME", id_outcome);
+                                bundle.putInt("ID_SAVING", id_saving);
                                 intent.putExtras(bundle);
                                 startActivity(intent);
                                 finish();
+                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                             }
                         }
                     } else {
@@ -242,6 +245,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
         startActivity(intent);
         finish();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
 
     @Override

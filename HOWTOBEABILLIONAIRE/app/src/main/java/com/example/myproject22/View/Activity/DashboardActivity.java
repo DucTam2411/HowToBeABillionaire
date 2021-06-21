@@ -20,7 +20,9 @@ public class DashboardActivity extends AppCompatActivity {
     private int id_user = 1;
     private int id_income = 1;
     private int id_outcome = 1;
+    private int id_saving = 1;
     BlurLayout blurLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,8 +48,16 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
+        ImageButton btnSaving = findViewById(R.id.btnMaybe);
+        btnSaving.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnSavingClick();
+            }
+        });
 
-        MotionLayout a= findViewById(R.id.motion1);
+
+        MotionLayout a = findViewById(R.id.motion1);
         a.setTransitionListener(new MotionLayout.TransitionListener() {
             @Override
             public void onTransitionStarted(MotionLayout motionLayout, int i, int i1) {
@@ -61,14 +71,14 @@ public class DashboardActivity extends AppCompatActivity {
 
             @Override
             public void onTransitionCompleted(MotionLayout motionLayout, int i) {
-                if(i == R.id.end){
-                   btnAddingClick();
+                if (i == R.id.end) {
+                    btnAddingClick();
                 }
-                if(i == R.id.end1){
-                   btnReportCategoryClick();
+                if (i == R.id.end1) {
+                    btnReportCategoryClick();
                 }
-                if(i == R.id.end2){
-                    
+                if (i == R.id.end2) {
+                    btnSavingClick();
                 }
             }
 
@@ -84,12 +94,13 @@ public class DashboardActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    public void GetBundleData(){
+    public void GetBundleData() {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         id_user = bundle.getInt("ID_USER");
         id_income = bundle.getInt("ID_INCOME");
         id_outcome = bundle.getInt("ID_OUTCOME");
+        id_saving = bundle.getInt("ID_SAVING");
     }
 
     @Override
@@ -102,7 +113,7 @@ public class DashboardActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    public void btnAddingClick(){
+    public void btnAddingClick() {
         Intent intent = new Intent(DashboardActivity.this, AddingActivity.class);
 
         Bundle bundle = new Bundle();
@@ -114,12 +125,23 @@ public class DashboardActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void btnReportCategoryClick(){
+    public void btnReportCategoryClick() {
         Intent intent = new Intent(DashboardActivity.this, ReportCategoryActivity.class);
 
         Bundle bundle = new Bundle();
         bundle.putInt("ID_INCOME", id_income);
         bundle.putInt("ID_OUTCOME", id_outcome);
+        intent.putExtras(bundle);
+
+        startActivity(intent);
+    }
+
+    public void btnSavingClick(){
+        Intent intent = new Intent(DashboardActivity.this, SavingActivity.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("ID_USER", id_user);
+        bundle.putInt("ID_SAVING", id_saving);
         intent.putExtras(bundle);
 
         startActivity(intent);

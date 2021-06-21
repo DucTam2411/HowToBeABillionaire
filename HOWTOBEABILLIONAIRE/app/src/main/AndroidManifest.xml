@@ -42,10 +42,9 @@
         <activity android:name=".View.Activity.ReportCategoryGraphActivity" /> <!-- phan cua Quan -->
         <!-- Giao dien chinh -->
         <activity android:name=".View.Activity.DashboardActivity">
-
         </activity> <!-- Phan cua Tam -->
         <activity android:name=".View.Activity.GoalActivity" />
-        <activity android:name=".View.Activity.SavingActivity" />
+        <activity android:name=".View.Activity.SavingActivity"/>
 
         <meta-data
             android:name="preloaded_fonts"

@@ -1,5 +1,6 @@
 package com.example.myproject22.Util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -93,6 +94,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
                 bundle.putInt("ID_USER", id_user);
                 intent.putExtras(bundle);
                 v.getContext().startActivity(intent);
+                ((Activity)v.getContext()).overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
             }
         });
     }

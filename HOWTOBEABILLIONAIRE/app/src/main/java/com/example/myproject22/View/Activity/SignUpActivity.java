@@ -500,6 +500,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
                     Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
                 else{
                     Snackbar snackbar = Snackbar.make(mSnackbarLayout,response,Snackbar.LENGTH_SHORT);
@@ -551,6 +552,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
                     Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_in_left);
                 }
                 else{
                     Snackbar snackbar = Snackbar.make(mSnackbarLayout,response,Snackbar.LENGTH_SHORT);
@@ -590,6 +592,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
         Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_in_left);
     }
 
     @Override

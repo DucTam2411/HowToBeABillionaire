@@ -20,6 +20,17 @@ public class UserClass {
         this.SALARY = SALARY;
     }
 
+    public UserClass(String FULLNAME, String DATESTART) {
+        this.FULLNAME = FULLNAME;
+        this.DATESTART = DATESTART;
+    }
+
+    public UserClass(String FULLNAME, String DATESTART, String IMAGE) {
+        this.FULLNAME = FULLNAME;
+        this.DATESTART = DATESTART;
+        this.IMAGE = IMAGE;
+    }
+
     public int getID_USER() {
         return ID_USER;
     }

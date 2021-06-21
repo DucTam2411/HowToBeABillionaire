@@ -1040,6 +1040,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                     Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
                     ResetSound();
                     finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
             }
         }, new Response.ErrorListener() {
@@ -1085,6 +1086,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                     Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
                     ResetSound();
                     finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
             }
         }, new Response.ErrorListener() {
@@ -1129,6 +1131,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                     Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
                     ResetSound();
                     finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
             }
         }, new Response.ErrorListener() {
@@ -1164,6 +1167,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 urlString + "insertIncomeDetailNoBoth.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                Log.i("TESTADD", response);
                 Snackbar snackbar = Snackbar.make(mSnackbarLayout,response,Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
@@ -1173,6 +1177,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                     Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
                     ResetSound();
                     finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
             }
         }, new Response.ErrorListener() {
@@ -1217,6 +1222,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                     Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
                     ResetSound();
                     finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
             }
         }, new Response.ErrorListener() {
@@ -1262,6 +1268,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                     Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
                     ResetSound();
                     finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
             }
         }, new Response.ErrorListener() {
@@ -1306,6 +1313,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                     Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
                     ResetSound();
                     finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
             }
         }, new Response.ErrorListener() {
@@ -1341,6 +1349,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 urlString + "insertOutcomeDetailNoBoth.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                Log.i("TESTADD", response);
                 Snackbar snackbar = Snackbar.make(mSnackbarLayout,response,Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
@@ -1350,6 +1359,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                     Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
                     ResetSound();
                     finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
             }
         }, new Response.ErrorListener() {
