@@ -28,6 +28,7 @@ public interface SavingInterface {
     public void TakeImageFromCamera();
     public File createImageFile() throws IOException;
     public void DeleteImage();
+    public void UpdateUserImageToServer(String image);
 
     public void LoadChiTietTietKiem();
     public void LoadTietKiem();

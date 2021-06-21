@@ -895,6 +895,13 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                         InputStream inputStream = getContentResolver().openInputStream(selectedImage);
                         bmImage = BitmapFactory.decodeStream(inputStream);
                         ivProfile.setImageBitmap(bmImage);
+                        String image_string = SavingPresenter.convertByteToString(SavingPresenter.encodeTobase64(bmImage));
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mSavingPresenter.updateUserImageToServer(image_string);
+                            }
+                        }, 1000);
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -907,6 +914,13 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                 if (resultCode == RESULT_OK) {
                     bmImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
                     ivProfile.setImageBitmap(bmImage);
+                    String image_string = SavingPresenter.convertByteToString(SavingPresenter.encodeTobase64(bmImage));
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mSavingPresenter.updateUserImageToServer(image_string);
+                        }
+                    }, 1000);
                 }
             }
         }
@@ -919,6 +933,40 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                 photoFile.delete();
             }
         }
+    }
+
+    @Override
+    public void UpdateUserImageToServer(String image) {
+        StringRequest request = new StringRequest(Request.Method.POST,
+                urlString + "updateUserImage.php", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Snackbar snackbar = Snackbar.make(weekchart, response , Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+                if(response.equals("Update image succes")){
+                    DeleteImage();
+                }
+                mSavingPresenter.loadUser(userClass);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Snackbar snackbar = Snackbar.make(weekchart, error.getMessage(), Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("id_user", String.valueOf(id_user));
+                params.put("userimage",image);
+                return params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(SavingActivity.this);
+        requestQueue.add(request);
     }
 }
 

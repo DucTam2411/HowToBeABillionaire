@@ -1,7 +1,11 @@
 package com.example.myproject22.Presenter;
 
+import android.graphics.Bitmap;
+import android.util.Base64;
+
 import com.example.myproject22.Model.UserClass;
 
+import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -64,6 +68,10 @@ public class SavingPresenter {
 
     public void chooseImage(){
         mSavingInterface.ChooseImage();
+    }
+
+    public void updateUserImageToServer(String image){
+        mSavingInterface.UpdateUserImageToServer(image);
     }
 
 
@@ -172,5 +180,23 @@ public class SavingPresenter {
         }
 
         return money_string;
+    }
+
+    public static byte[] encodeTobase64(Bitmap image) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+        byte[] byteArray = stream.toByteArray();
+        return byteArray;
+    }
+
+    public static String convertByteToString(byte[] bytes){
+        if(bytes == null){
+            String s = "NULL";
+            return s;
+        }
+        else{
+            String s = Base64.encodeToString(bytes,Base64.DEFAULT);
+            return s;
+        }
     }
 }
