@@ -752,6 +752,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     public void onModifyGoalClicked(View view) {
         Intent intent = new Intent(this, GoalActivity.class);
         startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
 
     @Override
@@ -788,6 +789,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                             Uri uri = Uri.fromParts("package", getPackageName(), null);
                             intent.setData(uri);
                             startActivity(intent);
+                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                         }
                     }
 
@@ -820,6 +822,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                         Uri uri = Uri.fromParts("package", getPackageName(), null);
                         intent.setData(uri);
                         startActivity(intent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                     }
 
                     @Override
@@ -837,6 +840,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, PERMISSION_EXTERNAL_STORAGE);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
 
     //Take image from camera
@@ -859,6 +863,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                     photoFile);
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
             startActivityForResult(takePictureIntent, PERMISSION_IMAGE);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
         }
     }
 

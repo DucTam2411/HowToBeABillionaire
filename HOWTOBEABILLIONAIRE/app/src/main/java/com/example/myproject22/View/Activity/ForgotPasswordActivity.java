@@ -6,6 +6,8 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -30,6 +32,7 @@ import com.example.myproject22.R;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +51,10 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
                     "$");
 
     //Component
+    private TextInputLayout til_user;
+    private TextInputLayout til_email;
+    private TextInputLayout til_password;
+    private TextInputLayout til_password_confirm;
     private TextInputEditText et_user_forgot;
     private TextInputEditText et_email_forgot;
     private TextInputEditText et_password_forgot;
@@ -87,6 +94,8 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
             public void onFocusChange(View v, boolean hasFocus) {
                 if(!hasFocus)
                     presenter.hideKeyboard(v);
+                else
+                    til_user.setError(null);
             }
         });
 
@@ -95,6 +104,8 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
             public void onFocusChange(View v, boolean hasFocus) {
                 if(!hasFocus)
                     presenter.hideKeyboard(v);
+                else
+                    til_email.setError(null);
             }
         });
 
@@ -103,6 +114,30 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
             public void onFocusChange(View v, boolean hasFocus) {
                 if(!hasFocus)
                     presenter.hideKeyboard(v);
+                else
+                    til_password.setError(null);
+            }
+        });
+
+        et_password_forgot.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length() < 4){
+                    til_password.setError("Mật khẩu phải tối thiểu 4 ký tự");
+                }
+                else{
+                    til_password.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 
@@ -111,6 +146,30 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
             public void onFocusChange(View v, boolean hasFocus) {
                 if(!hasFocus)
                     presenter.hideKeyboard(v);
+                else
+                    til_password_confirm.setError(null);
+            }
+        });
+
+        et_password_confirm_forgot.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length() < 4){
+                    til_password_confirm.setError("Mật khẩu phải tối thiểu 4 ký tự");
+                }
+                else{
+                    til_password_confirm.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 
@@ -118,6 +177,10 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
 
     @Override
     public void SetInIt() {
+        til_user = findViewById(R.id.til_user);
+        til_email = findViewById(R.id.til_email);
+        til_password = findViewById(R.id.til_password);
+        til_password_confirm = findViewById(R.id.til_password_confirm);
         et_user_forgot = findViewById(R.id.et_user_forgot);
         et_email_forgot = findViewById(R.id.et_email_forgot);
         et_password_forgot = findViewById(R.id.et_password_forgot);
@@ -131,11 +194,13 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
     @Override
     public Boolean GetNoUserName(String username) {
         if (username.isEmpty()) {
-            et_user_forgot.setError("Username không được để trống");
+            til_user.setError("Username không được để trống");
+            /*et_user_forgot.setError("Username không được để trống");*/
             pb_forgot.setVisibility(View.INVISIBLE);
             return false;
         } else {
-            et_user_forgot.setError(null);
+            til_user.setError(null);
+            /*et_user_forgot.setError(null);*/
             return true;
         }
     }
@@ -143,15 +208,18 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
     @Override
     public Boolean GetNoPassword(String password) {
         if (password.isEmpty()) {
-            et_password_forgot.setError("Mật khẩu không được để trống");
+            til_password.setError("Mật khẩu không được để trống");
+            /*et_password_forgot.setError("Mật khẩu không được để trống");*/
             pb_forgot.setVisibility(View.INVISIBLE);
             return false;
         } else if (!PASSWORD_PATTERN.matcher(password).matches()) {
-            et_password_forgot.setError("Mật khẩu quá yếu");
+            til_password.setError("Mật khẩu quá yếu");
+            /*et_password_forgot.setError("Mật khẩu quá yếu");*/
             pb_forgot.setVisibility(View.INVISIBLE);
             return false;
         } else {
-            et_password_forgot.setError(null);
+            til_password.setError(null);
+            /*et_password_forgot.setError(null);*/
             return  true;
         }
     }
@@ -159,15 +227,18 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
     @Override
     public Boolean GetNoEmail(String email) {
         if (email.isEmpty()) {
-            et_email_forgot.setError("Email không được để trống");
+            til_email.setError("Email không được để trống");
+            /*et_email_forgot.setError("Email không được để trống");*/
             pb_forgot.setVisibility(View.INVISIBLE);
             return false;
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            et_email_forgot.setError("Vui lòng nhập email chính xác");
+            til_email.setError("Vui lòng nhập email chính xác");
+            /*et_email_forgot.setError("Vui lòng nhập email chính xác");*/
             pb_forgot.setVisibility(View.INVISIBLE);
             return  false;
         } else {
-            et_email_forgot.setError(null);
+            til_email.setError(null);
+            /*et_email_forgot.setError(null);*/
             return true;
         }
     }
@@ -175,15 +246,18 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
     @Override
     public Boolean GetNoConfirmPassword(String password, String password_confirm) {
         if (password_confirm.isEmpty()) {
-            et_password_confirm_forgot.setError("Mật khẩu không được để trống");
+            til_password_confirm.setError("Mật khẩu không được để trống");
+            /*et_password_confirm_forgot.setError("Mật khẩu không được để trống");*/
             pb_forgot.setVisibility(View.INVISIBLE);
             return false;
         } else if (!password_confirm.equals(password)) {
-            et_password_confirm_forgot.setError("Mật khẩu xác nhận không trùng khớp");
+            til_password_confirm.setError("Mật khẩu xác nhận không trùng khớp");
+            /*et_password_confirm_forgot.setError("Mật khẩu xác nhận không trùng khớp");*/
             pb_forgot.setVisibility(View.INVISIBLE);
             return false;
         } else {
-            et_password_confirm_forgot.setError(null);
+            til_password_confirm.setError(null);
+            /*et_password_confirm_forgot.setError(null);*/
             return true;
         }
     }

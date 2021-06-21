@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusableInTouchMode="true"
     tools:context=".View.Activity.SignUpActivity">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -43,7 +45,8 @@
                 app:endIconMode="clear_text"
                 app:errorEnabled="true"
                 app:counterEnabled="true"
-                android:layout_marginTop="10dp"
+                app:counterMaxLength="15"
+                android:layout_marginTop="20dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvSignup">
 
@@ -82,6 +85,8 @@
                 android:hint="SALARY"
                 app:endIconMode="clear_text"
                 app:errorEnabled="true"
+                app:counterMaxLength="15"
+                app:counterEnabled="true"
                 android:layout_marginTop="10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/til_fullname">
@@ -89,7 +94,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_salary"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -119,7 +125,7 @@
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:hint="PASSWORD"
-                app:counterEnabled="true"
+                app:helperText="*Tối thiểu 4 kí tự bao gồm cả chữ và số"
                 app:endIconMode="password_toggle"
                 app:errorEnabled="true"
                 android:layout_marginTop="10dp"

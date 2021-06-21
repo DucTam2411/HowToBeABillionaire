@@ -109,6 +109,7 @@ public class RecordItemAdapter extends RecyclerView.Adapter<RecordItemAdapter.Vi
                     bundle.putInt("ID_DETAIL", item.get_ID_DETAIL());
                     intent.putExtras(bundle);
                     v.getContext().startActivity(intent);
+                    ((Activity)v.getContext()).overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
             });
         }else{
@@ -122,6 +123,7 @@ public class RecordItemAdapter extends RecyclerView.Adapter<RecordItemAdapter.Vi
                     bundle.putInt("ID_DETAIL", item.get_ID_DETAIL());
                     intent.putExtras(bundle);
                     v.getContext().startActivity(intent);
+                    ((Activity)v.getContext()).overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
             });
         }

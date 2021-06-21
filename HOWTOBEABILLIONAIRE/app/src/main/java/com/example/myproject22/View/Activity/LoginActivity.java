@@ -7,6 +7,8 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,9 +60,10 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
                     "$");
 
     //Component
+    private TextInputLayout til_username;
+    private TextInputLayout tif_password;
     private TextInputEditText et_username;
     private TextInputEditText et_password;
-    private TextInputLayout til_password;
     private Button btnLogin;
     private TextView tvSignUp;
     private TextView tvForget;
@@ -109,6 +112,43 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
             }
         });
 
+        et_username.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length() > 0){
+                    til_username.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        et_password.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length() > 0)
+                    tif_password.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         et_password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -121,12 +161,13 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
 
     @Override
     public void SetInIt() {
+        til_username = findViewById(R.id.til_user);
+        tif_password = findViewById(R.id.til_password);
         et_username = findViewById(R.id.et_user);
         et_password = findViewById(R.id.et_password);
         btnLogin = findViewById(R.id.btnLogin);
         tvSignUp = findViewById(R.id.tvRegister);
         tvForget = findViewById(R.id.tvForget);
-        til_password = findViewById(R.id.til_password);
         pb_signin = findViewById(R.id.pb_signin);
         mSnackbarLayout = findViewById(R.id.cl_snackbar);
     }
@@ -134,11 +175,13 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
     @Override
     public Boolean GetNoUserName(String username) {
         if (username.isEmpty()) {
-            et_username.setError("Username không được để trống");
+            til_username.setError("Username không được để trống");
+            /*et_username.setError("Username không được để trống");*/
             pb_signin.setVisibility(View.INVISIBLE);
             return false;
         } else {
-            et_username.setError(null);
+            til_username.setError(null);
+            /*et_username.setError(null);*/
             return true;
         }
     }
@@ -146,11 +189,13 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
     @Override
     public Boolean GetNoPassword(String password) {
         if (password.isEmpty()) {
-            et_password.setError("Mật khẩu không được để trống");
+            tif_password.setError("Mật khẩu không được để trống");
+            /*et_password.setError("Mật khẩu không được để trống");*/
             pb_signin.setVisibility(View.INVISIBLE);
             return false;
         } else {
-            et_password.setError(null);
+            tif_password.setError(null);
+            /*et_password.setError(null);*/
             return true;
         }
     }
@@ -209,6 +254,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
                         }
                     } else {
                         Snackbar snackbar = Snackbar.make(mSnackbarLayout,success,Snackbar.LENGTH_SHORT);
+                        snackbar.setAnchorView(btnLogin);
                         snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                         snackbar.show();
                         /*Toast.makeText(LoginActivity.this, success, Toast.LENGTH_SHORT).show();*/

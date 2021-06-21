@@ -17,6 +17,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -46,6 +48,7 @@ import com.example.myproject22.R;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -82,6 +85,11 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
                     "$");
 
     //Component
+    private TextInputLayout til_username;
+    private TextInputLayout til_fullname;
+    private TextInputLayout til_salary;
+    private TextInputLayout til_email;
+    private TextInputLayout til_password;
     private TextInputEditText et_username;
     private TextInputEditText et_fullname;
     private TextInputEditText et_salary;
@@ -144,11 +152,34 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
             }
         });
 
+        et_username.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length() > 15){
+                    til_username.setError("Username quá dài");
+                }else{
+                    til_username.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         et_fullname.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     presenter.hideKeyboard(v);
+                }else{
+                    til_fullname.setError(null);
                 }
             }
         });
@@ -158,7 +189,30 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     presenter.hideKeyboard(v);
+                }else {
+                    til_salary.setError(null);
                 }
+            }
+        });
+
+        et_salary.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length() > 15){
+                    til_salary.setError("Số tiền nhập quá lớn");
+                }else{
+                    til_salary.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 
@@ -167,6 +221,8 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     presenter.hideKeyboard(v);
+                }else{
+                    til_email.setError(null);
                 }
             }
         });
@@ -179,10 +235,37 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
                 }
             }
         });
+
+        et_password.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length() < 4){
+                    til_password.setError("Mật khẩu tối thiểu 4 ký tự");
+                }
+                else{
+                    til_password.setError(null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     @Override
     public void SetInit(){
+        til_email = findViewById(R.id.til_email);
+        til_fullname = findViewById(R.id.til_fullname);
+        til_salary = findViewById(R.id.til_salary);
+        til_password = findViewById(R.id.til_password);
+        til_username = findViewById(R.id.til_user);
         et_username = findViewById(R.id.et_user);
         et_fullname = findViewById(R.id.et_fullname);
         et_salary = findViewById(R.id.et_salary);
@@ -198,15 +281,18 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
     @Override
     public Boolean GetNoUserName(String username){
         if (username.isEmpty()) {
-            et_username.setError("Username không được để trống");
+            til_username.setError("Username không được để trống");
+            /*et_username.setError("Username không được để trống");*/
             pb_signup.setVisibility(View.INVISIBLE);
             return false;
         } else if (username.length() > 15) {
-            et_username.setError("Username quá dài");
+            til_username.setError("Username quá dài");
+            /*et_username.setError("Username quá dài");*/
             pb_signup.setVisibility(View.INVISIBLE);
             return false;
         } else {
-            et_username.setError(null);
+            til_username.setError(null);
+            /*et_username.setError(null);*/
             return true;
         }
     }
@@ -214,15 +300,18 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
     @Override
     public Boolean GetNoPassword(String password){
         if (password.isEmpty()) {
-            et_password.setError("Mật khẩu không được để trống");
+            til_password.setError("Mật khẩu không được để trống");
+            /*et_password.setError("Mật khẩu không được để trống");*/
             pb_signup.setVisibility(View.INVISIBLE);
             return false;
         } else if (!PASSWORD_PATTERN.matcher(password).matches()) {
-            et_password.setError("Mật khẩu quá yếu");
+            til_password.setError("Mật khẩu quá yếu");
+            /*et_password.setError("Mật khẩu quá yếu");*/
             pb_signup.setVisibility(View.INVISIBLE);
             return false;
         } else {
-            et_password.setError(null);
+            til_password.setError(null);
+            /*et_password.setError(null);*/
             return true;
         }
     }
@@ -230,15 +319,18 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
     @Override
     public Boolean GetNoSalary(String salary){
         if (salary.isEmpty()) {
-            et_salary.setError("Vui lòng nhập thu nhập ban đầu");
+            til_salary.setError("Vui lòng nhập thu nhập ban đầu");
+            /*et_salary.setError("Vui lòng nhập thu nhập ban đầu");*/
             pb_signup.setVisibility(View.INVISIBLE);
             return false;
         } else if (salary.length() > 15) {
-            et_salary.setError("Số tiền nhập quá lớn");
+            til_salary.setError("Số tiền nhập quá lớn");
+            /*et_salary.setError("Số tiền nhập quá lớn");*/
             pb_signup.setVisibility(View.INVISIBLE);
             return false;
         } else {
-            et_username.setError(null);
+            til_salary.setError(null);
+            /*et_username.setError(null);*/
             return true;
         }
     }
@@ -246,11 +338,13 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
     @Override
     public Boolean GetNoFullName(String fullname){
         if (fullname.isEmpty()) {
-            et_salary.setError("Vui lòng nhập họ và tên");
+            til_salary.setError("Vui lòng nhập họ và tên");
+            /*et_salary.setError("Vui lòng nhập họ và tên");*/
             pb_signup.setVisibility(View.INVISIBLE);
             return false;
         } else {
-            et_username.setError(null);
+            til_fullname.setError(null);
+            /*et_username.setError(null);*/
             return true;
         }
     }
@@ -258,15 +352,18 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
     @Override
     public Boolean GetNoEmail(String email){
         if (email.isEmpty()) {
-            et_email.setError("Vui lòng nhập email");
+            til_email.setError("Vui lòng nhập email");
+            /*et_email.setError("Vui lòng nhập email");*/
             pb_signup.setVisibility(View.INVISIBLE);
             return false;
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            et_email.setError("Vui lòng nhập email chính xác");
+            til_email.setError("Vui lòng nhập email chính xác");
+            /*et_email.setError("Vui lòng nhập email chính xác");*/
             pb_signup.setVisibility(View.INVISIBLE);
             return  false;
         } else {
-            et_email.setError(null);
+            til_email.setError(null);
+            /*et_email.setError(null);*/
             return true;
         }
     }

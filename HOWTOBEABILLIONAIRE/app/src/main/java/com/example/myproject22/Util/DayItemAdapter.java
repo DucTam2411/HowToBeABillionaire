@@ -1,5 +1,6 @@
 package com.example.myproject22.Util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -95,7 +96,7 @@ public class DayItemAdapter extends RecyclerView.Adapter<DayItemAdapter.ViewHold
                 bundle.putString("DATE_STRING", sDate);
                 intent.putExtras(bundle);
                 context.startActivity(intent);
-
+                ((Activity)v.getContext()).overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
             }
         });
 
