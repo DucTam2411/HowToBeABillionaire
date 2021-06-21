@@ -497,8 +497,6 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
                 pb_signup.setVisibility(View.GONE);
                 Log.i("TESTER", response);
                 if (response.equals("Sign Up success")) {
-                    Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                    startActivity(intent);
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
@@ -549,8 +547,6 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
                 pb_signup.setVisibility(View.GONE);
                 Log.i("TESTER1", response);
                 if (response.equals("Sign Up success")) {
-                    Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                    startActivity(intent);
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_in_left);
                 }
@@ -589,21 +585,12 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
 
     @Override
     public void TextViewClick(){
-        Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-        startActivity(intent);
         finish();
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_in_left);
     }
 
     @Override
     public void HideKeyboard(View view) {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        TextViewClick();
     }
 }

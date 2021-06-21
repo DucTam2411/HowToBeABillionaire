@@ -6,18 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".View.Activity.LoginActivity">
 
-    <io.alterac.blurkit.BlurLayout
-        android:id="@+id/blLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="150dp">
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="150dp">
 
             <ProgressBar
                 android:id="@+id/pb_signin"
@@ -112,8 +107,6 @@
                 android:layout_marginStart="80dp"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </io.alterac.blurkit.BlurLayout>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/cl_snackbar"

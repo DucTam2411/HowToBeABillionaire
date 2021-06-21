@@ -22,8 +22,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyProject22">
-        <activity android:name=".View.Activity.SignUpActivity"/>
-        <activity android:name=".View.Activity.LoginActivity" >
+        <activity android:name=".View.Activity.ForgotPasswordActivity"></activity>
+        <activity android:name=".View.Activity.SignUpActivity" />
+        <activity android:name=".View.Activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -41,10 +42,9 @@
         <activity android:name=".View.Activity.AddingActivity" />
         <activity android:name=".View.Activity.ReportCategoryGraphActivity" /> <!-- phan cua Quan -->
         <!-- Giao dien chinh -->
-        <activity android:name=".View.Activity.DashboardActivity">
-        </activity> <!-- Phan cua Tam -->
+        <activity android:name=".View.Activity.DashboardActivity"></activity> <!-- Phan cua Tam -->
         <activity android:name=".View.Activity.GoalActivity" />
-        <activity android:name=".View.Activity.SavingActivity"/>
+        <activity android:name=".View.Activity.SavingActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
