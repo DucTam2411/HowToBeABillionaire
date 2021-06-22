@@ -31,6 +31,7 @@ import com.example.myproject22.Model.DayItem;
 import com.example.myproject22.Presenter.LoginInterface;
 import com.example.myproject22.Presenter.LoginPresenter;
 import com.example.myproject22.R;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -64,7 +65,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
     private TextInputLayout tif_password;
     private TextInputEditText et_username;
     private TextInputEditText et_password;
-    private Button btnLogin;
+    private MaterialButton btnLogin;
     private TextView tvSignUp;
     private TextView tvForget;
     private ProgressBar pb_signin;

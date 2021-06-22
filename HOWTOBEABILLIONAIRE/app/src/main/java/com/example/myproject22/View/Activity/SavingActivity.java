@@ -57,6 +57,7 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.karumi.dexter.Dexter;
@@ -111,16 +112,8 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     private ConstraintLayout cl_savingdate;
     private ConstraintLayout cl_savingmoney;
     private ConstraintLayout cl_user;
+    private MaterialCardView cardView;
     private UserClass userClass;
-
-    //Xử lí profile image
-    private File photoFile = null;
-    private String mCurrentPhotoPath;
-    private Bitmap bmImage;
-
-    //Const mặc định để xét permission
-    private static final int PERMISSION_IMAGE = 1000;
-    private static final int PERMISSION_EXTERNAL_STORAGE = 1001;
 
     //Xử lí thời gian và tiền
     private ArrayList<Date> arrayDate = new ArrayList<>();
@@ -168,10 +161,17 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 | View.SYSTEM_UI_FLAG_FULLSCREEN);*/
 
-        ivProfile.setOnClickListener(new View.OnClickListener() {
+        /*ivProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSavingPresenter.chooseImage();
+            }
+        });*/
+
+        cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSavingPresenter.btnUserClick();
             }
         });
 
@@ -303,6 +303,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         cl_savingdate = findViewById(R.id.cl_savingdate);
         cl_savingmoney = findViewById(R.id.cl_savingmoney);
         cl_user = findViewById(R.id.cl_user);
+        cardView = findViewById(R.id.materialCardView);
 
         //Ẩn layout khi đang load từ server
         pb_savingmoney.bringToFront();
@@ -336,7 +337,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
             @Override
             public void onResponse(String response) {
                 try {
-                    Log.i("TESTER", response);
+                    Log.i("TESTER1", response);
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
 
@@ -348,7 +349,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
 
                             String date_string = object.getString("DATE");
                             Double money = object.getDouble("MONEY");
-
+                            Log.i("TESTRECORD", String.valueOf(money));
                             //Load saving vào trong bar chart
                             Date date = SavingPresenter.DateFromString(date_string);
                             Calendar cal = Calendar.getInstance();
@@ -382,6 +383,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                 params.put("id_saving", String.valueOf(id_saving));
                 params.put("datestart", date_start);
                 params.put("dateend", date_end);
+                Log.i("TESTRECORD", date_start + "\n" + date_end);
                 return params;
             }
         };
@@ -579,6 +581,14 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         }, 1000);
     }
 
+    @Override
+    public void BtnUserClick() {
+        Intent intent = new Intent(SavingActivity.this, UserAcitvity.class);
+        intent.putExtra("ID_USER", id_user);
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+    }
+
     // async stask
     class LoadChiTietTietKiem extends AsyncTask<Void, Process, Void> {
 
@@ -755,218 +765,5 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
 
-    @Override
-    public void ChooseImage() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(SavingActivity.this);
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.alert_dialog_picture, null);
-        builder.setCancelable(true);
-        builder.setView(dialogView);
-
-        ImageButton ivCamera = dialogView.findViewById(R.id.ivCamera);
-        ImageButton ivGallery = dialogView.findViewById(R.id.ivGallery);
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
-
-        ivCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dexter.withContext(SavingActivity.this).withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
-                        if(multiplePermissionsReport.areAllPermissionsGranted())
-                        {
-                            mSavingPresenter.takeImageFromCamera();
-                        }
-                        else{
-                            Snackbar snackbar = Snackbar.make(weekchart,"All permissions are not granted",Snackbar.LENGTH_SHORT);
-                            snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                            snackbar.show();
-                            /*Toast.makeText(AddingCategoryActivity.this, "All permissions are not granted", Toast.LENGTH_SHORT).show();*/
-                            Intent intent = new Intent();
-                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            Uri uri = Uri.fromParts("package", getPackageName(), null);
-                            intent.setData(uri);
-                            startActivity(intent);
-                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
-                        permissionToken.continuePermissionRequest();
-                    }
-                }).check();
-                dialog.dismiss();
-            }
-        });
-
-        ivGallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dexter.withContext(SavingActivity.this).withPermission(Manifest.permission.READ_EXTERNAL_STORAGE).withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-                        mSavingPresenter.takeImageFromGallery();
-                    }
-
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                        Snackbar snackbar = Snackbar.make(weekchart,"Permission is not granted",Snackbar.LENGTH_SHORT);
-                        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                        snackbar.show();
-                        /*Toast.makeText(AddingCategoryActivity.this, "Permission is not granted", Toast.LENGTH_SHORT).show();*/
-                        Intent intent = new Intent();
-                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", getPackageName(), null);
-                        intent.setData(uri);
-                        startActivity(intent);
-                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                        permissionToken.continuePermissionRequest();
-                    }
-                }).check();
-                dialog.dismiss();
-            }
-        });
-    }
-
-    @Override
-    public void TakeImageFromGallery() {
-        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-        photoPickerIntent.setType("image/*");
-        startActivityForResult(photoPickerIntent, PERMISSION_EXTERNAL_STORAGE);
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
-    }
-
-    //Take image from camera
-    @Override
-    public void TakeImageFromCamera() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        try {
-            photoFile = createImageFile();
-        } catch (IOException e) {
-            Snackbar snackbar = Snackbar.make(weekchart,e.getMessage(),Snackbar.LENGTH_SHORT);
-            snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-            snackbar.show();
-            /*Toast.makeText(AddingCategoryActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();*/
-        }
-
-        // Continue only if the File was successfully created
-        if (photoFile != null) {
-            Uri photoURI = FileProvider.getUriForFile(this,
-                    "com.example.myproject22.provider",
-                    photoFile);
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-            startActivityForResult(takePictureIntent, PERMISSION_IMAGE);
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
-        }
-    }
-
-    @Override
-    public File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case PERMISSION_EXTERNAL_STORAGE: {
-                if (resultCode == RESULT_OK) {
-                    Uri selectedImage = data.getData();
-                    try {
-                        InputStream inputStream = getContentResolver().openInputStream(selectedImage);
-                        bmImage = BitmapFactory.decodeStream(inputStream);
-                        ivProfile.setImageBitmap(bmImage);
-                        String image_string = SavingPresenter.convertByteToString(SavingPresenter.encodeTobase64(bmImage));
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mSavingPresenter.updateUserImageToServer(image_string);
-                            }
-                        }, 1000);
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                }
-            }
-
-            case PERMISSION_IMAGE: {
-                if (resultCode == RESULT_OK) {
-                    bmImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-                    ivProfile.setImageBitmap(bmImage);
-                    String image_string = SavingPresenter.convertByteToString(SavingPresenter.encodeTobase64(bmImage));
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mSavingPresenter.updateUserImageToServer(image_string);
-                        }
-                    }, 1000);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void DeleteImage() {
-        if (photoFile != null) {
-            if (photoFile.exists()) {
-                photoFile.delete();
-            }
-        }
-    }
-
-    @Override
-    public void UpdateUserImageToServer(String image) {
-        StringRequest request = new StringRequest(Request.Method.POST,
-                urlString + "updateUserImage.php", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Snackbar snackbar = Snackbar.make(weekchart, response , Snackbar.LENGTH_SHORT);
-                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                snackbar.show();
-                if(response.equals("Update image succes")){
-                    DeleteImage();
-                }
-                mSavingPresenter.loadUser(userClass);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(weekchart, error.getMessage(), Snackbar.LENGTH_SHORT);
-                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                snackbar.show();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("id_user", String.valueOf(id_user));
-                params.put("userimage",image);
-                return params;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(SavingActivity.this);
-        requestQueue.add(request);
-    }
 }
 

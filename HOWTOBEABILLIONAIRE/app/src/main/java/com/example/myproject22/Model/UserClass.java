@@ -8,24 +8,28 @@ public class UserClass {
     private String FULLNAME;
     private String DATESTART;
     private String IMAGE;
-    private double SALARY;
+    private double INCOME;
+    private double OUTCOME;
 
-    public UserClass(String USERNAME, String EMAIL, String PASSWORD, String FULLNAME, String DATESTART, String IMAGE, double SALARY) {
-        this.USERNAME = USERNAME;
-        this.EMAIL = EMAIL;
-        this.PASSWORD = PASSWORD;
+
+    public UserClass(String FULLNAME, String DATESTART, String IMAGE) {
         this.FULLNAME = FULLNAME;
         this.DATESTART = DATESTART;
         this.IMAGE = IMAGE;
-        this.SALARY = SALARY;
     }
 
-    public UserClass(String FULLNAME, String DATESTART) {
+
+
+    public UserClass(String FULLNAME, String DATESTART, String IMAGE, double INCOME, double OUTCOME) {
         this.FULLNAME = FULLNAME;
         this.DATESTART = DATESTART;
+        this.IMAGE = IMAGE;
+        this.INCOME = INCOME;
+        this.OUTCOME = OUTCOME;
     }
 
-    public UserClass(String FULLNAME, String DATESTART, String IMAGE) {
+    public UserClass(String EMAIL, String FULLNAME, String DATESTART, String IMAGE) {
+        this.EMAIL = EMAIL;
         this.FULLNAME = FULLNAME;
         this.DATESTART = DATESTART;
         this.IMAGE = IMAGE;
@@ -87,11 +91,19 @@ public class UserClass {
         this.IMAGE = IMAGE;
     }
 
-    public double getSALARY() {
-        return SALARY;
+    public double getINCOME() {
+        return INCOME;
     }
 
-    public void setSALARY(double SALARY) {
-        this.SALARY = SALARY;
+    public void setINCOME(double INCOME) {
+        this.INCOME = INCOME;
+    }
+
+    public double getOUTCOME() {
+        return OUTCOME;
+    }
+
+    public void setOUTCOME(double OUTCOME) {
+        this.OUTCOME = OUTCOME;
     }
 }

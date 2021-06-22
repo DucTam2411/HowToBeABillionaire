@@ -20,7 +20,7 @@ public class DashboardActivity extends AppCompatActivity {
     private int id_user = 1;
     private int id_income = 1;
     private int id_outcome = 1;
-    private int id_saving = 1;
+    private int id_saving = 2;
     BlurLayout blurLayout;
 
     @Override

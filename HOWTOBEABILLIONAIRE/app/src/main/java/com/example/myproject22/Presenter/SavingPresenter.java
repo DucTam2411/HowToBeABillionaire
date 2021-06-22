@@ -2,6 +2,7 @@ package com.example.myproject22.Presenter;
 
 import android.graphics.Bitmap;
 import android.util.Base64;
+import android.util.Log;
 
 import com.example.myproject22.Model.UserClass;
 
@@ -54,24 +55,12 @@ public class SavingPresenter {
         mSavingInterface.FetchUserFromServer();
     }
 
+    public void btnUserClick(){
+        mSavingInterface.BtnUserClick();
+    }
+
     public void loadUser(UserClass userClass){
         mSavingInterface.LoadUser(userClass);
-    }
-
-    public void takeImageFromCamera(){
-        mSavingInterface.TakeImageFromCamera();
-    }
-
-    public void takeImageFromGallery(){
-        mSavingInterface.TakeImageFromGallery();
-    }
-
-    public void chooseImage(){
-        mSavingInterface.ChooseImage();
-    }
-
-    public void updateUserImageToServer(String image){
-        mSavingInterface.UpdateUserImageToServer(image);
     }
 
 
@@ -163,7 +152,7 @@ public class SavingPresenter {
 
     public static String GetStringMoney(double money){
         String money_string = "";
-
+        Log.i("MONEY", String.valueOf(money));
         if(money > 1000000000.0){
             double money_bil = money / 1000000000.0;
             double money_round = (int)(Math.round(money_bil * 100))/100.0;

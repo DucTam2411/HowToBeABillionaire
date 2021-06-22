@@ -45,6 +45,7 @@ import com.example.myproject22.Model.UserClass;
 import com.example.myproject22.Presenter.SignUpInterface;
 import com.example.myproject22.Presenter.SignUpPresenter;
 import com.example.myproject22.R;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -95,7 +96,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
     private TextInputEditText et_salary;
     private TextInputEditText et_email;
     private TextInputEditText et_password;
-    private Button btn_signup;
+    private MaterialButton btn_signup;
     private ImageButton ibtn_user;
     private TextView tv_login;
     private ProgressBar pb_signup;
@@ -338,7 +339,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
     @Override
     public Boolean GetNoFullName(String fullname){
         if (fullname.isEmpty()) {
-            til_salary.setError("Vui lòng nhập họ và tên");
+            til_fullname.setError("Vui lòng nhập họ và tên");
             /*et_salary.setError("Vui lòng nhập họ và tên");*/
             pb_signup.setVisibility(View.INVISIBLE);
             return false;

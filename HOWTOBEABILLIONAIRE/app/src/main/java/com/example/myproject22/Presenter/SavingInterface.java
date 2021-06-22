@@ -21,14 +21,7 @@ public interface SavingInterface {
     public void FetchUserFromServer();
     public void LoadUser(UserClass userClass);
     public void LoadDataFromServer();
-
-    //Image User
-    public void ChooseImage();
-    public void TakeImageFromGallery();
-    public void TakeImageFromCamera();
-    public File createImageFile() throws IOException;
-    public void DeleteImage();
-    public void UpdateUserImageToServer(String image);
+    public void BtnUserClick();
 
     public void LoadChiTietTietKiem();
     public void LoadTietKiem();

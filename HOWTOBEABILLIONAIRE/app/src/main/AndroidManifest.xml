@@ -22,7 +22,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyProject22">
-        <activity android:name=".View.Activity.ForgotPasswordActivity"></activity>
+        <activity android:name=".View.Activity.UpdatePasswordActivity"></activity>
+        <activity android:name=".View.Activity.UpdateUserActivity" />
+        <activity android:name=".View.Activity.UserAcitvity" />
+        <activity android:name=".View.Activity.ForgotPasswordActivity" />
         <activity android:name=".View.Activity.SignUpActivity" />
         <activity android:name=".View.Activity.LoginActivity">
             <intent-filter>
@@ -42,7 +45,16 @@
         <activity android:name=".View.Activity.AddingActivity" />
         <activity android:name=".View.Activity.ReportCategoryGraphActivity" /> <!-- phan cua Quan -->
         <!-- Giao dien chinh -->
-        <activity android:name=".View.Activity.DashboardActivity"></activity> <!-- Phan cua Tam -->
+        <activity android:name=".View.Activity.DashboardActivity">
+
+            <!--
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            -->
+        </activity> <!-- Phan cua Tam -->
         <activity android:name=".View.Activity.GoalActivity" />
         <activity android:name=".View.Activity.SavingActivity" />
 

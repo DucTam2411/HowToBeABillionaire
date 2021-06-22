@@ -29,6 +29,7 @@ import com.example.myproject22.Model.ConnectionClass;
 import com.example.myproject22.Presenter.ForgotPasswordInterface;
 import com.example.myproject22.Presenter.ForgotPasswordPresenter;
 import com.example.myproject22.R;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -59,7 +60,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
     private TextInputEditText et_email_forgot;
     private TextInputEditText et_password_forgot;
     private TextInputEditText et_password_confirm_forgot;
-    private Button btn_forgot;
+    private MaterialButton btn_forgot;
     private TextView tv_signup_forgot;
     private ProgressBar pb_forgot;
     private CoordinatorLayout mSnackbarLayout;
@@ -300,9 +301,10 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
     @Override
     public void UploadNewPassword(String username, String email, String password) {
         StringRequest request = new StringRequest(Request.Method.POST,
-                ConnectionClass.urlString + "updatePasswordUser.php", new Response.Listener<String>() {
+                ConnectionClass.urlString + "forgotPassword.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                Log.i("RESPONSE",response);
                 pb_forgot.setVisibility(View.GONE);
                 if (response.equals("Update password success")) {
                     Toast.makeText(ForgotPasswordActivity.this, response, Toast.LENGTH_SHORT).show();
