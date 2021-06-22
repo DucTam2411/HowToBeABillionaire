@@ -75,15 +75,8 @@ public class SavingPresenter {
     }
 
 
-    public void LoadGetTietKiemData() {
-        mSavingInterface.LoadChiTietTietKiem();
-    }
-    public void LoadTietKiem(){
-        mSavingInterface.LoadTietKiem();
-    }
-    public void LoadMucTieu(){
-        mSavingInterface.LoadMucTieu();
-    }
+
+
 
     public static Date FindMondayFromDate(Date date_from){
         Calendar cal = Calendar.getInstance();

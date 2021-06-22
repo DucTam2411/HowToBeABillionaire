@@ -1,29 +1,16 @@
 package com.example.myproject22.Util;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.media.MediaPlayer;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -32,8 +19,6 @@ import com.example.myproject22.R;
 import com.example.myproject22.View.Activity.RecordDetailActivity;
 import com.google.android.material.card.MaterialCardView;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -62,7 +47,7 @@ public class RecordItemAdapter extends RecyclerView.Adapter<RecordItemAdapter.Vi
         TextView tvDescription = cardView.findViewById(R.id.tvDescription);
         TextView tvTime = cardView.findViewById(R.id.tvTime);
         TextView tvName = cardView.findViewById(R.id.tvCategory);
-        CircleImageView btnImage = cardView.findViewById(R.id.circleImageView);
+        CircleImageView btnImage = cardView.findViewById(R.id.profile_image);
         CircleImageView btnImageCategory = cardView.findViewById(R.id.ivCategoryImage);
         ImageView ivCategory = cardView.findViewById(R.id.circleImageView4);
         ImageView ivSetAudio = cardView.findViewById(R.id.ivSetAudio);

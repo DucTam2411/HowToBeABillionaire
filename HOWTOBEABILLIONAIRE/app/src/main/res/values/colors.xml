@@ -21,4 +21,6 @@
     <color name="nearlyRed">#FF7167</color>
     <color name="backgroundTransForText">#84000000</color>
 
+    <color name="transForBackground">#62000000</color>
+
 </resources>

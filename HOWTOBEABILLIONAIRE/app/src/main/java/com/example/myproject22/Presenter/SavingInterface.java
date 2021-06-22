@@ -30,8 +30,6 @@ public interface SavingInterface {
     public void DeleteImage();
     public void UpdateUserImageToServer(String image);
 
-    public void LoadChiTietTietKiem();
-    public void LoadTietKiem();
-    public void LoadMucTieu();
+
 }
 

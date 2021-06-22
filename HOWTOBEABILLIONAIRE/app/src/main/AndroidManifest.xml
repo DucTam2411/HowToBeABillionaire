@@ -25,11 +25,7 @@
         <activity android:name=".View.Activity.ForgotPasswordActivity"></activity>
         <activity android:name=".View.Activity.SignUpActivity" />
         <activity android:name=".View.Activity.LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".View.Activity.RecordDetailActivity"
@@ -44,7 +40,13 @@
         <!-- Giao dien chinh -->
         <activity android:name=".View.Activity.DashboardActivity"></activity> <!-- Phan cua Tam -->
         <activity android:name=".View.Activity.GoalActivity" />
-        <activity android:name=".View.Activity.SavingActivity" />
+        <activity android:name=".View.Activity.SavingActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <meta-data
             android:name="preloaded_fonts"

@@ -50,7 +50,9 @@ import com.example.myproject22.R;
 import com.example.myproject22.Presenter.SavingInterface;
 import com.example.myproject22.Presenter.SavingPresenter;
 import com.example.myproject22.View.Fragment.IncomeCategoryGraphFragment;
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -92,12 +94,12 @@ import static com.example.myproject22.Util.FormatImage.ByteToBitmap;
 
 public class SavingActivity extends AppCompatActivity implements SavingInterface {
 
-    private BarChart weekchart;
 
     // for debugg
     double ivSize = 0;
+    private SavingPresenter mSavingPresenter;
 
-    // tiet kiem
+    //region tiet kiem
     private int id_saving = 3;
     private int id_user = 9;
     private TextView tvDayStreak;
@@ -112,39 +114,39 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     private ConstraintLayout cl_savingmoney;
     private ConstraintLayout cl_user;
     private UserClass userClass;
+    //endregion
 
-    //Xử lí profile image
+
+    //region Xử lí profile image
     private File photoFile = null;
     private String mCurrentPhotoPath;
     private Bitmap bmImage;
+    //endregion
 
-    //Const mặc định để xét permission
+
+    //region Const mặc định để xét permission
     private static final int PERMISSION_IMAGE = 1000;
     private static final int PERMISSION_EXTERNAL_STORAGE = 1001;
+    //endregion
 
-    //Xử lí thời gian và tiền
+
+    //region Xử lí thời gian và tiền
     private ArrayList<Date> arrayDate = new ArrayList<>();
     private int count_date = 0;
     private String money_string = "";
-
-    // muc tieu
-    private TextView tvGoalName;
-    private TextView tvGoalDescription;
-    private TextView tvMoneyGoal;
-    private ImageView ivGoal;
-    private TextRoundCornerProgressBar ProgressSaving;
+    //endregion
 
 
-    private static final int DAYSOFWEEK = 7;
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private SavingPresenter mSavingPresenter;
 
-    SQLiteDatabase db;
-    Cursor cursor;
+
+    //region BARCHART
     ArrayList<String> ngayTrongTuan = new ArrayList<String>();
     ArrayList<BarEntry> recordTietKiem = new ArrayList<>();
+    private BarChart weekchart;
+    //endregion
 
-    SavingDatabaseHelper ASavingDatabaseHelper = new SavingDatabaseHelper(this, null, null, 0);
+
+    //region DEFAULT FUNC
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,10 +160,6 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         mSavingPresenter.getBundleData();
         mSavingPresenter.createDataBarChart();
 
-        /*AddRecords();
-        mSavingPresenter.LoadGetTietKiemData();
-        mSavingPresenter.LoadTietKiem();*/
-        mSavingPresenter.LoadMucTieu();
 
       /*  View overlay = findViewById(R.id.mylayout);
         overlay.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
@@ -177,20 +175,31 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
 
     }
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ASavingDatabaseHelper.closeAll();
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
-       mSavingPresenter.loadDataFromServer();
+        mSavingPresenter.loadDataFromServer();
     }
 
+
     @Override
-    public void CreateDataBarChart(){
+    protected void onRestart() {
+        super.onRestart();
+    }
+    //endregion
+
+
+    //region INIT VIEWS
+
+    @Override
+    public void CreateDataBarChart() {
 
         //Load bar chart cột x
         ngayTrongTuan.add("Thứ 2");
@@ -212,540 +221,70 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     }
 
     @Override
-    public void LoadDataFromServerToBarChart() {
-        //get data from database
-        BarDataSet barDataSet = new BarDataSet(recordTietKiem, "Ngày trong tuần");
-        barDataSet.setColors(ColorTemplate.VORDIPLOM_COLORS);
-        barDataSet.setValueTextColor(Color.BLACK);
-        barDataSet.setValueTextSize(0f);
-        barDataSet.setValueTypeface(Typeface.MONOSPACE);
-        barDataSet.setBarBorderWidth(1);
-        BarData barData = new BarData(barDataSet);
-
-
-        barData.setBarWidth(0.5f);
-        weekchart.setFitBars(true);
-        weekchart.setData(barData);
-        weekchart.getDescription().setText("");
-        weekchart.setHighlightFullBarEnabled(true);
-
-
-        // set XAxis value formater
-        XAxis xAxis = weekchart.getXAxis();
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(ngayTrongTuan));
-
-        xAxis.setPosition(XAxis.XAxisPosition.TOP);
-        xAxis.setDrawAxisLine(false);
-        xAxis.setDrawGridLines(true);
-        xAxis.setGranularity(1f);
-        xAxis.setDrawLabels(true);
-        xAxis.setLabelCount(ngayTrongTuan.size());
-
-        pb_saving.setVisibility(View.GONE);
-        weekchart.setVisibility(View.VISIBLE);
-    }
-
-
-    @Override
-    public void LoadChiTietTietKiem() {
-        new LoadChiTietTietKiem().execute();
-    }
-
-    @Override
-    public void LoadTietKiem() {
-        new LoadTietKiem().execute();
-    }
-
-    @Override
-    public void LoadMucTieu() {
-        new LoadMucTieu().execute();
-    }
-
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        mSavingPresenter.LoadMucTieu();
-    }
-
-
-    public void AddRecords() {
-/*
-
-        ASavingDatabaseHelper.insertChitietTienChi(20, "me cho", 1, null, "2020-06-03");
-        ASavingDatabaseHelper.insertChitietTienChi(20, "me cho", 1, null, "2020-06-04");
-        ASavingDatabaseHelper.insertChitietTienChi(20, "me cho", 1, null, "2020-06-05");
-        ASavingDatabaseHelper.insertChitietTienChi(20, "me cho", 1, null, "2020-06-06");
-
-        ASavingDatabaseHelper.insertChiTietTienThu(10, "ssa", 1, "2020-06-07");
-        ASavingDatabaseHelper.insertChitietTienChi(10, "ssa", 1, null,"2020-06-07");
-
-
-        ASavingDatabaseHelper.insertChitietTienChi(10, "ssa", 1, null,"2020-06-08");
-        ASavingDatabaseHelper.insertChiTietTienThu(10, "ssa", 1, "2020-06-09");
-*/
-
-
-    }
-
-    @Override
     public void InitViews() {
         //saving
         weekchart = findViewById(R.id.weekChar);
         tvDayStreak = findViewById(R.id.tvDayStreak);
         tvTotalSaving = findViewById(R.id.tvTotalSaving);
+
+        //cl_user = findViewById(R.id.cl_user);
         tvUserName = findViewById(R.id.tv_username);
         tvUserDate = findViewById(R.id.tv_userdate);
         ivProfile = findViewById(R.id.profile_image);
+
+
         pb_saving = findViewById(R.id.pb_saving);
         pb_savingdate = findViewById(R.id.pb_savingdate);
         pb_savingmoney = findViewById(R.id.pb_savingmoney);
         cl_savingdate = findViewById(R.id.cl_savingdate);
         cl_savingmoney = findViewById(R.id.cl_savingmoney);
-        cl_user = findViewById(R.id.cl_user);
+
 
         //Ẩn layout khi đang load từ server
         pb_savingmoney.bringToFront();
         pb_savingdate.bringToFront();
         pb_saving.bringToFront();
-        cl_user.setVisibility(View.INVISIBLE);
+
+
+        /* cl_user.setVisibility(View.INVISIBLE); AAAA*/
+
+
         cl_savingmoney.setVisibility(View.INVISIBLE);
         cl_savingdate.setVisibility(View.INVISIBLE);
         weekchart.setVisibility(View.INVISIBLE);
 
-        // goal
-        tvGoalName = findViewById(R.id.tvGoalName);
-        tvGoalDescription = findViewById(R.id.tvGoalDescription);
-        tvMoneyGoal = findViewById(R.id.tvMoneyGoal);
-        ProgressSaving = findViewById(R.id.Progress_saving);
-        ivGoal = findViewById(R.id.ivGoal);
+
     }
 
     @Override
     public void GetBundleData() {
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        id_user = bundle.getInt("ID_USER");
-        id_saving = bundle.getInt("ID_SAVING");
+    /*    Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();*/
+        id_user = 9;
+        id_saving = 3;
     }
 
-    @Override
-    public void FetchSavingDetailFromServer(String date_start, String date_end){
-        StringRequest request = new StringRequest(Request.Method.POST,
-                urlString + "getSavingDetailByDate.php", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    Log.i("TESTER", response);
-                    JSONObject jsonObject = new JSONObject(response);
-                    String success = jsonObject.getString("success");
+    //endregion
 
-                    JSONArray jsonArray = jsonObject.getJSONArray("data");
 
-                    if (success.equals("1")) {
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject object = jsonArray.getJSONObject(i);
-
-                            String date_string = object.getString("DATE");
-                            Double money = object.getDouble("MONEY");
-
-                            //Load saving vào trong bar chart
-                            Date date = SavingPresenter.DateFromString(date_string);
-                            Calendar cal = Calendar.getInstance();
-                            cal.setTime(date);
-                            int dow = cal.get(Calendar.DAY_OF_WEEK);
-                            if(dow == 1){
-                                recordTietKiem.get(6).setY(money.floatValue());
-                            }
-                            else{
-                                recordTietKiem.get(dow - 2).setY(money.floatValue());
-                            }
-
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                mSavingPresenter.loadDataFromServerToBarChart();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(weekchart, error.getMessage(), Snackbar.LENGTH_SHORT);
-                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                snackbar.show();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("id_saving", String.valueOf(id_saving));
-                params.put("datestart", date_start);
-                params.put("dateend", date_end);
-                return params;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(SavingActivity.this);
-        requestQueue.add(request);
-    }
-
-    public void FetchArrayDateFromServer(){
-        arrayDate = new ArrayList<>();
-        count_date = 0;
-        StringRequest request = new StringRequest(Request.Method.POST,
-                urlString + "getSavingDetailDate.php", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    String success = jsonObject.getString("success");
-
-                    JSONArray jsonArray = jsonObject.getJSONArray("data");
-
-                    if (success.equals("1")) {
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject object = jsonArray.getJSONObject(i);
-
-                            String date_string = object.getString("DATE");
-                            Date date = SavingPresenter.DateFromString(date_string);
-
-                            if(arrayDate.size() == 0){
-                                arrayDate.add(date);
-                                count_date++;
-                            } else{
-                                Date last_array = arrayDate.get(arrayDate.size() - 1);
-                                if(SavingPresenter.CalculateDateUse(last_array, date) > 1){
-                                    count_date = 0;
-                                }
-                                arrayDate.add(date);
-                                count_date++;
-                            }
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                pb_savingdate.setVisibility(View.GONE);
-                tvDayStreak.setText(String.valueOf(count_date));
-                cl_savingdate.setVisibility(View.VISIBLE);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(weekchart, error.getMessage(), Snackbar.LENGTH_SHORT);
-                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                snackbar.show();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("id_saving", String.valueOf(id_saving));
-                return params;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(SavingActivity.this);
-        requestQueue.add(request);
-    }
-
-    @Override
-    public void FetchMoneySavingFromServer(){
-        StringRequest request = new StringRequest(Request.Method.POST,
-                urlString + "getMoneySaving.php", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    String success = jsonObject.getString("success");
-
-                    JSONArray jsonArray = jsonObject.getJSONArray("data");
-
-                    if (success.equals("1")) {
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject object = jsonArray.getJSONObject(i);
-
-                            Double money_saving = object.getDouble("TOTAL_SAVING");
-                            money_string = SavingPresenter.GetStringMoney(money_saving);
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                pb_savingmoney.setVisibility(View.GONE);
-                tvTotalSaving.setText(money_string);
-                cl_savingmoney.setVisibility(View.VISIBLE);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(weekchart, error.getMessage(), Snackbar.LENGTH_SHORT);
-                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                snackbar.show();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("id_saving", String.valueOf(id_saving));
-                return params;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(SavingActivity.this);
-        requestQueue.add(request);
-    }
-
-    @Override
-    public void FetchUserFromServer(){
-        StringRequest request = new StringRequest(Request.Method.POST,
-                urlString + "getUser.php", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    Log.i("TESTER", response);
-                    JSONObject jsonObject = new JSONObject(response);
-                    String success = jsonObject.getString("success");
-
-                    JSONArray jsonArray = jsonObject.getJSONArray("data");
-
-                    if (success.equals("1")) {
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject object = jsonArray.getJSONObject(i);
-
-                            String fullname = object.getString("FULLNAME");
-                            String date_string = object.getString("DATESTART");
-                            String image_string = object.getString("USERIMAGE");
-
-                            if(!image_string.equals("null")){
-                                String url_image = urlString + "ImagesUser/" + image_string;
-                                userClass = new UserClass(fullname, date_string, url_image);
-                            }
-                            else{
-                                userClass = new UserClass(fullname,date_string,image_string);
-                            }
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                mSavingPresenter.loadUser(userClass);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(weekchart, error.getMessage(), Snackbar.LENGTH_SHORT);
-                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                snackbar.show();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("id_user", String.valueOf(id_user));
-                return params;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(SavingActivity.this);
-        requestQueue.add(request);
-    }
+    //region BUTTON HANDLE
 
     @Override
     public void LoadUser(UserClass userClass) {
+
         tvUserName.setText(userClass.getFULLNAME());
+
         String date_temp = userClass.getDATESTART();
         String[] slipdate = date_temp.split(" ");
         String[] slipday = slipdate[0].split("-");
         String date_string = "Đã tham gia vào \nngày " + slipday[2] + "/" + slipday[1] + "/" + slipday[0];
         tvUserDate.setText(date_string);
 
-        if(!userClass.getIMAGE().equals("null")){
+        if (!userClass.getIMAGE().equals("null")) {
             Glide.with(SavingActivity.this).load(userClass.getIMAGE()).into(ivProfile);
         }
 
-        cl_user.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void LoadDataFromServer() {
-        String date_start = SavingPresenter.StringFromDate(SavingPresenter.FindMondayFromDate(new Date()));
-        String date_end = SavingPresenter.StringFromDate(SavingPresenter.FindEndOfWeek(SavingPresenter.FindMondayFromDate(new Date())));
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mSavingPresenter.fetchUserFromServer();
-                mSavingPresenter.fetchArrayDateFromServer();
-                mSavingPresenter.fetchMoneySavingFromServer();
-                mSavingPresenter.fetchSavingDetailFromServer(date_start,date_end);
-            }
-        }, 1000);
-    }
-
-    // async stask
-    class LoadChiTietTietKiem extends AsyncTask<Void, Process, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            db = ASavingDatabaseHelper.getWritableDatabase();
-            weekchart.animateY(2000);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                cursor = db.query("CHITIETTIETKIEM", new String[]{"_id_tietkiem", "SOTIENTIETKIEMTRONGNGAY", "NGAY_TIETKIEM"},
-                        null, null, null, null, "_id_ChiTietTietKiem DESC");
-
-                if (cursor.moveToFirst()) {
-                    int cnt = 0;
-                    do {
-                        cnt++;
-                        double tietKiem = cursor.getDouble(1);
-                        String strDate = cursor.getString(2);
-                        Date date = dateFormat.parse(strDate);
-                        int ngay = date.getDay();
-                        recordTietKiem.add(new BarEntry((float) ngay, (float) tietKiem));
-                    }
-                    while (cnt <= DAYSOFWEEK && cursor.moveToNext());
-                }
-            } catch (Exception e) {
-
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            // assign value to char1
-            weekchart = findViewById(R.id.weekChar);
-
-            //get data from database
-            BarDataSet barDataSet = new BarDataSet(recordTietKiem, "Ngày trong tuần");
-            barDataSet.setColors(ColorTemplate.VORDIPLOM_COLORS);
-            barDataSet.setValueTextColor(Color.BLACK);
-            barDataSet.setValueTextSize(0f);
-            barDataSet.setValueTypeface(Typeface.MONOSPACE);
-            barDataSet.setBarBorderWidth(1);
-            BarData barData = new BarData(barDataSet);
-
-
-            barData.setBarWidth(0.5f);
-            weekchart.setFitBars(true);
-            weekchart.setData(barData);
-            weekchart.getDescription().setText("");
-            weekchart.setHighlightFullBarEnabled(true);
-
-
-            // set XAxis value formater
-            XAxis xAxis = weekchart.getXAxis();
-            xAxis.setValueFormatter(new IndexAxisValueFormatter(ngayTrongTuan));
-
-            xAxis.setPosition(XAxis.XAxisPosition.TOP);
-            xAxis.setDrawAxisLine(false);
-            xAxis.setDrawGridLines(true);
-            xAxis.setGranularity(1f);
-            xAxis.setDrawLabels(true);
-            xAxis.setLabelCount(ngayTrongTuan.size());
-
-        }
-    }
-
-    class LoadTietKiem extends AsyncTask<Void, Process, Boolean> {
-
-        double totalSaving;
-        int dayStreak;
-
-
-        @Override
-        protected void onPreExecute() {
-
-            // sieu nhan dien quang
-
-
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            cursor = ASavingDatabaseHelper.getTietKiem();
-            if (cursor.moveToFirst()) {
-                totalSaving = cursor.getDouble(1);
-                dayStreak = cursor.getInt(4);
-                return true;
-            }
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            tvTotalSaving.setText(String.valueOf(totalSaving));
-            tvDayStreak.setText(String.valueOf(dayStreak));
-        }
-    }
-
-    class LoadMucTieu extends AsyncTask<Void, Process, Boolean> {
-
-
-        String goalName;
-        String goalDescription;
-        double goalMoney;
-        double SavingMoney;
-        byte[] goal_image;
-        String strGoal;
-        double progress;
-
-        @Override
-        protected void onPreExecute() {
-
-        }
-
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            cursor = ASavingDatabaseHelper.getMucTieu();
-
-            try {
-                if (cursor.moveToFirst()) {
-                    goalName = "[ " + cursor.getString(1) + " ]";
-                    goalDescription = "*" + cursor.getString(2) + "*";
-                    goalMoney = cursor.getDouble(3);
-                    SavingMoney = cursor.getDouble(4);
-                    strGoal = SavingMoney + "/" + goalMoney;
-                    progress = SavingMoney * 100 / goalMoney;
-                    if (progress >= 100) {
-                        progress = 100;
-                    }
-
-                    goal_image = cursor.getBlob(5);
-
-
-                    return true;
-                }
-            } catch (Exception e) {
-            }
-            return false;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean havingRecord) {
-
-            if (havingRecord) {
-
-                tvGoalName.setText(goalName);
-                tvGoalDescription.setText(goalDescription);
-                tvMoneyGoal.setText(strGoal);
-
-                ProgressSaving.setProgressText(String.valueOf(Math.round((float) progress)));
-                ProgressSaving.setProgress(Math.round((float) progress));
-
-
-                Toast.makeText(SavingActivity.this, String.valueOf(progress), Toast.LENGTH_SHORT).show();
-                Bitmap bitmap = ByteToBitmap(goal_image);
-                Drawable d = new BitmapDrawable(bitmap);
-                ivGoal.setImageDrawable(d);
-                if (progress <= 90) {
-                    ProgressSaving.setSecondaryProgress((float) progress + 10);
-                }
-
-            }
-        }
+        /*   cl_user.setVisibility(View.VISIBLE);AAAA*/
     }
 
 
@@ -754,6 +293,12 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
+
+
+    //endregion
+
+
+    //region Take image from camera
 
     @Override
     public void ChooseImage() {
@@ -775,12 +320,10 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                 Dexter.withContext(SavingActivity.this).withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
-                        if(multiplePermissionsReport.areAllPermissionsGranted())
-                        {
+                        if (multiplePermissionsReport.areAllPermissionsGranted()) {
                             mSavingPresenter.takeImageFromCamera();
-                        }
-                        else{
-                            Snackbar snackbar = Snackbar.make(weekchart,"All permissions are not granted",Snackbar.LENGTH_SHORT);
+                        } else {
+                            Snackbar snackbar = Snackbar.make(weekchart, "All permissions are not granted", Snackbar.LENGTH_SHORT);
                             snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                             snackbar.show();
                             /*Toast.makeText(AddingCategoryActivity.this, "All permissions are not granted", Toast.LENGTH_SHORT).show();*/
@@ -813,7 +356,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
 
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                        Snackbar snackbar = Snackbar.make(weekchart,"Permission is not granted",Snackbar.LENGTH_SHORT);
+                        Snackbar snackbar = Snackbar.make(weekchart, "Permission is not granted", Snackbar.LENGTH_SHORT);
                         snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                         snackbar.show();
                         /*Toast.makeText(AddingCategoryActivity.this, "Permission is not granted", Toast.LENGTH_SHORT).show();*/
@@ -843,14 +386,13 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
 
-    //Take image from camera
     @Override
     public void TakeImageFromCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try {
             photoFile = createImageFile();
         } catch (IOException e) {
-            Snackbar snackbar = Snackbar.make(weekchart,e.getMessage(),Snackbar.LENGTH_SHORT);
+            Snackbar snackbar = Snackbar.make(weekchart, e.getMessage(), Snackbar.LENGTH_SHORT);
             snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
             snackbar.show();
             /*Toast.makeText(AddingCategoryActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -935,16 +477,21 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         }
     }
 
+
+    //endregion
+
+
+    //region DATABASE HANDLE
     @Override
     public void UpdateUserImageToServer(String image) {
         StringRequest request = new StringRequest(Request.Method.POST,
                 urlString + "updateUserImage.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Snackbar snackbar = Snackbar.make(weekchart, response , Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(weekchart, response, Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
-                if(response.equals("Update image succes")){
+                if (response.equals("Update image succes")) {
                     DeleteImage();
                 }
                 mSavingPresenter.loadUser(userClass);
@@ -961,12 +508,295 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put("id_user", String.valueOf(id_user));
-                params.put("userimage",image);
+                params.put("userimage", image);
                 return params;
             }
         };
         RequestQueue requestQueue = Volley.newRequestQueue(SavingActivity.this);
         requestQueue.add(request);
     }
+
+    @Override
+    public void FetchSavingDetailFromServer(String date_start, String date_end) {
+        StringRequest request = new StringRequest(Request.Method.POST,
+                urlString + "getSavingDetailByDate.php", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    Log.i("TESTER", response);
+                    JSONObject jsonObject = new JSONObject(response);
+                    String success = jsonObject.getString("success");
+
+                    JSONArray jsonArray = jsonObject.getJSONArray("data");
+
+                    if (success.equals("1")) {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject object = jsonArray.getJSONObject(i);
+
+                            String date_string = object.getString("DATE");
+                            Double money = object.getDouble("MONEY");
+
+                            //Load saving vào trong bar chart
+                            Date date = SavingPresenter.DateFromString(date_string);
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTime(date);
+                            int dow = cal.get(Calendar.DAY_OF_WEEK);
+                            if (dow == 1) {
+                                recordTietKiem.get(6).setY(money.floatValue());
+                            } else {
+                                recordTietKiem.get(dow - 2).setY(money.floatValue());
+                            }
+
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                mSavingPresenter.loadDataFromServerToBarChart();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Snackbar snackbar = Snackbar.make(weekchart, error.getMessage(), Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("id_saving", String.valueOf(id_saving));
+                params.put("datestart", date_start);
+                params.put("dateend", date_end);
+                return params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(SavingActivity.this);
+        requestQueue.add(request);
+    }
+
+    public void FetchArrayDateFromServer() {
+        arrayDate = new ArrayList<>();
+        count_date = 0;
+        StringRequest request = new StringRequest(Request.Method.POST,
+                urlString + "getSavingDetailDate.php", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String success = jsonObject.getString("success");
+
+                    JSONArray jsonArray = jsonObject.getJSONArray("data");
+
+                    if (success.equals("1")) {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject object = jsonArray.getJSONObject(i);
+
+                            String date_string = object.getString("DATE");
+                            Date date = SavingPresenter.DateFromString(date_string);
+
+                            if (arrayDate.size() == 0) {
+                                arrayDate.add(date);
+                                count_date++;
+                            } else {
+                                Date last_array = arrayDate.get(arrayDate.size() - 1);
+                                if (SavingPresenter.CalculateDateUse(last_array, date) > 1) {
+                                    count_date = 0;
+                                }
+                                arrayDate.add(date);
+                                count_date++;
+                            }
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                pb_savingdate.setVisibility(View.GONE);
+                tvDayStreak.setText(String.valueOf(count_date));
+                cl_savingdate.setVisibility(View.VISIBLE);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Snackbar snackbar = Snackbar.make(weekchart, error.getMessage(), Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("id_saving", String.valueOf(id_saving));
+                return params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(SavingActivity.this);
+        requestQueue.add(request);
+    }
+
+    @Override
+    public void FetchMoneySavingFromServer() {
+        StringRequest request = new StringRequest(Request.Method.POST,
+                urlString + "getMoneySaving.php", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String success = jsonObject.getString("success");
+
+                    JSONArray jsonArray = jsonObject.getJSONArray("data");
+
+                    if (success.equals("1")) {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject object = jsonArray.getJSONObject(i);
+
+                            Double money_saving = object.getDouble("TOTAL_SAVING");
+                            money_string = SavingPresenter.GetStringMoney(money_saving);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                pb_savingmoney.setVisibility(View.GONE);
+                tvTotalSaving.setText(money_string);
+                cl_savingmoney.setVisibility(View.VISIBLE);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Snackbar snackbar = Snackbar.make(weekchart, error.getMessage(), Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("id_saving", String.valueOf(id_saving));
+                return params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(SavingActivity.this);
+        requestQueue.add(request);
+    }
+
+    @Override
+    public void FetchUserFromServer() {
+        StringRequest request = new StringRequest(Request.Method.POST,
+                urlString + "getUser.php", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    Log.i("TESTER", response);
+                    JSONObject jsonObject = new JSONObject(response);
+                    String success = jsonObject.getString("success");
+
+                    JSONArray jsonArray = jsonObject.getJSONArray("data");
+
+                    if (success.equals("1")) {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject object = jsonArray.getJSONObject(i);
+
+                            String fullname = object.getString("FULLNAME");
+                            String date_string = object.getString("DATESTART");
+                            String image_string = object.getString("USERIMAGE");
+
+                            if (!image_string.equals("null")) {
+                                String url_image = urlString + "ImagesUser/" + image_string;
+                                userClass = new UserClass(fullname, date_string, url_image);
+                            } else {
+                                userClass = new UserClass(fullname, date_string, image_string);
+                            }
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                mSavingPresenter.loadUser(userClass);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Snackbar snackbar = Snackbar.make(weekchart, error.getMessage(), Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("id_user", String.valueOf(id_user));
+                return params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(SavingActivity.this);
+        requestQueue.add(request);
+    }
+
+    @Override
+    public void LoadDataFromServer() {
+        String date_start = SavingPresenter.StringFromDate(SavingPresenter.FindMondayFromDate(new Date()));
+        String date_end = SavingPresenter.StringFromDate(SavingPresenter.FindEndOfWeek(SavingPresenter.FindMondayFromDate(new Date())));
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mSavingPresenter.fetchUserFromServer();
+                mSavingPresenter.fetchArrayDateFromServer();
+                mSavingPresenter.fetchMoneySavingFromServer();
+                mSavingPresenter.fetchSavingDetailFromServer(date_start, date_end);
+            }
+        }, 1000);
+    }
+
+    @Override
+    public void LoadDataFromServerToBarChart() {
+
+        //get data from database
+        BarDataSet barDataSet = new BarDataSet(recordTietKiem, "Ngày trong tuần");
+        barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+        barDataSet.setValueTextColor(Color.WHITE);
+        barDataSet.setValueTextSize(0f);
+        barDataSet.setValueTypeface(Typeface.MONOSPACE);
+        barDataSet.setBarBorderWidth(1);
+        barDataSet.setBarBorderColor(Color.WHITE);
+
+        BarData barData = new BarData(barDataSet);
+        barData.setBarWidth(0.5f);
+
+        barData.setValueTextColor(Color.WHITE);
+        weekchart.setFitBars(true);
+        weekchart.setData(barData);
+        weekchart.setHighlightFullBarEnabled(true);
+
+
+        weekchart.getAxisLeft().setTextColor(Color.WHITE);
+        weekchart.getAxisRight().setTextSize(0f);
+
+
+        Legend l = weekchart.getLegend();
+        l.setTextColor(Color.WHITE);
+
+
+        // set XAxis value formater
+        XAxis xAxis = weekchart.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(ngayTrongTuan));
+
+        xAxis.setPosition(XAxis.XAxisPosition.TOP);
+        xAxis.setDrawAxisLine(false);
+        xAxis.setDrawGridLines(true);
+        xAxis.setGranularity(1f);
+        xAxis.setDrawLabels(true);
+        xAxis.setLabelCount(ngayTrongTuan.size());
+        xAxis.setTextColor(Color.WHITE);
+
+
+        pb_saving.setVisibility(View.GONE);
+        weekchart.setVisibility(View.VISIBLE);
+        weekchart.animateY(1000);
+
+    }
+
+
+    //endregion
 }
 
