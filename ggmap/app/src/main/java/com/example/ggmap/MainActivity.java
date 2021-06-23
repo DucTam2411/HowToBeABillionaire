@@ -37,31 +37,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         editText = findViewById(R.id.et_location);
-
-        String originalString = "geo:0,0?z=15&q=";
-        String stringToBeInserted = editText.getText().toString();
-        int index = 14;
-
         btn = findViewById(R.id.btn_location);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.parse(insertString(originalString, stringToBeInserted, index));
+                String locat = "geo:0,0?z=15&q=" + editText.getText().toString();
+                Toast.makeText(MainActivity.this,locat,Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this,insertString(originalString, stringToBeInserted, index),Toast.LENGTH_SHORT).show();
+                Uri uri = Uri.parse(locat);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 intent.setPackage("com.google.android.apps.maps");
                 startActivity(intent);
 
             }
         });
-    }
-    public static String insertString(String originalString, String stringToBeInserted, int index){
-        String newString = new String();
-        for (int i = 0; i < originalString.length(); i++) {
-            newString += originalString.charAt(i);
-            if (i == index) {
-                newString += stringToBeInserted;
-            }
-        }
-        return newString;
     }
 }
