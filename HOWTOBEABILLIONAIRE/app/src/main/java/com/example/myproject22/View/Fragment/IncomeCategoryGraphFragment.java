@@ -279,8 +279,9 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
                 c.add(Calendar.DATE, 7);
                 datefrom = c.getTime();
 
+                Date dateto = datefrom;
                 //Gán thời gian sau khi cộng để tìm date_to
-                String date_to = formattest.format(date_from);
+                String date_to = formattest.format(dateto);
                 WeekItem weekItem = new WeekItem(s, date_from, date_to);
                 weeks.add(weekItem);
 

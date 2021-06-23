@@ -325,18 +325,16 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
                                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                             }
                         }
-                    } else if(response.equals("Password wrong")) {
+                    } else if(success.equals("Password wrong")) {
                         tif_password.setError("Nhập sai mật khẩu");
                         /*Toast.makeText(LoginActivity.this, success, Toast.LENGTH_SHORT).show();*/
                     }
-                    else if(response.equals("This account has not been register yet")){
-                        Snackbar snackbar = Snackbar.make(tvSignUp,"Tài khoản này chưa được khởi tạo",Snackbar.LENGTH_SHORT);
-                        snackbar.setAnchorView(btnLogin);
-                        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                        snackbar.show();
+                    else if(success.equals("This account has not been register yet")){
+                        til_username.setError("Tài khoản này chưa được khởi tạo");
+                        tif_password.setError("Tài khoản này chưa được khởi tạo");
                     }
                     else{
-                        Log.i("RESPONSELOGIN", response);
+                        Log.i("RESPONSELOGIN", success);
                         Snackbar snackbar = Snackbar.make(tvSignUp,"Đăng nhập thật bại",Snackbar.LENGTH_SHORT);
                         snackbar.setAnchorView(btnLogin);
                         snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
