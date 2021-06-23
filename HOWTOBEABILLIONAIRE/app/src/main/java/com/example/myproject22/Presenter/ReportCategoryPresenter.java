@@ -7,6 +7,8 @@ public class ReportCategoryPresenter {
         this.anInterface = anInterface;
     }
 
+    //region Set and Get
+
     public void setInit(){
         anInterface.SetInit();
     }
@@ -15,9 +17,21 @@ public class ReportCategoryPresenter {
         anInterface.GetBundleData();
     }
 
+    //endregion
+
+    //region Loading
+
     public void loadRecycleView(){
         anInterface.LoadRecycleView();
     }
+
+    public void loadData(){
+        anInterface.LoadData();
+    }
+
+    //endregion
+
+    //region Fetch Data
 
     public void fetchIncomeInServer(){
         anInterface.FetchIncomeInServer();
@@ -27,7 +41,6 @@ public class ReportCategoryPresenter {
         anInterface.FetchOutcomeInServer();
     }
 
-    public void loadData(){
-        anInterface.LoadData();
-    }
+    //endregion
+
 }

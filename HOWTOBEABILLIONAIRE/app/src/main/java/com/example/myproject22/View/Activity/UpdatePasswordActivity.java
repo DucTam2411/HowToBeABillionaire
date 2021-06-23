@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -37,18 +38,22 @@ import java.util.regex.Pattern;
 
 public class UpdatePasswordActivity extends AppCompatActivity implements UpdatePasswordInterface {
 
+    //region Khởi tạo component và các giá trị ban đầu
+
+    //region Password
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
-                    //"(?=.*[0-9])" +         //at least 1 digit
-                    //"(?=.*[a-z])" +         //at least 1 lower case letter
-                    //"(?=.*[A-Z])" +         //at least 1 upper case letter
-                    "(?=.*[a-zA-Z])" +      //any letter
-                    //"(?=.*[@#$%^&+=])" +    //at least 1 special character
-                    "(?=\\S+$)" +           //no white spaces
-                    ".{4,}" +               //at least 4 characters
+                    //"(?=.*[0-9])" +         //tối thiểu 1 số
+                    //"(?=.*[a-z])" +         //tối thiểu 1 ký tự viết thường
+                    //"(?=.*[A-Z])" +         /tối thiểu 1 ký tự viết hoa
+                    "(?=.*[a-zA-Z])" +      //bát kỳ ký tự nào
+                    //"(?=.*[@#$%^&+=])" +    //tối thiểu 1 ký tự đặt biệt
+                    "(?=\\S+$)" +           //không có khoảng trắng
+                    ".{4,}" +               //tối thiểu 4 ký tự
                     "$");
+    //endregion
 
-    //Set component
+    //region Component
     private ProgressBar pb_password;
     private TextInputLayout til_oldpassword;
     private TextInputLayout til_newpassword;
@@ -58,10 +63,14 @@ public class UpdatePasswordActivity extends AppCompatActivity implements UpdateP
     private TextInputEditText et_newconfirm;
     private MaterialButton btnSave;
     private MaterialButton btnCancel;
+    //endregion
 
-    //Presenter
+    //region Presenter
     private UpdatePasswordPresenter presenter;
     private int id_user;
+    //endregion
+
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +78,13 @@ public class UpdatePasswordActivity extends AppCompatActivity implements UpdateP
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_update_password);
 
+        //region Khởi tạo presenter và gán các giá trị ban đầu
         presenter = new UpdatePasswordPresenter(this);
         presenter.setInit();
         presenter.getBundleData();
+        //endregion
 
+        //region Xử lí các button click
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,7 +98,9 @@ public class UpdatePasswordActivity extends AppCompatActivity implements UpdateP
                 presenter.btnCancelClick();
             }
         });
+        //endregion
 
+        //region Xử lí các edittext
         et_oldpassword.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -182,8 +196,10 @@ public class UpdatePasswordActivity extends AppCompatActivity implements UpdateP
                 }
             }
         });
+        //endregion
     }
 
+    //region Set Init, get bundle, keyboard
     @Override
     public void SetInit() {
         til_newconfirm = findViewById(R.id.til_password_confirm);
@@ -205,6 +221,15 @@ public class UpdatePasswordActivity extends AppCompatActivity implements UpdateP
     }
 
     @Override
+    public void HideKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    //endregion
+
+    //region Xử lí các button click
+    @Override
     public void BtnSaveClick() {
         pb_password.bringToFront();
         pb_password.setVisibility(View.VISIBLE);
@@ -215,7 +240,7 @@ public class UpdatePasswordActivity extends AppCompatActivity implements UpdateP
         }
 
         String newpassword = et_newpassword.getText().toString().trim();
-        if(!presenter.getNoPassword(newpassword)){
+        if(!presenter.getNoPassword(newpassword, oldpassword)){
             return;
         }
 
@@ -232,9 +257,13 @@ public class UpdatePasswordActivity extends AppCompatActivity implements UpdateP
         finish();
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
+    //endregion
 
+    //region Kiểm tra điều kiện
+
+    //Điều kiện password mới là phải có tối thiểu 4 ký tự (khác password cũ, có ít nhất 1 chữ)
     @Override
-    public Boolean GetNoPassword(String password) {
+    public Boolean GetNoPassword(String password,String oldpassword) {
         if (password.isEmpty()) {
             til_newpassword.setError("Mật khẩu không được để trống");
             pb_password.setVisibility(View.INVISIBLE);
@@ -243,24 +272,31 @@ public class UpdatePasswordActivity extends AppCompatActivity implements UpdateP
             til_newpassword.setError("Mật khẩu quá yếu");
             pb_password.setVisibility(View.INVISIBLE);
             return false;
+        } else if(password.equals(oldpassword)){
+            til_newpassword.setError("Mật khẩu mới không được giống mật khẩu cũ");
+            pb_password.setVisibility(View.INVISIBLE);
+            return false;
         } else {
             til_newpassword.setError(null);
             return  true;
         }
     }
 
+    //Điều kiện password cữ là phải tối thiểu 4 ký tự
     @Override
     public Boolean GetNoOldPassword(String password) {
         if (password.isEmpty()) {
             til_oldpassword.setError("Mật khẩu không được để trống");
             pb_password.setVisibility(View.INVISIBLE);
             return false;
-        } else {
+        }
+        else {
             til_oldpassword.setError(null);
             return  true;
         }
     }
 
+    //Điều kiện password confirm là phải giống password mới
     @Override
     public Boolean GetNoConfirmPassword(String password, String password_confirm) {
         if (password_confirm.isEmpty()) {
@@ -276,7 +312,9 @@ public class UpdatePasswordActivity extends AppCompatActivity implements UpdateP
             return true;
         }
     }
+    //endregion
 
+    //region Upload password lên server
     @Override
     public void UploadPasswordToServer(String oldpassword, String newpassword) {
         StringRequest request = new StringRequest(Request.Method.POST,
@@ -285,12 +323,15 @@ public class UpdatePasswordActivity extends AppCompatActivity implements UpdateP
             public void onResponse(String response) {
                 pb_password.setVisibility(View.GONE);
                 if (response.equals("Update password success")) {
-                    Toast.makeText(UpdatePasswordActivity.this, response, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UpdatePasswordActivity.this, "Cập nhật mật khẩu thành công", Toast.LENGTH_SHORT).show();
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+                } else if(response.equals("Password wrong")){
+                    til_oldpassword.setError("Mật khẩu cũ không đúng");
                 }
                 else{
-                    Snackbar snackbar = Snackbar.make(btnCancel,response,Snackbar.LENGTH_SHORT);
+                    Log.i("RESPONSEUPDATEPASSWORD", response);
+                    Snackbar snackbar = Snackbar.make(btnCancel,"Có lỗi trong lúc đổi mật khẩu. Vui lòng thử lại sau.",Snackbar.LENGTH_SHORT);
                     snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                     snackbar.show();
                 }
@@ -298,7 +339,7 @@ public class UpdatePasswordActivity extends AppCompatActivity implements UpdateP
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(btnCancel,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(btnCancel,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -318,10 +359,6 @@ public class UpdatePasswordActivity extends AppCompatActivity implements UpdateP
         RequestQueue requestQueue = Volley.newRequestQueue(UpdatePasswordActivity.this);
         requestQueue.add(request);
     }
+    //endregion
 
-    @Override
-    public void HideKeyboard(View view) {
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
 }

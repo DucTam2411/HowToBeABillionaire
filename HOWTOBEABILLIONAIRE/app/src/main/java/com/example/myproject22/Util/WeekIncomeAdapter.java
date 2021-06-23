@@ -19,10 +19,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 public class  WeekIncomeAdapter extends  RecyclerView.Adapter<WeekIncomeAdapter.ViewHolder> {
+
+    //region Component
     ArrayList<WeekItem> weeks = new ArrayList<>();
     Context context;
     EventListener listener; //Gọi hàm từ fragment
     private static long mLastClickTime = 0;
+    //endregion
 
     public WeekIncomeAdapter(ArrayList<WeekItem> weeks, Context context,  EventListener listener) {
         this.weeks = weeks;
@@ -41,13 +44,17 @@ public class  WeekIncomeAdapter extends  RecyclerView.Adapter<WeekIncomeAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull ViewHolder holder, int position) {
+
+        //region Component
         MaterialCardView cardView = holder.cardView;
-
-
-
         TextView week = ((TextView) cardView.findViewById(R.id.tvWeek));
-        week.setText(weeks.get(position).getName());
+        //endregion
 
+        //region Gán dữ liệu
+        week.setText(weeks.get(position).getName());
+        //endregion
+
+        //region Handle Click
         String datestart = weeks.get(position).getDatestart();
         String dateend = weeks.get(position).getDateend();
 
@@ -60,6 +67,7 @@ public class  WeekIncomeAdapter extends  RecyclerView.Adapter<WeekIncomeAdapter.
                listener.FetchIncomeFromServer(datestart,dateend);
             }
         });
+        //endregion
     }
 
     @Override

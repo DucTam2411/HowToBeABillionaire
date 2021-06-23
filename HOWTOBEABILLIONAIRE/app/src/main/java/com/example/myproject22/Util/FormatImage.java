@@ -11,6 +11,7 @@ import java.util.zip.Inflater;
 
 public class FormatImage {
 
+    //region Đổi từ byte[] to bitmap
     public static Bitmap ByteToBitmap(byte[] images) {
         if (images != null) {
             images = decompress(images);
@@ -42,7 +43,9 @@ public class FormatImage {
         }
         return null;
     }
+    //endregion
 
+    //region Bitmap to byte[]
     public static byte[] BitmapToByte(Bitmap bitmap) {
         //
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -75,6 +78,6 @@ public class FormatImage {
         }
         return null;
     }
-
+    //endregion
 
 }

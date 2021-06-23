@@ -26,12 +26,14 @@ import java.util.ArrayList;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder>  {
 
+    //region Component
     ArrayList<CategoryClass> categoryList;
     BottomSheetBehavior bottomSheetBehavior;
     TextView tvChooseItem;
     MaterialButton btnAddCategory;
     int id_user;
     Context context;
+    //endregion
 
     public CategoryAdapter(Context context, ArrayList<CategoryClass> categoryList, BottomSheetBehavior bottomSheetBehavior,
                            TextView tvChooseItem, MaterialButton btnAddCategory, int id_user) {
@@ -52,15 +54,21 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
+        //region Component
         MaterialCardView cardView = holder.cardView;
         ImageButton categoryImage = ((ImageButton) cardView.findViewById(R.id.categoryImage));
         TextView categoryName = ((TextView) cardView.findViewById(R.id.categoryName));
         btnAddCategory.setEnabled(true);
         btnAddCategory.setVisibility(View.VISIBLE);
+        //endregion
 
+        //region Gán giá trị
         Glide.with(cardView.getContext()).load(categoryList.get(position).Get_IMAGE()).into(categoryImage);
         categoryName.setText(categoryList.get(position).Get_NAME());
+        //endregion
 
+        //region Handle click
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,6 +105,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
                 ((Activity)v.getContext()).overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
             }
         });
+        //endregion
     }
 
 

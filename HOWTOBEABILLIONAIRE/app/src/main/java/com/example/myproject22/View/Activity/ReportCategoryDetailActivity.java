@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -52,25 +53,35 @@ import static com.example.myproject22.Model.ConnectionClass.urlString;
 
 public class ReportCategoryDetailActivity extends AppCompatActivity implements ReportCategoryDetailInterface {
 
+    //region Khởi tạo component
+
+    //region Component
     private RecyclerView recyclerView;
     private Toolbar toolbar;
     private ProgressBar progressBar;
     private TextView tvDate;
     private CoordinatorLayout mSnackbarLayout;
+    //endregion
 
+    //region parameter
     private String dateString;
     private int id_income;
     private int id_outcome;
 
     private Boolean isIncome = false;
     private Boolean isOutcome = false;
+    //endregion
 
+    //region ArrayList
     private ArrayList<DetailItem> incomedetail = new ArrayList<>();
     private ArrayList<DetailItem> outcomedetail = new ArrayList<>();
     private ArrayList<DetailItem> totaldetail = new ArrayList<>();
+    //endregion
 
     //Presenter
     private ReportCategoryDetailPresenter presenter;
+
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,12 +89,16 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_report_category_detail);
 
+        //region Khởi tạo presenter và các giá trị ban đầu
         presenter = new ReportCategoryDetailPresenter(this);
         presenter.setInit();
         presenter.getBundleData();
         presenter.loadData();
+        //endregion
+
     }
 
+    //region Set init, get bundle
     @Override
     public void SetInit() {
         recyclerView = findViewById(R.id.record_recycler);
@@ -104,6 +119,9 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
         id_outcome = bundle.getInt("ID_OUTCOME");
     }
 
+    //endregion
+
+    //region Fetch income, outcome from server
     @Override
     public void FetchIncomeDetailInServer() {
         StringRequest request = new StringRequest(Request.Method.POST,
@@ -111,6 +129,8 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
             @Override
             public void onResponse(String response) {
                 try {
+                    Log.i("RESPONSECATEGORYDETAIL", response);
+
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
 
@@ -162,7 +182,7 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(ReportCategoryDetailActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -187,6 +207,8 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
             @Override
             public void onResponse(String response) {
                 try {
+                    Log.i("RESPONSECATEGORYDETAIL", response);
+
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
 
@@ -238,7 +260,7 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối từ internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(ReportCategoryDetailActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -255,7 +277,9 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
         RequestQueue requestQueue = Volley.newRequestQueue(ReportCategoryDetailActivity.this);
         requestQueue.add(request);
     }
+    //endregion
 
+    //region Load dữ liệu từ server vào layout
     @Override
     public void LoadData() {
         Handler handler = new Handler();
@@ -301,7 +325,7 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
         }
 
         setSupportActionBar(toolbar);
-        tvDate.setText("    " + dateString);
+        tvDate.setText("  " + dateString);
         toolbar.setVisibility(View.VISIBLE);
 
         RecordItemAdapter recordItemAdapter = new RecordItemAdapter(totaldetail, ReportCategoryDetailActivity.this);
@@ -311,4 +335,7 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
         recyclerView.setLayoutManager(linearLayout);
 
     }
+
+    //endregion
+
 }

@@ -26,15 +26,12 @@ import java.util.Date;
 
 public class DayItemAdapter extends RecyclerView.Adapter<DayItemAdapter.ViewHolder> {
 
+    //region Component
     ArrayList<DayItem> days;
     Context context;
     int id_income;
     int id_outcome;
-
-    public DayItemAdapter(ArrayList<DayItem> days, Context context) {
-        this.days = days;
-        this.context = context;
-    }
+    //endregion
 
     public DayItemAdapter(ArrayList<DayItem> days, Context context, int id_income, int id_outcome) {
         this.days = days;
@@ -53,14 +50,26 @@ public class DayItemAdapter extends RecyclerView.Adapter<DayItemAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
+        //region Component
         MaterialCardView cardView = holder.cardView;
         TextView tvDay = cardView.findViewById(R.id.tvDay);
         TextView tvDayDetail = cardView.findViewById(R.id.tvDayDetail);
         TextView tvNumberOfRecord = cardView.findViewById(R.id.tvNumberOfRecord);
+        //endregion
 
+        //region Gán dữ liệu
+
+        //region Xử lí ngày
         DateFormat formater = new SimpleDateFormat("EEEE");
         tvDay.setText(formater.format(days.get(position).date));
 
+        formater = new SimpleDateFormat("dd.MM.yyyy");
+        tvDayDetail.setText(formater.format(days.get(position).date));
+        tvNumberOfRecord.setText(String.valueOf(days.get(position).numberOfRecord));
+        //endregion
+
+        //region Đổi màu ngày thứ 2 và ngày hiện tại
         Calendar cal = Calendar.getInstance();
         cal.setTime(days.get(position).getDate());
         int dow = cal.get(Calendar.DAY_OF_WEEK);
@@ -68,10 +77,6 @@ public class DayItemAdapter extends RecyclerView.Adapter<DayItemAdapter.ViewHold
         Calendar total_cal = Calendar.getInstance();
         Date currentdate = total_cal.getTime();
         Date date = days.get(position).getDate();
-
-        formater = new SimpleDateFormat("dd.MM.yyyy");
-        tvDayDetail.setText(formater.format(days.get(position).date));
-        tvNumberOfRecord.setText(String.valueOf(days.get(position).numberOfRecord));
 
         if(dow == Calendar.MONDAY)
         {
@@ -83,8 +88,11 @@ public class DayItemAdapter extends RecyclerView.Adapter<DayItemAdapter.ViewHold
                 cardView.setCardBackgroundColor(context.getColor(R.color.teal_200));
             }
         }
+        //endregion
 
+        //endregion
 
+        //region Handle Click Cardview
         String sDate = days.get(position).getDateString();
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +107,7 @@ public class DayItemAdapter extends RecyclerView.Adapter<DayItemAdapter.ViewHold
                 ((Activity)v.getContext()).overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
             }
         });
+        //endregion
 
     }
 

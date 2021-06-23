@@ -19,6 +19,8 @@ public class SavingPresenter {
         this.mSavingInterface = mSavingInterface;
     }
 
+    //region Set init, get bundle
+
     public void initView(){
         mSavingInterface.InitViews();
     }
@@ -27,20 +29,20 @@ public class SavingPresenter {
         mSavingInterface.GetBundleData();
     }
 
+    //endregion
+
+    //region Create Barchart
+
     public void createDataBarChart(){
         mSavingInterface.CreateDataBarChart();
     }
 
+    //endregion
+
+    //region Fetch Data from server
+
     public void fetchSavingDetailFromServer(String date_start, String date_end){
         mSavingInterface.FetchSavingDetailFromServer(date_start,date_end);
-    }
-
-    public void loadDataFromServerToBarChart(){
-        mSavingInterface.LoadDataFromServerToBarChart();
-    }
-
-    public void loadDataFromServer(){
-        mSavingInterface.LoadDataFromServer();
     }
 
     public void fetchArrayDateFromServer(){
@@ -55,25 +57,35 @@ public class SavingPresenter {
         mSavingInterface.FetchUserFromServer();
     }
 
-    public void btnUserClick(){
-        mSavingInterface.BtnUserClick();
+    //endregion
+
+    //region Load data from server to layout
+
+    public void loadDataFromServerToBarChart(){
+        mSavingInterface.LoadDataFromServerToBarChart();
+    }
+
+    public void loadDataFromServer(){
+        mSavingInterface.LoadDataFromServer();
     }
 
     public void loadUser(UserClass userClass){
         mSavingInterface.LoadUser(userClass);
     }
 
+    //endregion
 
-    public void LoadGetTietKiemData() {
-        mSavingInterface.LoadChiTietTietKiem();
-    }
-    public void LoadTietKiem(){
-        mSavingInterface.LoadTietKiem();
-    }
-    public void LoadMucTieu(){
-        mSavingInterface.LoadMucTieu();
+    //region Handle Button Click
+
+    public void btnUserClick(){
+        mSavingInterface.BtnUserClick();
     }
 
+    //endregion
+
+    //region Các static function sử dụng
+
+    //Tìm thứ hai từ 1 ngày bất kỳ
     public static Date FindMondayFromDate(Date date_from){
         Calendar cal = Calendar.getInstance();
         Date date_monday = new Date();
@@ -118,6 +130,7 @@ public class SavingPresenter {
         }
     }
 
+    //Tìm ngày cuối cùng từ ngày thứ đã tìm ở trên
     public static Date FindEndOfWeek(Date date_from){
         Calendar cal = Calendar.getInstance();
         cal.setTime(date_from);
@@ -127,18 +140,21 @@ public class SavingPresenter {
         return date_end;
     }
 
+    //Chuyển đổi từ Date sang String
     public static String StringFromDate(Date date){
         SimpleDateFormat format_string = new SimpleDateFormat("yyyy-MM-dd");
         String string_date = format_string.format(date);
         return string_date;
     }
 
+    //Tìm khoảng ngày từ 2 ngày đã biết
     public static long CalculateDateUse(Date fromDate, Date toDate) {
         if (fromDate == null || toDate == null)
             return 0;
         return (long) ((toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24));
     }
 
+    //Chuyển đổi từ String sang Date
     public static Date DateFromString(String date_string){
         SimpleDateFormat curFormater = new SimpleDateFormat("dd-MM-yyyy");
         try {
@@ -150,6 +166,7 @@ public class SavingPresenter {
         return new Date();
     }
 
+    //Chuyển đổi tiền thành String
     public static String GetStringMoney(double money){
         String money_string = "";
         Log.i("MONEY", String.valueOf(money));
@@ -171,21 +188,17 @@ public class SavingPresenter {
         return money_string;
     }
 
-    public static byte[] encodeTobase64(Bitmap image) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 80, stream);
-        byte[] byteArray = stream.toByteArray();
-        return byteArray;
-    }
+    //endregion
 
-    public static String convertByteToString(byte[] bytes){
-        if(bytes == null){
-            String s = "NULL";
-            return s;
-        }
-        else{
-            String s = Base64.encodeToString(bytes,Base64.DEFAULT);
-            return s;
-        }
+    //region Của Tâm
+    public void LoadGetTietKiemData() {
+        mSavingInterface.LoadChiTietTietKiem();
     }
+    public void LoadTietKiem(){
+        mSavingInterface.LoadTietKiem();
+    }
+    public void LoadMucTieu(){
+        mSavingInterface.LoadMucTieu();
+    }
+    //endregion
 }

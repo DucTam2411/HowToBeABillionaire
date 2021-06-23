@@ -1,16 +1,20 @@
 package com.example.myproject22.Model;
 
 public class IncomeClass {
+
+    //region Component
     private String category;
     private Double money;
-    //private Date date;
+    //endregion
 
+    //region Constructor
     public IncomeClass(String category, Double money) {
         this.category = category;
         this.money = money;
-       // this.date = date;
     }
+    //endregion
 
+    //region Get and Set
     public String getCategory() {
         return category;
     }
@@ -26,12 +30,6 @@ public class IncomeClass {
     public void setMoney(Double money) {
         this.money = money;
     }
+    //endregion
 
-   /* public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }*/
 }

@@ -9,6 +9,8 @@ public class UserPresenter {
         this.anInterface = anInterface;
     }
 
+    //region Set Init, get bundle
+
     public void setInit() {
         anInterface.SetInit();
     }
@@ -16,6 +18,10 @@ public class UserPresenter {
     public void getBundleData() {
         anInterface.GetBundleData();
     }
+
+    //endregion
+
+    //region Handle Button Click
 
     public void btnUpdateUser() {
         anInterface.BtnUpdateUser();
@@ -33,9 +39,17 @@ public class UserPresenter {
         anInterface.BtnLogOut();
     }
 
+    //endregion
+
+    //region Fetch User
+
     public void fetchUserFromServer(){
         anInterface.FetchUserFromServer();
     }
+
+    //endregion
+
+    //region Loading
 
     public void loadUser(UserClass userClass){
         anInterface.LoadUser(userClass);
@@ -44,4 +58,18 @@ public class UserPresenter {
     public void loadDataToLayout() {
         anInterface.LoadDataToLayout();
     }
+
+    //endregion
+
+    //region Set dialog for map
+
+    public void showCustomDialog() {
+        anInterface.ShowCustomDialog();
+    }
+
+    public void showGPSDisabledAlertToUser() {
+        anInterface.ShowGPSDisabledAlertToUser();
+    }
+
+    //endregion
 }

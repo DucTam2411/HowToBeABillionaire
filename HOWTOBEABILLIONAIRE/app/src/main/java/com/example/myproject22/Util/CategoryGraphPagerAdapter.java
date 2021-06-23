@@ -12,9 +12,12 @@ import com.example.myproject22.View.Fragment.OutcomeCategoryGraphFragment;
 import org.jetbrains.annotations.NotNull;
 
 public class CategoryGraphPagerAdapter extends FragmentPagerAdapter {
+
+    //region Component
     private int id_user;
     private int id_outcome;
     private int id_income;
+    //endregion
 
     public CategoryGraphPagerAdapter(@NonNull FragmentManager fm) {
         super(fm);

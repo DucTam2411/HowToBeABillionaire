@@ -77,7 +77,9 @@ import static com.example.myproject22.Presenter.AddingMoneyPresentent.encodeToba
 
 public class UpdateUserActivity extends AppCompatActivity implements UpdateUserInterface {
 
-    //Set component
+    //region Khởi tạo các component
+
+    //region Component
     private ConstraintLayout cl_total;
     private ProgressBar pb_user;
     private TextInputLayout til_fullname;
@@ -87,13 +89,15 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
     private CircleImageView iv_profile;
     private MaterialButton btnSave;
     private MaterialButton btnCancel;
+    //endregion
 
-    //Set presenter
+    //region presenter
     private UpdateUserPresenter presenter;
     private int id_user = 0;
     private UserClass userClass;
+    //endregion
 
-    //Xử lí profile image
+    //region Xử lí profile image
     private File photoFile = null;
     private String mCurrentPhotoPath;
     private Bitmap bmImage;
@@ -101,6 +105,9 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
     //Const mặc định để xét permission
     private static final int PERMISSION_IMAGE = 1000;
     private static final int PERMISSION_EXTERNAL_STORAGE = 1001;
+    //endregion
+
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,10 +115,13 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_update_user);
 
+        //region Khởi tạo present và các giá trị ban đầu
         presenter = new UpdateUserPresenter(this);
         presenter.setInit();
         presenter.getBundleData();
+        //endregion
 
+        //region Xử lí button
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,7 +142,9 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
                 presenter.chooseImage();
             }
         });
+        //endregion
 
+        //region Xử lí các edittext
         et_email.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -196,14 +208,25 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
 
             }
         });
+        //endregion
     }
 
+    //region Xử lí override Activity
     @Override
     protected void onResume() {
         super.onResume();
         presenter.loadDataToLayout();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        DeleteImage();
+    }
+
+    //endregion
+
+    //region Set Init, get bundle, keyboard
     @Override
     public void SetInit() {
         cl_total = findViewById(R.id.cl_total);
@@ -227,6 +250,15 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         id_user = bundle.getInt("ID_USER");
     }
 
+    @Override
+    public void HideKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    //endregion
+
+    //region Fetch User
     @Override
     public void FetchUserFromServer() {
         StringRequest request = new StringRequest(Request.Method.POST,
@@ -267,7 +299,7 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(btnCancel, error.getMessage(), Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(btnCancel, "Lỗi kết nối internet", Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
             }
@@ -282,7 +314,9 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         RequestQueue requestQueue = Volley.newRequestQueue(UpdateUserActivity.this);
         requestQueue.add(request);
     }
+    //endregion
 
+    //region Load data từ server vào layout
     @Override
     public void LoadUser(UserClass userClass) {
 
@@ -307,7 +341,9 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
             }
         },1000);
     }
+    //endregion
 
+    //region Xử lí các button click
     @Override
     public void BtnSaveClick() {
         String fullname = et_fullname.getText().toString().trim();
@@ -336,7 +372,8 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
     @Override
     public void BtnCancelClick() {
         finish();
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+        DeleteImage();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_in_left);
     }
 
     @Override
@@ -418,7 +455,10 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
             }
         });
     }
+    //endregion
 
+    //region Xử lý image
+    //Take image from gallery
     @Override
     public void TakeImageFromGallery() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
@@ -434,7 +474,7 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         try {
             photoFile = createImageFile();
         } catch (IOException e) {
-            Snackbar snackbar = Snackbar.make(btnCancel,e.getMessage(),Snackbar.LENGTH_SHORT);
+            Snackbar snackbar = Snackbar.make(btnCancel,"Lỗi truy cập hình ảnh",Snackbar.LENGTH_SHORT);
             snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
             snackbar.show();
             /*Toast.makeText(AddingCategoryActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -451,6 +491,7 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         }
     }
 
+    //Create file for image from camera
     @Override
     public File createImageFile() throws IOException {
         // Create an image file name
@@ -468,6 +509,7 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         return image;
     }
 
+    //Get image through intent
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -496,6 +538,7 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         }
     }
 
+    //Delete image after upload or back previous activity
     @Override
     public void DeleteImage() {
         if (photoFile != null) {
@@ -505,6 +548,7 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         }
     }
 
+    //Check image null or not
     @Override
     public Boolean IsNullImage(Bitmap bitmap) {
         if (bitmap == null) {
@@ -514,6 +558,7 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         }
     }
 
+    //Convert image from bitmap to string
     @Override
     public String GetStringImage() {
         String image = "";
@@ -526,7 +571,11 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         }
         return image;
     }
+    //endregion
 
+    //region Kiểm tra điều kiện
+
+    //Điều kiện email là nhập đúng định dạng email và không được để trống
     @Override
     public Boolean GetNoEmail(String email){
         if (email.isEmpty()) {
@@ -546,6 +595,7 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         }
     }
 
+    //Điều kiện fullname là không được để trống
     @Override
     public Boolean GetNoFullName(String fullname){
         if (fullname.isEmpty()) {
@@ -559,13 +609,10 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
             return true;
         }
     }
+    //endregion
 
-    @Override
-    public void HideKeyboard(View view) {
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
+    //region Upload User to Server
+    //Include Image
     @Override
     public void UploadUserToServer(String fullname, String email, String image) {
         StringRequest request = new StringRequest(Request.Method.POST,
@@ -573,14 +620,15 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
             @Override
             public void onResponse(String response) {
                 pb_user.setVisibility(View.INVISIBLE);
-                Log.i("RESPONSE", response);
                 if(response.equals("Update user success")){
-                    Toast.makeText(UpdateUserActivity.this, response, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UpdateUserActivity.this, "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
                     finish();
                     DeleteImage();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_in_left);
                 }
                 else{
-                    Snackbar snackbar = Snackbar.make(btnCancel, response, Snackbar.LENGTH_SHORT);
+                    Log.i("RESPONSEUSER", response);
+                    Snackbar snackbar = Snackbar.make(btnCancel, "Cập nhật thông tin thất bại", Snackbar.LENGTH_SHORT);
                     snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                     snackbar.show();
                     DeleteImage();
@@ -589,7 +637,7 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(btnCancel, error.getMessage(), Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(btnCancel, "Lỗi kết nối internet", Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
             }
@@ -607,7 +655,7 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         RequestQueue requestQueue = Volley.newRequestQueue(UpdateUserActivity.this);
         requestQueue.add(request);
     }
-
+    //Not Image
     @Override
     public void UploadUserToServerNoImage(String fullname, String email) {
         StringRequest request = new StringRequest(Request.Method.POST,
@@ -615,13 +663,14 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
             @Override
             public void onResponse(String response) {
                 pb_user.setVisibility(View.INVISIBLE);
-                Log.i("RESPONSE", response);
                 if(response.equals("Update user success")){
-                    Toast.makeText(UpdateUserActivity.this, response, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UpdateUserActivity.this, "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
                     finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_in_left);
                 }
                 else{
-                    Snackbar snackbar = Snackbar.make(btnCancel, response, Snackbar.LENGTH_SHORT);
+                    Log.i("RESPONSEUSER", response);
+                    Snackbar snackbar = Snackbar.make(btnCancel, "Cập nhật thông tin thất bại", Snackbar.LENGTH_SHORT);
                     snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                     snackbar.show();
                 }
@@ -629,7 +678,7 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(btnCancel, error.getMessage(), Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(btnCancel, "Lỗi kết nối internet", Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
             }
@@ -646,4 +695,6 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         RequestQueue requestQueue = Volley.newRequestQueue(UpdateUserActivity.this);
         requestQueue.add(request);
     }
+    //endregion
+
 }

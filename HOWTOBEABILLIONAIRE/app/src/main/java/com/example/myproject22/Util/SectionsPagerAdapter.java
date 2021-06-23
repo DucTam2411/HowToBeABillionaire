@@ -11,8 +11,10 @@ import java.util.List;
 
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+    //region Component
     List<Fragment> fragmentList = new ArrayList<>();
     List<String> stringList = new ArrayList<>();
+    //endregion
 
     public SectionsPagerAdapter(FragmentManager fm) {
         super(fm);

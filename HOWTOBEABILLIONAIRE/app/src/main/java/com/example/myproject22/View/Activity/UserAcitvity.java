@@ -1,16 +1,34 @@
 package com.example.myproject22.View.Activity;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
+import android.transition.TransitionManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -24,15 +42,30 @@ import com.example.myproject22.Model.UserClass;
 import com.example.myproject22.Presenter.UserInterface;
 import com.example.myproject22.Presenter.UserPresenter;
 import com.example.myproject22.R;
+import com.example.myproject22.Util.Formatter;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -41,6 +74,9 @@ import static com.example.myproject22.Model.ConnectionClass.urlString;
 
 public class UserAcitvity extends AppCompatActivity implements UserInterface {
 
+    //region Khởi tạo giá trị ban đầu
+
+    //region Component
     private TextView tv_name;
     private TextView tv_date;
     private TextView tv_income;
@@ -52,10 +88,15 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
     private MaterialButton btnLogout;
     private ProgressBar pb_user;
     private ConstraintLayout cl_total;
+    //endregion
 
+    //region Presenter
     private int id_user = 1;
     private UserClass userClass;
     private UserPresenter presenter;
+    //endregion
+
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +104,13 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_user_acitvity);
 
+        //region Khởi tạo presenter và thiết lập các giá trị ban đầu
         presenter = new UserPresenter(this);
         presenter.setInit();
         presenter.getBundleData();
+        //endregion
 
+        //region Xử lí button click
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,6 +138,8 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
                 presenter.btnMap();
             }
         });
+        //endregion
+
     }
 
     @Override
@@ -102,6 +148,7 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
         presenter.loadDataToLayout();
     }
 
+    //region Set Init, get bundle
     @Override
     public void SetInit() {
         tv_name = findViewById(R.id.tv_username);
@@ -125,7 +172,11 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
         Bundle bundle = intent.getExtras();
         id_user = bundle.getInt("ID_USER");
     }
+    //endregion
 
+    //region Xử lí button click
+
+    //region Button Cập nhật thông tin
     @Override
     public void BtnUpdateUser() {
         Intent intent = new Intent(UserAcitvity.this, UpdateUserActivity.class);
@@ -133,7 +184,9 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
+    //endregion
 
+    //region Button Thay đổi mật khẩu
     @Override
     public void BtnPassword() {
         Intent intent = new Intent(UserAcitvity.this, UpdatePasswordActivity.class);
@@ -141,21 +194,76 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
+    //endregion
 
+    //region Button tìm kiếm ngân hàng, ATM
     @Override
     public void BtnMap() {
+        //Sử dụng dexter để check Permission
+        Dexter.withContext(UserAcitvity.this)
+                .withPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
+                        if(multiplePermissionsReport.areAllPermissionsGranted()){
 
+                            //region Xử lí khi mọi permission granted
+                            LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                                presenter.showCustomDialog();
+                            }else{
+                                presenter.showGPSDisabledAlertToUser();
+                            }
+                            //endregion
+
+                        } else {
+                            Snackbar snackbar = Snackbar.make(btnLogout, "Bạn chưa cấp quyền truy cập", Snackbar.LENGTH_SHORT);
+                            snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                            snackbar.show();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
+                        permissionToken.continuePermissionRequest();
+                    }
+                }).check();
     }
+    //endregion
 
+    //region Button đăng xuất
     @Override
     public void BtnLogOut() {
-        Intent i = new Intent(UserAcitvity.this, LoginActivity.class);
-        // set the new task and clear flags
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(i);
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
-    }
+        AlertDialog.Builder builder = new AlertDialog.Builder(UserAcitvity.this);
 
+        builder.setMessage("Bạn thật sự muốn đăng xuât")
+                .setTitle("Đăng xuất")
+                .setCancelable(false)
+                .setPositiveButton("Vâng", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent i = new Intent(UserAcitvity.this, LoginActivity.class);
+                        // set the new task and clear flags
+                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(i);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+                    }
+                })
+                .setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+    //endregion
+
+    //endregion
+
+    //region Fetch User
     @Override
     public void FetchUserFromServer() {
         StringRequest request = new StringRequest(Request.Method.POST,
@@ -163,7 +271,7 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
             @Override
             public void onResponse(String response) {
                 try {
-                    Log.i("TESTER", response);
+                    Log.i("RESPONSEUSER", response);
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
 
@@ -196,7 +304,7 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(btnMap, error.getMessage(), Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(btnMap, "Lỗi kết nối internet", Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
             }
@@ -211,7 +319,9 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
         RequestQueue requestQueue = Volley.newRequestQueue(UserAcitvity.this);
         requestQueue.add(request);
     }
+    //endregion
 
+    //region Load data from server to layout
     @Override
     public void LoadUser(UserClass userClass) {
 
@@ -232,14 +342,16 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
             Log.i("MONEY1",String.valueOf(money));
             String money_string = "Hiện tại đang nợ: " ;
             tv_income.setText(money_string);
-            String smoney = money + "VND";
+            String smoney = Formatter.getCurrencyStr(String.valueOf(-money));
+            smoney = smoney + " VND";
             tv_money.setText(smoney);
         }
         else{
             Log.i("MONEY1",String.valueOf(money));
             String money_string = "Hiện tại đang có: ";
             tv_income.setText(money_string);
-            String smoney = money + "VND";
+            String smoney = Formatter.getCurrencyStr(String.valueOf(money));
+            smoney = smoney + " VND";
             tv_money.setText(smoney);
         }
 
@@ -257,4 +369,92 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
             }
         },1000);
     }
+
+    //endregion
+
+    //region Dialog cho Map
+    @Override
+    public void ShowCustomDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(UserAcitvity.this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_map, null);
+        builder.setCancelable(true);
+        builder.setView(dialogView);
+
+        EditText et_find = dialogView.findViewById(R.id.et_findlocation);
+        MaterialButton btnBank = dialogView.findViewById(R.id.btnBank);
+        MaterialButton btnAtm = dialogView.findViewById(R.id.btnATM);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        et_find.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus){
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        });
+
+        btnBank.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String locat = et_find.getText().toString().trim();
+                if(!locat.isEmpty()){
+                    locat = locat + " ";
+                }
+                String find_string = "geo:0,0?z=15&q=" + locat + "atm";
+                Uri uri = Uri.parse(find_string);
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                intent.setPackage("com.google.android.apps.maps");
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+            }
+        });
+
+        btnAtm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String locat = et_find.getText().toString().trim();
+                if(!locat.isEmpty()){
+                    locat = locat + " ";
+                }
+                String find_string = "geo:0,0?z=15&q=" + locat + "bank";
+                Uri uri = Uri.parse(find_string);
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                intent.setPackage("com.google.android.apps.maps");
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+            }
+        });
+    }
+
+    @Override
+    public void ShowGPSDisabledAlertToUser() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("Hiện tại máy bạn chưa bật định vị. Bạn có muốn bật định vị không?")
+                .setTitle("Định vị")
+                .setCancelable(false)
+                .setPositiveButton("Vâng",
+                        new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int id){
+                                Intent callGPSSettingIntent = new Intent(
+                                        android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                startActivity(callGPSSettingIntent);
+                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+                            }
+                        });
+        alertDialogBuilder.setNegativeButton("Không",
+                new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int id){
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
+    //endregion
+
 }

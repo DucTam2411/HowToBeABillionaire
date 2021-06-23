@@ -7,17 +7,23 @@ import java.io.File;
 import java.io.IOException;
 
 public interface SignUpInterface {
+
+    //region Create and Set
     //Set init
     public void SetInit();
+    //Hide keyboard
+    public void HideKeyboard(View view);
+    //endregion
 
-    //Check null reference
+    //region Condition
     public Boolean GetNoUserName(String username);
     public Boolean GetNoPassword(String password);
     public Boolean GetNoSalary(String salary);
     public Boolean GetNoFullName(String fullname);
     public Boolean GetNoEmail(String email);
+    //endregion
 
-    //Image
+    //region Image
     public void ChooseImage();
     public void TakeImageFromGallery();
     public void TakeImageFromCamera();
@@ -25,15 +31,19 @@ public interface SignUpInterface {
     public Boolean IsNullImage(Bitmap bitmap);
     public String GetStringImage();
     public void DenyPermission();
+    public void DeleteImage();
+    //endregion
 
-    //Handle Click Event
+    //region Handle Click Event
     public void BtnSignUp();
     public void TextViewClick();
-    public void HideKeyboard(View view);
+    //endregion
 
-    //Get data from server
+    //region Upload data from server
     public void UploadUserToServer(String username, String password, String email,
                                    String fullname, String salary, String image);
     public void UploadUserNoImageToServer(String username, String password, String email,
                                           String fullname, String salary);
+    //endregion
+
 }

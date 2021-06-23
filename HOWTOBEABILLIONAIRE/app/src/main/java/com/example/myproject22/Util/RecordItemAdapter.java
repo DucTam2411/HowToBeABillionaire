@@ -40,8 +40,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RecordItemAdapter extends RecyclerView.Adapter<RecordItemAdapter.ViewHolder> {
 
+    //region Component
     private ArrayList<DetailItem> arrays;
     private Context context;
+    //endregion
+
     public RecordItemAdapter(ArrayList<DetailItem> arrays, Context context) {
         this.arrays = arrays;
         this.context = context;
@@ -56,6 +59,8 @@ public class RecordItemAdapter extends RecyclerView.Adapter<RecordItemAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
+        //region Component
         MaterialCardView cardView = holder.cardView;
 
         TextView tvMoney = cardView.findViewById(R.id.tvMoney);
@@ -66,14 +71,21 @@ public class RecordItemAdapter extends RecyclerView.Adapter<RecordItemAdapter.Vi
         CircleImageView btnImageCategory = cardView.findViewById(R.id.ivCategoryImage);
         ImageView ivCategory = cardView.findViewById(R.id.circleImageView4);
         ImageView ivSetAudio = cardView.findViewById(R.id.ivSetAudio);
+        //endregion
 
+        //region Gán dữ liệu
 
         DetailItem item = arrays.get(position);
-        tvMoney.setText(String.valueOf(item.get_MONEY()));
+
+        //region Gán dữ liệu cơ bản
+        String money = Formatter.getCurrencyStr(String.valueOf(item.get_MONEY())) + " VND";
+        tvMoney.setText(money);
         tvDescription.setText(item.get_DESCRIPTION());
         tvName.setText(item.get_NAME());
         tvTime.setText(item.get_DATE());
+        //endregion
 
+        //region Gán dữ liệu cho loại thu chi
         int IsCategory = item.get_TYPE();
         if(IsCategory == 1){
             ivCategory.setImageResource(R.drawable.round_background_income);
@@ -83,7 +95,9 @@ public class RecordItemAdapter extends RecyclerView.Adapter<RecordItemAdapter.Vi
             ivCategory.setImageResource(R.drawable.round_background_outcome);
             ivSetAudio.setImageResource(R.drawable.round_background_outcome);
         }
+        //endregion
 
+        //region Gán hình ảnh
         String image_url = item.get_IMAGE();
         if (image_url.equals("NULL")) {
             btnImage.setImageResource(R.drawable.backgroundflower);
@@ -96,7 +110,11 @@ public class RecordItemAdapter extends RecyclerView.Adapter<RecordItemAdapter.Vi
         } else {
             Glide.with(cardView).load(image_category_url).into(btnImageCategory);
         }
+        //endregion
 
+        //endregion
+
+        //region Handle Click (âm thanh và không có âm thanh)
         String audio_url = item.get_AUDIO();
         if(audio_url.equals("NULL")){
             ivSetAudio.setVisibility(View.INVISIBLE);
@@ -127,6 +145,7 @@ public class RecordItemAdapter extends RecyclerView.Adapter<RecordItemAdapter.Vi
                 }
             });
         }
+        //endregion
     }
 
     @Override

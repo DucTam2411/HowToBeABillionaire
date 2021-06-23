@@ -1,6 +1,8 @@
 package com.example.myproject22.Model;
 
 public class UserClass {
+
+    //region Component
     private int ID_USER;
     private String USERNAME;
     private String EMAIL;
@@ -10,15 +12,14 @@ public class UserClass {
     private String IMAGE;
     private double INCOME;
     private double OUTCOME;
+    //endregion
 
-
+    //region Constructor
     public UserClass(String FULLNAME, String DATESTART, String IMAGE) {
         this.FULLNAME = FULLNAME;
         this.DATESTART = DATESTART;
         this.IMAGE = IMAGE;
     }
-
-
 
     public UserClass(String FULLNAME, String DATESTART, String IMAGE, double INCOME, double OUTCOME) {
         this.FULLNAME = FULLNAME;
@@ -34,7 +35,9 @@ public class UserClass {
         this.DATESTART = DATESTART;
         this.IMAGE = IMAGE;
     }
+    //endregion
 
+    //region Get and Set
     public int getID_USER() {
         return ID_USER;
     }
@@ -106,4 +109,6 @@ public class UserClass {
     public void setOUTCOME(double OUTCOME) {
         this.OUTCOME = OUTCOME;
     }
+    //endregion
+
 }

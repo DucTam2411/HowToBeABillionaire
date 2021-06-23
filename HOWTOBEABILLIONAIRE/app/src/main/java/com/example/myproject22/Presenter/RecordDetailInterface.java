@@ -4,26 +4,28 @@ import android.view.View;
 
 public interface RecordDetailInterface {
 
+    //region Set init, get bundle
     //Set init
     public void SetInit();
-
     //Get Bundle Data
     public void GetBundleData();
+    //endregion
 
-    //Load Data to Layout
+    //region Load Data to Layout
     public void LoadDataToLayout();
     public void LoadDataToLayoutNoAudio();
-
-    //Fetch Data from server
-    public  void FetchIncomeDataFromServer();
-    public void FetchOutcomeDataFromServer();
-
     //LoadFromServer
     public void LoadFromServer();
+    //endregion
 
+    //region Fetch Data from server
+    public  void FetchIncomeDataFromServer();
+    public void FetchOutcomeDataFromServer();
+    //endregion
+
+    //region Handle Media
     //Prepare Media Player
     public void PrepareMedia(String url);
-
     //Get time media
     public String GetTimeMedia(long millionsecond);
     public void UpdateSeekbar();
@@ -33,4 +35,6 @@ public interface RecordDetailInterface {
     public void SetNext5Second();
     public void SetBack5Second();
     public void SetRealseMedia();
+    //endregion
+
 }

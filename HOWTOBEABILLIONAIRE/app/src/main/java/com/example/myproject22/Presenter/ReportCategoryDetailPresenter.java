@@ -7,6 +7,8 @@ public class ReportCategoryDetailPresenter {
         this.anInterface = anInterface;
     }
 
+    //region Set init, get bundle
+
     public void setInit(){
         anInterface.SetInit();
     }
@@ -15,9 +17,21 @@ public class ReportCategoryDetailPresenter {
         anInterface.GetBundleData();
     }
 
+    //endregion
+
+    //region Loading
+
     public void loadTotalArray(){
         anInterface.LoadTotalArray();
     }
+
+    public void loadData(){
+        anInterface.LoadData();
+    }
+
+    //endregion
+
+    //region Fetch income, outcome
 
     public void fetchIncomeFromServer(){
         anInterface.FetchIncomeDetailInServer();
@@ -27,7 +41,6 @@ public class ReportCategoryDetailPresenter {
         anInterface.FetchOutcomeDetailInServer();
     }
 
-    public void loadData(){
-        anInterface.LoadData();
-    }
+    //endregion
+
 }

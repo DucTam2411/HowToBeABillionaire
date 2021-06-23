@@ -7,13 +7,18 @@
         android:required="true" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -22,11 +27,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyProject22">
-        <activity android:name=".View.Activity.UpdatePasswordActivity"></activity>
-        <activity android:name=".View.Activity.UpdateUserActivity" />
+
+        <activity android:name=".View.Activity.UpdatePasswordActivity"
+            android:parentActivityName=".View.Activity.UserAcitvity"/>
+
+        <activity android:name=".View.Activity.UpdateUserActivity"
+            android:parentActivityName=".View.Activity.UserAcitvity"/>
+
         <activity android:name=".View.Activity.UserAcitvity" />
-        <activity android:name=".View.Activity.ForgotPasswordActivity" />
-        <activity android:name=".View.Activity.SignUpActivity" />
+
+        <activity android:name=".View.Activity.ForgotPasswordActivity"
+            android:parentActivityName=".View.Activity.LoginActivity"/>
+
+        <activity android:name=".View.Activity.SignUpActivity"
+            android:parentActivityName=".View.Activity.LoginActivity"/>
+
         <activity android:name=".View.Activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,15 +49,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".View.Activity.RecordDetailActivity"
             android:parentActivityName=".View.Activity.ReportCategoryDetailActivity" />
-        <activity android:name=".View.Activity.ReportCategoryDetailActivity" /> <!-- Phan report cua Son -->
+
+        <activity android:name=".View.Activity.ReportCategoryDetailActivity" /> <!-- Phan report cua Quan -->
         <activity android:name=".View.Activity.ReportCategoryActivity" />
+
         <activity
             android:name=".View.Activity.AddingCategoryActivity"
             android:parentActivityName=".View.Activity.AddingActivity" />
+
         <activity android:name=".View.Activity.AddingActivity" />
+
         <activity android:name=".View.Activity.ReportCategoryGraphActivity" /> <!-- phan cua Quan -->
         <!-- Giao dien chinh -->
         <activity android:name=".View.Activity.DashboardActivity">

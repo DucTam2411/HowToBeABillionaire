@@ -13,9 +13,11 @@ import com.google.android.material.tabs.TabLayout;
 
 public class ReportCategoryGraphActivity extends AppCompatActivity  {
 
+    //region Parameter
     private int id_user =0 ;
     private int id_income = 0;
     private int id_outcome = 0;
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,17 +27,23 @@ public class ReportCategoryGraphActivity extends AppCompatActivity  {
 
         GetBundleData();
 
+        //region Xử lí ViewPager
         CategoryGraphPagerAdapter categoryGraphPagerAdapter = new CategoryGraphPagerAdapter(getSupportFragmentManager(), id_user, id_income, id_outcome);
         ViewPager viewPager = findViewById(R.id.category_graph_pager);
         viewPager.setAdapter(categoryGraphPagerAdapter);
+        //endregion
 
+        //region Xử lí TabLayout
         TabLayout tabLayout = findViewById(R.id.category_tabs);
         tabLayout.setupWithViewPager(viewPager);
 
         tabLayout.getTabAt(0).setIcon(R.drawable.icon_edit);
         tabLayout.getTabAt(1).setIcon(R.drawable.icon_music);
+        //endregion
+
     }
 
+    //region Get bundle
     public void GetBundleData(){
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
@@ -43,7 +51,5 @@ public class ReportCategoryGraphActivity extends AppCompatActivity  {
         id_income = bundle.getInt("ID_INCOME");
         id_outcome = bundle.getInt("ID_OUTCOME");
     }
-
-
-
+    //endregion
 }

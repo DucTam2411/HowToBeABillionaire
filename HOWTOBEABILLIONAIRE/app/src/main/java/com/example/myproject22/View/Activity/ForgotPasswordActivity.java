@@ -40,18 +40,23 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class ForgotPasswordActivity extends AppCompatActivity implements ForgotPasswordInterface {
+
+    //region Khởi tạo component
+
+    //region Xử lí cài dặt password
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
-                    //"(?=.*[0-9])" +         //at least 1 digit
-                    //"(?=.*[a-z])" +         //at least 1 lower case letter
-                    //"(?=.*[A-Z])" +         //at least 1 upper case letter
-                    "(?=.*[a-zA-Z])" +      //any letter
-                    //"(?=.*[@#$%^&+=])" +    //at least 1 special character
-                    "(?=\\S+$)" +           //no white spaces
-                    ".{4,}" +               //at least 4 characters
+                    //"(?=.*[0-9])" +         //tối thiểu 1 số
+                    //"(?=.*[a-z])" +         //tối thiểu 1 ký tự viết thường
+                    //"(?=.*[A-Z])" +         /tối thiểu 1 ký tự viết hoa
+                    "(?=.*[a-zA-Z])" +      //bát kỳ ký tự nào
+                    //"(?=.*[@#$%^&+=])" +    //tối thiểu 1 ký tự đặt biệt
+                    "(?=\\S+$)" +           //không có khoảng trắng
+                    ".{4,}" +               //tối thiểu 4 ký tự
                     "$");
+    //endregion
 
-    //Component
+    //region Component
     private TextInputLayout til_user;
     private TextInputLayout til_email;
     private TextInputLayout til_password;
@@ -64,18 +69,25 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
     private TextView tv_signup_forgot;
     private ProgressBar pb_forgot;
     private CoordinatorLayout mSnackbarLayout;
+    //endregion
 
     //Presenter
     private ForgotPasswordPresenter presenter;
+
+    //endregion
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_forgot_password);
 
+        //region Khởi tạo presenter
         presenter = new ForgotPasswordPresenter(this);
         presenter.setInit();
+        //endregion
 
+        //region Xử lí button và textview
         btn_forgot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,7 +101,9 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
                 presenter.textViewClick();
             }
         });
+        //endregion
 
+        //region Xử lí các edittext
         et_user_forgot.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -174,8 +188,11 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
             }
         });
 
+        //endregion
+
     }
 
+    //region Khởi tạo các component vầ keyboard
     @Override
     public void SetInIt() {
         til_user = findViewById(R.id.til_user);
@@ -193,6 +210,17 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
     }
 
     @Override
+    public void HideKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    //endregion
+
+    //region Kiểm tra điều kiện trước khi nhấn button
+
+    //Điều kiện username không được để trông username
+    @Override
     public Boolean GetNoUserName(String username) {
         if (username.isEmpty()) {
             til_user.setError("Username không được để trống");
@@ -206,6 +234,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
         }
     }
 
+    //Điều kiện password là password không được để trống và password phải tối thiêu 4 ký tự (1 từ)
     @Override
     public Boolean GetNoPassword(String password) {
         if (password.isEmpty()) {
@@ -225,6 +254,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
         }
     }
 
+    //Điều kiện email không được để trông email
     @Override
     public Boolean GetNoEmail(String email) {
         if (email.isEmpty()) {
@@ -244,6 +274,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
         }
     }
 
+    //Điều kiện password comfirm không được để trông và phải giống với password trước
     @Override
     public Boolean GetNoConfirmPassword(String password, String password_confirm) {
         if (password_confirm.isEmpty()) {
@@ -263,6 +294,10 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
         }
     }
 
+    //endregion
+
+
+    //region Xử lí button click và textview click
     @Override
     public void BtnForgetClick() {
         pb_forgot.setVisibility(View.VISIBLE);
@@ -298,21 +333,31 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
 
+    //Thay đổi password trên server
     @Override
     public void UploadNewPassword(String username, String email, String password) {
+        String c = "Account not found";
         StringRequest request = new StringRequest(Request.Method.POST,
                 ConnectionClass.urlString + "forgotPassword.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.i("RESPONSE",response);
                 pb_forgot.setVisibility(View.GONE);
-                if (response.equals("Update password success")) {
-                    Toast.makeText(ForgotPasswordActivity.this, response, Toast.LENGTH_SHORT).show();
+                if (response.length() == 25) {
+                    Toast.makeText(ForgotPasswordActivity.this, "Thay đổi mật khâu thành công", Toast.LENGTH_SHORT).show();
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
+                else if(response.length() == 15){
+                    til_password.setError("Mật khẩu bạn đổi giống với mật khẩu hiện tại.");
+                    til_password_confirm.setError("Mật khẩu bạn đổi giống với mật khẩu hiện tại.");
+                }
+                else if(response.length() == 19){
+                    til_email.setError("Không tìm thấy tài khoản này");
+                    til_user.setError("Không tìm thấy tài khoản này");
+                }
                 else{
-                    Snackbar snackbar = Snackbar.make(mSnackbarLayout,response,Snackbar.LENGTH_SHORT);
+                    Log.i("RESPONSEFORGOTPASSWORD",response);
+                    Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Thay đổi mật khẩu thất bại",Snackbar.LENGTH_SHORT);
                     snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                     snackbar.show();
                 }
@@ -320,7 +365,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -341,9 +386,6 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
         requestQueue.add(request);
     }
 
-    @Override
-    public void HideKeyboard(View view) {
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
+    //endregion
+
 }

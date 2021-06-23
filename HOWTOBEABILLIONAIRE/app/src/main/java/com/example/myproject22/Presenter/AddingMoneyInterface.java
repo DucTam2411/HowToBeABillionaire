@@ -7,13 +7,25 @@ import java.io.File;
 import java.io.IOException;
 
 public interface AddingMoneyInterface {
-    //Set component
+
+    //region Set component
     public void SetInit();
     public void GetDataBundle();
+    //Hide Keyboard
+    public void HideKeyboard(View view);
+    //endregion
 
+    //region Category
     //Load income and spending category
     public void LoadCategory();
+    //Find id category by its name
+    public int FindIdByName(String name);
+    //Fetch category from server
+    public void FetchIncomeCategory();
+    public void FetchOutcomeCategory();
+    //endregion
 
+    //region Image
     //Load Image from Camera of Gallery
     public void ChooseImage();
 
@@ -21,6 +33,16 @@ public interface AddingMoneyInterface {
     public void TakeImageFromGallery();
     public void TakeImageFromCamera();
 
+    public void DeleteRecord();
+    public void DeleteImage();
+    public File createImageFile() throws IOException;
+
+    //Check image null
+    public Boolean IsNullImage(Bitmap bitmap);
+    public String GetStringImage();
+    //endregion
+
+    //region Audio
     //Capture record and play audio
     public void CaptureRecord();
     public void CaptureAudio();
@@ -31,38 +53,24 @@ public interface AddingMoneyInterface {
     public void StartAudio();
     public void StopAudio();
 
-    //Check valid number
-    public void IsValidNumber(CharSequence s);
-
-    //Find id category by its name
-    public int FindIdByName(String name);
-
-    //Check image null
-    public Boolean IsNullImage(Bitmap bitmap);
-    public String GetStringImage();
-
     //Check audio null
     public Boolean IsNullAudio();
     public byte[] Convert3gbToByte();
     public String GetStringAudio();
 
-    //Saving
-    public void SavingMoneyData(String money, String description, int category_id, String image, String audio);
+    //Reset
+    public void ResetSound();
+    //endregion
 
+    //region Condition
+    //Check valid number
+    public void IsValidNumber(CharSequence s);
     //If money not numeric or category, toast user
     public Boolean GetNoMoneyData(String money);
     public void GetNoCategoryData();
+    //endregion
 
-    //Hide Keyboard
-    public void HideKeyboard(View view);
+    //Saving
+    public void SavingMoneyData(String money, String description, int category_id, String image, String audio);
 
-    //Fetch category from server
-    public void FetchIncomeCategory();
-    public void FetchOutcomeCategory();
-
-    public void ResetSound();
-
-    public void DeleteRecord();
-    public void DeleteImage();
-    public File createImageFile() throws IOException;
 }

@@ -7,12 +7,14 @@ import android.widget.RadioGroup;
 import java.io.ByteArrayOutputStream;
 
 public class AddingCategoryPresenter {
-    private AddingCategoryInterface anInterface;
 
+    private AddingCategoryInterface anInterface;
 
     public AddingCategoryPresenter(AddingCategoryInterface anInterface) {
         this.anInterface = anInterface;
     }
+
+    //region Set and Create
 
     public void setInit(){
         anInterface.SetInit();
@@ -20,6 +22,17 @@ public class AddingCategoryPresenter {
 
     public void getBundleData(){
         anInterface.GetBundleData();
+    }
+
+    public void hideKeyboard(View view){
+        anInterface.HideKeyboard(view);
+    }
+
+    //endregion
+
+    //region Condition and Saving
+    public void checkRadioButtonCategory(RadioGroup radioGroup, int idChecked){
+        anInterface.CheckRadioButtonCategory(radioGroup,idChecked);
     }
 
     public void savingNewCategory(Bitmap bitmap){
@@ -34,6 +47,9 @@ public class AddingCategoryPresenter {
 
         anInterface.SavingNewCategory();
     }
+    //endregion
+
+    //region Image
 
     public void chooseImage(){
         anInterface.ChooseImage();
@@ -41,14 +57,6 @@ public class AddingCategoryPresenter {
 
     public Boolean isNullImage(Bitmap bitmap){
         return anInterface.IsNullImage(bitmap);
-    }
-
-    public void checkRadioButtonCategory(RadioGroup radioGroup, int idChecked){
-        anInterface.CheckRadioButtonCategory(radioGroup,idChecked);
-    }
-
-    public void hideKeyboard(View view){
-        anInterface.HideKeyboard(view);
     }
 
     public void takeImageFromCamera(){
@@ -65,5 +73,7 @@ public class AddingCategoryPresenter {
         byte[] byteArray = stream.toByteArray();
         return byteArray;
     }
+
+    //endregion
 
 }

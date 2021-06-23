@@ -93,12 +93,11 @@ import static com.example.myproject22.Util.FormatImage.ByteToBitmap;
 
 public class SavingActivity extends AppCompatActivity implements SavingInterface {
 
-    private BarChart weekchart;
-
+    //region Khởi tạo component
     // for debugg
     double ivSize = 0;
 
-    // tiet kiem
+    //region Component cho tiet kiem
     private int id_saving = 3;
     private int id_user = 9;
     private TextView tvDayStreak;
@@ -113,31 +112,47 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     private ConstraintLayout cl_savingmoney;
     private ConstraintLayout cl_user;
     private MaterialCardView cardView;
-    private UserClass userClass;
+    private BarChart weekchart;
+    //endregion
 
-    //Xử lí thời gian và tiền
+    //region Parameter
+
+    //region Xử lí thời gian và tiền
     private ArrayList<Date> arrayDate = new ArrayList<>();
     private int count_date = 0;
     private String money_string = "";
+    //endregion
 
+    //region Xử lí user
+    private UserClass userClass;
+    //endregion
+
+    //region Array list và 1 vài xử lí biểu đồ
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private static final int DAYSOFWEEK = 7;
+    ArrayList<String> ngayTrongTuan = new ArrayList<String>();
+    ArrayList<BarEntry> recordTietKiem = new ArrayList<>();
+    //endregion
+
+    // region Presenter
+    private SavingPresenter mSavingPresenter;
+    //endregion
+
+    //endregion
+
+    //endregion
+
+    //region của Tâm
     // muc tieu
     private TextView tvGoalName;
     private TextView tvGoalDescription;
     private TextView tvMoneyGoal;
     private ImageView ivGoal;
     private TextRoundCornerProgressBar ProgressSaving;
-
-
-    private static final int DAYSOFWEEK = 7;
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private SavingPresenter mSavingPresenter;
-
     SQLiteDatabase db;
     Cursor cursor;
-    ArrayList<String> ngayTrongTuan = new ArrayList<String>();
-    ArrayList<BarEntry> recordTietKiem = new ArrayList<>();
-
     SavingDatabaseHelper ASavingDatabaseHelper = new SavingDatabaseHelper(this, null, null, 0);
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,11 +161,14 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_saving);
 
+        //region Khởi tạo presenter và các giá trị mặc định
         mSavingPresenter = new SavingPresenter(this);
         mSavingPresenter.initView();
         mSavingPresenter.getBundleData();
         mSavingPresenter.createDataBarChart();
+        //endregion
 
+        //region Của Tâm
         /*AddRecords();
         mSavingPresenter.LoadGetTietKiemData();
         mSavingPresenter.LoadTietKiem();*/
@@ -167,130 +185,32 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                 mSavingPresenter.chooseImage();
             }
         });*/
+        //endregion
 
+        //region Xử lí cardview click
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSavingPresenter.btnUserClick();
             }
         });
+        //endregion
 
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ASavingDatabaseHelper.closeAll();
-    }
-
+    //region Xử lí các hàm override từ Activity
     @Override
     protected void onResume() {
         super.onResume();
        mSavingPresenter.loadDataFromServer();
     }
+    //endregion
 
-    @Override
-    public void CreateDataBarChart(){
-
-        //Load bar chart cột x
-        ngayTrongTuan.add("Thứ 2");
-        ngayTrongTuan.add("Thứ 3");
-        ngayTrongTuan.add("Thứ 4");
-        ngayTrongTuan.add("Thứ 5");
-        ngayTrongTuan.add("Thứ 6");
-        ngayTrongTuan.add("Thứ 7");
-        ngayTrongTuan.add("Chủ Nhật");
-
-        //Khởi tạo bar chart cho cột y tương ứng với từng cột x
-        recordTietKiem.add(new BarEntry(0, 0));
-        recordTietKiem.add(new BarEntry(1, 0));
-        recordTietKiem.add(new BarEntry(2, 0));
-        recordTietKiem.add(new BarEntry(3, 0));
-        recordTietKiem.add(new BarEntry(4, 0));
-        recordTietKiem.add(new BarEntry(5, 0));
-        recordTietKiem.add(new BarEntry(6, 0));
-    }
-
-    @Override
-    public void LoadDataFromServerToBarChart() {
-        //get data from database
-        BarDataSet barDataSet = new BarDataSet(recordTietKiem, "Ngày trong tuần");
-        barDataSet.setColors(ColorTemplate.VORDIPLOM_COLORS);
-        barDataSet.setValueTextColor(Color.BLACK);
-        barDataSet.setValueTextSize(0f);
-        barDataSet.setValueTypeface(Typeface.MONOSPACE);
-        barDataSet.setBarBorderWidth(1);
-        BarData barData = new BarData(barDataSet);
-
-
-        barData.setBarWidth(0.5f);
-        weekchart.setFitBars(true);
-        weekchart.setData(barData);
-        weekchart.getDescription().setText("");
-        weekchart.setHighlightFullBarEnabled(true);
-
-
-        // set XAxis value formater
-        XAxis xAxis = weekchart.getXAxis();
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(ngayTrongTuan));
-
-        xAxis.setPosition(XAxis.XAxisPosition.TOP);
-        xAxis.setDrawAxisLine(false);
-        xAxis.setDrawGridLines(true);
-        xAxis.setGranularity(1f);
-        xAxis.setDrawLabels(true);
-        xAxis.setLabelCount(ngayTrongTuan.size());
-
-        pb_saving.setVisibility(View.GONE);
-        weekchart.setVisibility(View.VISIBLE);
-    }
-
-
-    @Override
-    public void LoadChiTietTietKiem() {
-        new LoadChiTietTietKiem().execute();
-    }
-
-    @Override
-    public void LoadTietKiem() {
-        new LoadTietKiem().execute();
-    }
-
-    @Override
-    public void LoadMucTieu() {
-        new LoadMucTieu().execute();
-    }
-
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        mSavingPresenter.LoadMucTieu();
-    }
-
-
-    public void AddRecords() {
-/*
-
-        ASavingDatabaseHelper.insertChitietTienChi(20, "me cho", 1, null, "2020-06-03");
-        ASavingDatabaseHelper.insertChitietTienChi(20, "me cho", 1, null, "2020-06-04");
-        ASavingDatabaseHelper.insertChitietTienChi(20, "me cho", 1, null, "2020-06-05");
-        ASavingDatabaseHelper.insertChitietTienChi(20, "me cho", 1, null, "2020-06-06");
-
-        ASavingDatabaseHelper.insertChiTietTienThu(10, "ssa", 1, "2020-06-07");
-        ASavingDatabaseHelper.insertChitietTienChi(10, "ssa", 1, null,"2020-06-07");
-
-
-        ASavingDatabaseHelper.insertChitietTienChi(10, "ssa", 1, null,"2020-06-08");
-        ASavingDatabaseHelper.insertChiTietTienThu(10, "ssa", 1, "2020-06-09");
-*/
-
-
-    }
-
+    //region Set init, get bundle
     @Override
     public void InitViews() {
-        //saving
+
+        //region saving
         weekchart = findViewById(R.id.weekChar);
         tvDayStreak = findViewById(R.id.tvDayStreak);
         tvTotalSaving = findViewById(R.id.tvTotalSaving);
@@ -304,8 +224,9 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         cl_savingmoney = findViewById(R.id.cl_savingmoney);
         cl_user = findViewById(R.id.cl_user);
         cardView = findViewById(R.id.materialCardView);
+        //endregion
 
-        //Ẩn layout khi đang load từ server
+        //region Ẩn layout khi đang load từ server
         pb_savingmoney.bringToFront();
         pb_savingdate.bringToFront();
         pb_saving.bringToFront();
@@ -313,13 +234,16 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         cl_savingmoney.setVisibility(View.INVISIBLE);
         cl_savingdate.setVisibility(View.INVISIBLE);
         weekchart.setVisibility(View.INVISIBLE);
+        //endregion
 
-        // goal
+        //region goal
         tvGoalName = findViewById(R.id.tvGoalName);
         tvGoalDescription = findViewById(R.id.tvGoalDescription);
         tvMoneyGoal = findViewById(R.id.tvMoneyGoal);
         ProgressSaving = findViewById(R.id.Progress_saving);
         ivGoal = findViewById(R.id.ivGoal);
+        //endregion
+
     }
 
     @Override
@@ -329,7 +253,122 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         id_user = bundle.getInt("ID_USER");
         id_saving = bundle.getInt("ID_SAVING");
     }
+    //endregion
 
+    //region Tạo barchart
+    @Override
+    public void CreateDataBarChart(){
+
+        //region Load bar chart cột x
+        ngayTrongTuan.add("Thứ 2");
+        ngayTrongTuan.add("Thứ 3");
+        ngayTrongTuan.add("Thứ 4");
+        ngayTrongTuan.add("Thứ 5");
+        ngayTrongTuan.add("Thứ 6");
+        ngayTrongTuan.add("Thứ 7");
+        ngayTrongTuan.add("Chủ Nhật");
+        //endregion
+
+        //region Khởi tạo bar chart cho cột y tương ứng với từng cột x
+        recordTietKiem.add(new BarEntry(0, 0));
+        recordTietKiem.add(new BarEntry(1, 0));
+        recordTietKiem.add(new BarEntry(2, 0));
+        recordTietKiem.add(new BarEntry(3, 0));
+        recordTietKiem.add(new BarEntry(4, 0));
+        recordTietKiem.add(new BarEntry(5, 0));
+        recordTietKiem.add(new BarEntry(6, 0));
+        //endregion
+
+    }
+    //endregion
+
+    //region Load data from server vào layout
+
+    //region BarChart
+    @Override
+    public void LoadDataFromServerToBarChart() {
+
+        //region Xử lí BarDataSet
+        BarDataSet barDataSet = new BarDataSet(recordTietKiem, "Ngày trong tuần");
+        barDataSet.setColors(ColorTemplate.VORDIPLOM_COLORS);
+        barDataSet.setValueTextColor(Color.BLACK);
+        barDataSet.setValueTextSize(0f);
+        barDataSet.setValueTypeface(Typeface.MONOSPACE);
+        barDataSet.setBarBorderWidth(1);
+        //endregion
+
+        //region Xử lí BarData
+        BarData barData = new BarData(barDataSet);
+        barData.setBarWidth(0.5f);
+        //endregion
+
+        //region Xử lí weekchart
+        weekchart.setFitBars(true);
+        weekchart.setData(barData);
+        weekchart.getDescription().setText("");
+        weekchart.setHighlightFullBarEnabled(true);
+        //endregion
+
+        //region Xử lí XAxis (Hàng X)
+        // set XAxis value formater
+        XAxis xAxis = weekchart.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(ngayTrongTuan));
+
+        xAxis.setPosition(XAxis.XAxisPosition.TOP);
+        xAxis.setDrawAxisLine(false);
+        xAxis.setDrawGridLines(true);
+        xAxis.setGranularity(1f);
+        xAxis.setDrawLabels(true);
+        xAxis.setLabelCount(ngayTrongTuan.size());
+        //endregion
+
+        //region Hiện barchart khi đã load xong
+        pb_saving.setVisibility(View.GONE);
+        weekchart.setVisibility(View.VISIBLE);
+        //endregion
+    }
+    //endregion
+
+    //region User
+    @Override
+    public void LoadUser(UserClass userClass) {
+        tvUserName.setText(userClass.getFULLNAME());
+        String date_temp = userClass.getDATESTART();
+        String[] slipdate = date_temp.split(" ");
+        String[] slipday = slipdate[0].split("-");
+        String date_string = "Đã tham gia vào \nngày " + slipday[2] + "/" + slipday[1] + "/" + slipday[0];
+        tvUserDate.setText(date_string);
+
+        if(!userClass.getIMAGE().equals("null")){
+            Glide.with(SavingActivity.this).load(userClass.getIMAGE()).into(ivProfile);
+        }
+
+        cl_user.setVisibility(View.VISIBLE);
+    }
+    //endregion
+
+    //region Total
+    @Override
+    public void LoadDataFromServer() {
+        String date_start = SavingPresenter.StringFromDate(SavingPresenter.FindMondayFromDate(new Date()));
+        String date_end = SavingPresenter.StringFromDate(SavingPresenter.FindEndOfWeek(SavingPresenter.FindMondayFromDate(new Date())));
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mSavingPresenter.fetchUserFromServer();
+                mSavingPresenter.fetchArrayDateFromServer();
+                mSavingPresenter.fetchMoneySavingFromServer();
+                mSavingPresenter.fetchSavingDetailFromServer(date_start,date_end);
+            }
+        }, 1000);
+    }
+    //endregion
+
+    //endregion
+
+    //region Fetch Data from server
+
+    //region Lấy dữ liệu từ bảng savingdetail
     @Override
     public void FetchSavingDetailFromServer(String date_start, String date_end){
         StringRequest request = new StringRequest(Request.Method.POST,
@@ -337,7 +376,8 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
             @Override
             public void onResponse(String response) {
                 try {
-                    Log.i("TESTER1", response);
+                    Log.i("RESPONSESAVING", response);
+
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
 
@@ -372,7 +412,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(weekchart, error.getMessage(), Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(weekchart, "Lỗi kết nối internet", Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
             }
@@ -383,14 +423,15 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                 params.put("id_saving", String.valueOf(id_saving));
                 params.put("datestart", date_start);
                 params.put("dateend", date_end);
-                Log.i("TESTRECORD", date_start + "\n" + date_end);
                 return params;
             }
         };
         RequestQueue requestQueue = Volley.newRequestQueue(SavingActivity.this);
         requestQueue.add(request);
     }
+    //endregion
 
+    //region Lấy dữ liệu ngày từ savingdetail (để tìm chuỗi ngày)
     public void FetchArrayDateFromServer(){
         arrayDate = new ArrayList<>();
         count_date = 0;
@@ -399,6 +440,8 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
             @Override
             public void onResponse(String response) {
                 try {
+                    Log.i("RESPONSESAVING", response);
+
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
 
@@ -434,7 +477,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(weekchart, error.getMessage(), Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(weekchart, "Lỗi kết nối internet", Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
             }
@@ -449,7 +492,9 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         RequestQueue requestQueue = Volley.newRequestQueue(SavingActivity.this);
         requestQueue.add(request);
     }
+    //endregion
 
+    //region Lấy dữ liệu tiền từ saving (để tìm tiến tiết kiệm)
     @Override
     public void FetchMoneySavingFromServer(){
         StringRequest request = new StringRequest(Request.Method.POST,
@@ -457,6 +502,8 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
             @Override
             public void onResponse(String response) {
                 try {
+                    Log.i("RESPONSESAVING", response);
+
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
 
@@ -480,7 +527,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(weekchart, error.getMessage(), Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(weekchart, "Lỗi kết nối internet", Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
             }
@@ -495,7 +542,9 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         RequestQueue requestQueue = Volley.newRequestQueue(SavingActivity.this);
         requestQueue.add(request);
     }
+    //endregion
 
+    //region Lấy thông tin user từ bảng user
     @Override
     public void FetchUserFromServer(){
         StringRequest request = new StringRequest(Request.Method.POST,
@@ -503,7 +552,8 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
             @Override
             public void onResponse(String response) {
                 try {
-                    Log.i("TESTER", response);
+                    Log.i("RESPONSESAVING", response);
+
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
 
@@ -534,7 +584,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(weekchart, error.getMessage(), Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(weekchart, "Lỗi kết nối internet", Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
             }
@@ -549,38 +599,11 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         RequestQueue requestQueue = Volley.newRequestQueue(SavingActivity.this);
         requestQueue.add(request);
     }
+    //endregion
 
-    @Override
-    public void LoadUser(UserClass userClass) {
-        tvUserName.setText(userClass.getFULLNAME());
-        String date_temp = userClass.getDATESTART();
-        String[] slipdate = date_temp.split(" ");
-        String[] slipday = slipdate[0].split("-");
-        String date_string = "Đã tham gia vào \nngày " + slipday[2] + "/" + slipday[1] + "/" + slipday[0];
-        tvUserDate.setText(date_string);
+    //endregion
 
-        if(!userClass.getIMAGE().equals("null")){
-            Glide.with(SavingActivity.this).load(userClass.getIMAGE()).into(ivProfile);
-        }
-
-        cl_user.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void LoadDataFromServer() {
-        String date_start = SavingPresenter.StringFromDate(SavingPresenter.FindMondayFromDate(new Date()));
-        String date_end = SavingPresenter.StringFromDate(SavingPresenter.FindEndOfWeek(SavingPresenter.FindMondayFromDate(new Date())));
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mSavingPresenter.fetchUserFromServer();
-                mSavingPresenter.fetchArrayDateFromServer();
-                mSavingPresenter.fetchMoneySavingFromServer();
-                mSavingPresenter.fetchSavingDetailFromServer(date_start,date_end);
-            }
-        }, 1000);
-    }
-
+    //region Handle Material Cardview Click
     @Override
     public void BtnUserClick() {
         Intent intent = new Intent(SavingActivity.this, UserAcitvity.class);
@@ -588,7 +611,9 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
+    //endregion
 
+    //region Của Tâm
     // async stask
     class LoadChiTietTietKiem extends AsyncTask<Void, Process, Void> {
 
@@ -764,6 +789,54 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
+
+    @Override
+    public void LoadChiTietTietKiem() {
+        new LoadChiTietTietKiem().execute();
+    }
+
+    @Override
+    public void LoadTietKiem() {
+        new LoadTietKiem().execute();
+    }
+
+    @Override
+    public void LoadMucTieu() {
+        new LoadMucTieu().execute();
+    }
+
+    public void AddRecords() {
+/*
+
+        ASavingDatabaseHelper.insertChitietTienChi(20, "me cho", 1, null, "2020-06-03");
+        ASavingDatabaseHelper.insertChitietTienChi(20, "me cho", 1, null, "2020-06-04");
+        ASavingDatabaseHelper.insertChitietTienChi(20, "me cho", 1, null, "2020-06-05");
+        ASavingDatabaseHelper.insertChitietTienChi(20, "me cho", 1, null, "2020-06-06");
+
+        ASavingDatabaseHelper.insertChiTietTienThu(10, "ssa", 1, "2020-06-07");
+        ASavingDatabaseHelper.insertChitietTienChi(10, "ssa", 1, null,"2020-06-07");
+
+
+        ASavingDatabaseHelper.insertChitietTienChi(10, "ssa", 1, null,"2020-06-08");
+        ASavingDatabaseHelper.insertChiTietTienThu(10, "ssa", 1, "2020-06-09");
+*/
+
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        mSavingPresenter.LoadMucTieu();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ASavingDatabaseHelper.closeAll();
+    }
+
+    //endregion
 
 }
 

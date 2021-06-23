@@ -12,6 +12,8 @@ public class UpdateUserPresenter {
         this.anInterface = anInterface;
     }
 
+    //region SetInit, Get bundle, Keyboard
+
     public void setInit() {
         anInterface.SetInit();
     }
@@ -20,9 +22,21 @@ public class UpdateUserPresenter {
         anInterface.GetBundleData();
     }
 
+    public void hideKeyboard(View view){
+        anInterface.HideKeyboard(view);
+    }
+
+    //endregion
+
+    //region Fetch User
+
     public void fetchUserFromServer(){
         anInterface.FetchUserFromServer();
     }
+
+    //endregion
+
+    //region Loading
 
     public void loadUser(UserClass userClass){
         anInterface.LoadUser(userClass);
@@ -32,6 +46,10 @@ public class UpdateUserPresenter {
         anInterface.LoadDataToLayout();
     }
 
+    //endregion
+
+    //region Handle Button Click
+
     public void btnSaveClick(){
         anInterface.BtnSaveClick();
     }
@@ -40,13 +58,18 @@ public class UpdateUserPresenter {
         anInterface.BtnCancelClick();
     }
 
-    //Image User
+    //endregion
+
+    //region Image User
+
     public void chooseImage() {
         anInterface.ChooseImage();
     }
+
     public void takeImageFromGallery() {
         anInterface.TakeImageFromGallery();
     }
+
     public void takeImageFromCamera() {
         anInterface.TakeImageFromCamera();
     }
@@ -59,6 +82,10 @@ public class UpdateUserPresenter {
         return anInterface.GetStringImage();
     }
 
+    //endregion
+
+    //region Condition
+
     public Boolean getNoFullName(String fullname){
         return anInterface.GetNoFullName(fullname);
     }
@@ -67,14 +94,18 @@ public class UpdateUserPresenter {
         return anInterface.GetNoEmail(email);
     }
 
+    //endregion
+
+    //region Upload User to Server
+
     public void uploadUserToServer(String fullname, String email, String image) {
         anInterface.UploadUserToServer(fullname,email,image);
     }
+
     public void uploadUserToServerNoImage(String fullname, String email) {
         anInterface.UploadUserToServerNoImage(fullname,email);
     }
 
-    public void hideKeyboard(View view){
-        anInterface.HideKeyboard(view);
-    }
+    //endregion
+
 }

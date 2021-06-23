@@ -72,6 +72,9 @@ import static com.example.myproject22.Presenter.AddingMoneyPresentent.convertByt
 
 public class AddingCategoryActivity extends AppCompatActivity implements AddingCategoryInterface {
 
+    //region Khởi tạo các component
+
+    //region Component cho layout
     private EditText etCategory;
     private RadioGroup rgCategory;
     private RadioButton rbtnIncome;
@@ -82,20 +85,25 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
     private ImageButton btnSaving;
     private ProgressBar progressBar;
     private CoordinatorLayout mSnackbarLayout;
+    //endregion
 
+    //region Parameter xử lí hình ảnh
     private File photoFile = null;
     private String mCurrentPhotoPath;
-
     private Bitmap bmImage;
     private int id_user;
     private int isCategory = 1;
+    //endregion
 
-    //Const mặc định để xét permission
+    //region Const mặc định để xét permission
     private static final int PERMISSION_IMAGE = 1000;
     private static final int PERMISSION_EXTERNAL_STORAGE = 1001;
+    //endregion
 
     //Presenter
     AddingCategoryPresenter presentent;
+
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,10 +111,13 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_adding_category);
 
+        //region Khởi tạo presenter và các giá trị ban đầu
         presentent = new AddingCategoryPresenter(this);
         presentent.setInit();
         presentent.getBundleData();
+        //endregion
 
+        //region Xử lí các edit text, button
         etCategory.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -132,7 +143,9 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
                 presentent.checkRadioButtonCategory(group, checkedId);
             }
         });
+        //endregion
 
+        //region Xử lí button lưu
         btnSaving.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,8 +153,10 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
                 presentent.savingNewCategory(bmImage);
             }
         });
+        //endregion
     }
 
+    //region Xử lí khởi tạo, lấy bundle và keyboard
     @Override
     public void SetInit() {
         etCategory = findViewById(R.id.etCategory);
@@ -156,6 +171,24 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         til_category = findViewById(R.id.til_category);
     }
 
+    @Override
+    public void GetBundleData() {
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+
+        id_user = bundle.getInt("ID_USER");
+    }
+
+    @Override
+    public void HideKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    //endregion
+
+    //region Xử lí image và tên image
+    //region Xử lí image
     @Override
     public void ChooseImage() {
         AlertDialog.Builder builder = new AlertDialog.Builder(AddingCategoryActivity.this);
@@ -181,7 +214,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
                             presentent.takeImageFromCamera();
                         }
                         else{
-                            Snackbar snackbar = Snackbar.make(mSnackbarLayout,"All permissions are not granted",Snackbar.LENGTH_SHORT);
+                            Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Bạn chưa cấp đủ quyền truy cập.",Snackbar.LENGTH_SHORT);
                             snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                             snackbar.show();
                             /*Toast.makeText(AddingCategoryActivity.this, "All permissions are not granted", Toast.LENGTH_SHORT).show();*/
@@ -214,7 +247,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
 
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Permission is not granted",Snackbar.LENGTH_SHORT);
+                        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Bạn chưa cấp quyền truy cập",Snackbar.LENGTH_SHORT);
                         snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                         snackbar.show();
                         /*Toast.makeText(AddingCategoryActivity.this, "Permission is not granted", Toast.LENGTH_SHORT).show();*/
@@ -237,25 +270,6 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
     }
 
     @Override
-    public void GetBundleData() {
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-
-        id_user = bundle.getInt("ID_USER");
-    }
-
-    @Override
-    public void SavingNewCategory() {
-        String name = etCategory.getText().toString().trim();
-        String image = GetStringImage();
-        if (isCategory == 1) {
-            UploadIncomeCategoryToServer(name, id_user, image);
-        } else {
-            UploadOutcomeCategoryToServer(name, id_user, image);
-        }
-    }
-
-    @Override
     public void TakeImageFromGallery() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
@@ -270,7 +284,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         try {
             photoFile = createImageFile();
         } catch (IOException e) {
-            Snackbar snackbar = Snackbar.make(mSnackbarLayout,e.getMessage(),Snackbar.LENGTH_SHORT);
+            Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi chỉnh sửa hình ảnh",Snackbar.LENGTH_SHORT);
             snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
             snackbar.show();
             /*Toast.makeText(AddingCategoryActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -337,8 +351,9 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
             }
         }
     }
+    //endregion
 
-
+    //region Xử lí String image
     @Override
     public Boolean IsNullImage(Bitmap bitmap) {
         if (bitmap == null) {
@@ -350,7 +365,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
 
     @Override
     public void GetNoImage() {
-        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Vui lòng chọn hình ảnh cho danh mục.",Snackbar.LENGTH_SHORT);
+        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Vui lòng chọn hình ảnh cho danh mục.",Snackbar.LENGTH_INDEFINITE);
         snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
         snackbar.show();
         /*Toast.makeText(AddingCategoryActivity.this, "Vui lòng chọn hình ảnh cho danh mục.", Toast.LENGTH_SHORT).show();*/
@@ -370,6 +385,11 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         return image;
     }
 
+    //endregion
+
+    //endregion
+
+    //region Kiểm tra điều kiện để lưu danh mục
     @Override
     public void CheckRadioButtonCategory(RadioGroup radioGroup, int idChecked) {
         int checkRadio = radioGroup.getCheckedRadioButtonId();
@@ -396,6 +416,19 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
             return false;
         }
     }
+    //endregion
+
+    //region Lưu danh mục (danh mục thu và danh mục chi)
+    @Override
+    public void SavingNewCategory() {
+        String name = etCategory.getText().toString().trim();
+        String image = GetStringImage();
+        if (isCategory == 1) {
+            UploadIncomeCategoryToServer(name, id_user, image);
+        } else {
+            UploadOutcomeCategoryToServer(name, id_user, image);
+        }
+    }
 
     public void UploadIncomeCategoryToServer(String name, int id_user, String image) {
         StringRequest request = new StringRequest(Request.Method.POST,
@@ -404,10 +437,12 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
             public void onResponse(String response) {
                 progressBar.setVisibility(View.GONE);
                 if (response.equals("Add new income category success")) {
-                    Toast.makeText(AddingCategoryActivity.this, response, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddingCategoryActivity.this, "Thêm danh mục mới thành công", Toast.LENGTH_SHORT).show();
                     DeleteImage();
                     finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_in_left);
                 } else {
+                    Log.i("RESPONSECATEGORY", response);
                     Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Tên danh mục đã tồn tại. Vui lòng chọn tên danh mục khác.",Snackbar.LENGTH_SHORT);
                     snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                     snackbar.show();
@@ -417,7 +452,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(AddingCategoryActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -445,10 +480,12 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
             public void onResponse(String response) {
                 progressBar.setVisibility(View.GONE);
                 if (response.equals("Add new outcome category success")) {
-                    Toast.makeText(AddingCategoryActivity.this, response, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddingCategoryActivity.this, "Thêm danh mục mới thành công", Toast.LENGTH_SHORT).show();
                     DeleteImage();
                     finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_in_left);
                 } else {
+                    Log.i("RESPONSECATEGORY", response);
                     Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Tên danh mục đã tồn tại. Vui lòng chọn tên danh mục khác.",Snackbar.LENGTH_SHORT);
                     snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                     snackbar.show();
@@ -458,7 +495,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(AddingCategoryActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -478,13 +515,9 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         RequestQueue requestQueue = Volley.newRequestQueue(AddingCategoryActivity.this);
         requestQueue.add(request);
     }
+    //endregion
 
-    @Override
-    public void HideKeyboard(View view) {
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
+    //region Xóa ảnh ki đã lưu hoặc quay lại
     @Override
     public void DeleteImage() {
         if (photoFile != null) {
@@ -499,4 +532,6 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         super.onBackPressed();
         DeleteImage();
     }
+    //endregion
+
 }

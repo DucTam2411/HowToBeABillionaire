@@ -9,9 +9,19 @@ public class ForgotPasswordPresenter {
         this.anInterface = anInterface;
     }
 
+    //region Create and Set
+
     public void setInit(){
         anInterface.SetInIt();
     }
+
+    public void hideKeyboard(View view){
+        anInterface.HideKeyboard(view);
+    }
+
+    //endregion
+
+    //region Condition
 
     public Boolean getNoUserName(String username) {
         return anInterface.GetNoUserName(username);
@@ -29,6 +39,10 @@ public class ForgotPasswordPresenter {
         return anInterface.GetNoConfirmPassword(password, password_confirm);
     }
 
+    //endregion
+
+    //region Handle Click
+
     public void btnForgetClick(){
         anInterface.BtnForgetClick();
     }
@@ -37,11 +51,14 @@ public class ForgotPasswordPresenter {
         anInterface.TextViewClick();
     }
 
+    //endregion
+
+    //region Update Password to server
+
     public void uploadNewPassword(String username, String email, String password){
         anInterface.UploadNewPassword(username,email,password);
     }
 
-    public void hideKeyboard(View view){
-        anInterface.HideKeyboard(view);
-    }
+    //endregion
+
 }

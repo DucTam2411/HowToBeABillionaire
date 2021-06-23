@@ -10,6 +10,8 @@ public class RecordDetailPresenter {
         this.anInterface = anInterface;
     }
 
+    //region Set init, get bundle
+
     public void GetBundleData(){
         anInterface.GetBundleData();
     }
@@ -18,9 +20,25 @@ public class RecordDetailPresenter {
         anInterface.SetInit();
     }
 
+    //endregion
+
+    //region Loading
+
     public void loadDataToLayout(){
         anInterface.LoadDataToLayout();
     }
+
+    public void loadDataToLayoutNoAudio(){
+        anInterface.LoadDataToLayoutNoAudio();
+    }
+
+    public void loadDataFromServer(){
+        anInterface.LoadFromServer();
+    }
+
+    //endregion
+
+    //region Fetch data from server
 
     public void fetchIncomeDatFromServer(){
         anInterface.FetchIncomeDataFromServer();
@@ -30,9 +48,9 @@ public class RecordDetailPresenter {
         anInterface.FetchOutcomeDataFromServer();
     }
 
-    public void loadDataFromServer(){
-        anInterface.LoadFromServer();
-    }
+    //endregion
+
+    //region Handle Media
 
     public void prepareMedia(String url){
         anInterface.PrepareMedia(url);
@@ -70,7 +88,6 @@ public class RecordDetailPresenter {
         anInterface.SetRealseMedia();
     }
 
-    public void loadDataToLayoutNoAudio(){
-        anInterface.LoadDataToLayoutNoAudio();
-    }
+    //endregion
+
 }

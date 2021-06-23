@@ -6,25 +6,37 @@ import java.io.File;
 import java.io.IOException;
 
 public interface SavingInterface {
-    //Set init
+
+    //region Set init, get bundle
     public void InitViews();
     public void GetBundleData();
+    //endregion
 
-    //Create Data bar chart
+    //region Create Data bar chart
     public void CreateDataBarChart();
-    public void LoadDataFromServerToBarChart();
+    //endregion
 
-    //Fetch data from server
+    //region Loading to layout
+    public void LoadDataFromServerToBarChart();
+    public void LoadUser(UserClass userClass);
+    public void LoadDataFromServer();
+    //endregion
+
+    //region Fetch data from server
     public void FetchSavingDetailFromServer(String date_start, String date_end);
     public void FetchArrayDateFromServer();
     public void FetchMoneySavingFromServer();
     public void FetchUserFromServer();
-    public void LoadUser(UserClass userClass);
-    public void LoadDataFromServer();
-    public void BtnUserClick();
+    //endregion
 
+    //region Handle Button Click
+    public void BtnUserClick();
+    //endregion
+
+    //region Của Tâm
     public void LoadChiTietTietKiem();
     public void LoadTietKiem();
     public void LoadMucTieu();
+    //endregion
 }
 

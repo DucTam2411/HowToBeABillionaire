@@ -13,27 +13,42 @@ public class AddingMoneyPresentent {
     public AddingMoneyPresentent(AddingMoneyInterface anInterface) {
         this.anInterface = anInterface;
     }
+
+    //region Create and Set
+
     public void getDataBundle(){anInterface.GetDataBundle();}
 
     public void setInit(){
         anInterface.SetInit();
     }
 
+    public void hideKeyBoard(View view){
+        anInterface.HideKeyboard(view);
+    }
+
+    //endregion
+
+    //region Category
+
     public void loadingIncomeCategory(){
         anInterface.LoadCategory();
     }
 
-    public void chooseImage(){
-        anInterface.ChooseImage();
+    public int findIdByName(String name){
+        return anInterface.FindIdByName(name);
     }
 
-    public void CaptureRecord(){
-        anInterface.CaptureRecord();
+    public void fetchIncomeCategoryFromServer(){
+        anInterface.FetchIncomeCategory();
     }
 
-    public void CaptureAudio(){
-        anInterface.CaptureAudio();
+    public void fetchOutcomeCategoryFromServer(){
+        anInterface.FetchOutcomeCategory();
     }
+
+    //endregion
+
+    //region Condition
 
     public void SetOnTextChange(CharSequence s){
         anInterface.IsValidNumber(s);
@@ -43,40 +58,7 @@ public class AddingMoneyPresentent {
         return str != null && str.matches("[0-9]+");
     }
 
-    public int findIdByName(String name){
-        return anInterface.FindIdByName(name);
-    }
-
-    public Boolean isNullAudio(){
-        return anInterface.IsNullAudio();
-    }
-
-    public Boolean isNullImage(Bitmap bitmap){
-        return anInterface.IsNullImage(bitmap);
-    }
-
-    public byte[] convert3gbToByte(){
-        return anInterface.Convert3gbToByte();
-    }
-
-    public String getStringImage(){
-        return anInterface.GetStringImage();
-    }
-
-    public String getStringAudio(){
-        return anInterface.GetStringAudio();
-    }
-
-    public static String convertByteToString(byte[] bytes){
-        if(bytes == null){
-            String s = "NULL";
-            return s;
-        }
-        else{
-            String s = Base64.encodeToString(bytes,Base64.DEFAULT);
-            return s;
-        }
-    }
+    //endregion
 
     public void savingMoneyData(String money, String description, int category_id, String image, String audio){
         //Check valid money
@@ -93,15 +75,14 @@ public class AddingMoneyPresentent {
         anInterface.SavingMoneyData(money,description,category_id,image,audio);
     }
 
-    public static byte[] encodeTobase64(Bitmap image) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 80, stream);
-        byte[] byteArray = stream.toByteArray();
-        return byteArray;
+    //region Audio
+
+    public void CaptureRecord(){
+        anInterface.CaptureRecord();
     }
 
-    public void hideKeyBoard(View view){
-        anInterface.HideKeyboard(view);
+    public void CaptureAudio(){
+        anInterface.CaptureAudio();
     }
 
     public void startRecord(){
@@ -120,6 +101,37 @@ public class AddingMoneyPresentent {
         anInterface.StopAudio();
     }
 
+    public String getStringAudio(){
+        return anInterface.GetStringAudio();
+    }
+
+    public static String convertByteToString(byte[] bytes){
+        if(bytes == null){
+            String s = "NULL";
+            return s;
+        }
+        else{
+            String s = Base64.encodeToString(bytes,Base64.DEFAULT);
+            return s;
+        }
+    }
+
+    public byte[] convert3gbToByte(){
+        return anInterface.Convert3gbToByte();
+    }
+
+    public Boolean isNullAudio(){
+        return anInterface.IsNullAudio();
+    }
+
+    //endregion
+
+    //region Image
+
+    public void chooseImage(){
+        anInterface.ChooseImage();
+    }
+
     public void takeImageFromCamera(){
         anInterface.TakeImageFromCamera();
     }
@@ -128,11 +140,21 @@ public class AddingMoneyPresentent {
         anInterface.TakeImageFromGallery();
     }
 
-    public void fetchIncomeCategoryFromServer(){
-        anInterface.FetchIncomeCategory();
+    public Boolean isNullImage(Bitmap bitmap){
+        return anInterface.IsNullImage(bitmap);
     }
 
-    public void fetchOutcomeCategoryFromServer(){
-        anInterface.FetchOutcomeCategory();
+    public String getStringImage(){
+        return anInterface.GetStringImage();
     }
+
+    public static byte[] encodeTobase64(Bitmap image) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+        byte[] byteArray = stream.toByteArray();
+        return byteArray;
+    }
+
+    //endregion
+
 }

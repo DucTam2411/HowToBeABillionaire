@@ -32,6 +32,7 @@ import com.example.myproject22.Model.DetailItem;
 import com.example.myproject22.Presenter.RecordDetailInterface;
 import com.example.myproject22.Presenter.RecordDetailPresenter;
 import com.example.myproject22.R;
+import com.example.myproject22.Util.Formatter;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -55,11 +56,16 @@ import static com.example.myproject22.Model.ConnectionClass.urlString;
 
 public class RecordDetailActivity extends AppCompatActivity implements RecordDetailInterface {
 
-    //ID_DETAIL
+    //region Khởi tạo component
+
+    //region Presenter
+    private RecordDetailPresenter presenter;
     private int id_detail;
     private int isCategory;
+    private DetailItem item;
+    //endregion
 
-    //Component
+    //region Component
     private TextView tvMoney;
     private TextView tvDescription;
     private TextView tvNameCategory;
@@ -76,16 +82,17 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
     private LinearLayout linearLayout;
     private ProgressBar progressBar;
     private CoordinatorLayout mSnackbarLayout;
+    //endregion
 
-    private DetailItem item;
-
+    //region Media
     private MediaPlayer mediaPlayer;
     private Handler handler = new Handler();
     private Boolean flag = false;
     private Boolean isLoading = true;
+    //endregion
 
-    //Presenter
-    private RecordDetailPresenter presenter;
+    //endregion
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,23 +100,24 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_record_detail);
 
+        //region Khởi tạo presenter và giá trị ban đầu
         presenter = new RecordDetailPresenter(this);
         presenter.setInit();
+        presenter.GetBundleData();
+        //endregion
 
-        btnPause.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                presenter.getPauseClick();
-            }
-        });
+        //region Xử lí media
 
+        //region Xử lí seekbar
         seekBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return presenter.getSeekbarTouch(v);
             }
         });
+        //endregion
 
+        //region Xử lí media player
         mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
             @Override
             public void onBufferingUpdate(MediaPlayer mp, int percent) {
@@ -121,6 +129,15 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
             @Override
             public void onCompletion(MediaPlayer mp) {
                 presenter.setCompleteMedia();
+            }
+        });
+        //endregion
+
+        //region Xử lí các button
+        btnPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.getPauseClick();
             }
         });
 
@@ -137,16 +154,35 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
                 presenter.setBack5Second();
             }
         });
+        //endregion
+
+        //endregion
+
     }
 
+    //region Xử lí các hàm override từ activity
     @Override
     protected void onResume() {
         super.onResume();
-        presenter.GetBundleData();
-
         presenter.loadDataFromServer();
     }
 
+    //Xử lí quay lại
+    @Override
+    public void onBackPressed() {
+        if(isLoading == false) {
+            super.onBackPressed();
+            presenter.setReleaseMedia();
+        }
+        else{
+            super.onBackPressed();
+        }
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_in_left);
+    }
+
+    //endregion
+
+    //region Set init, get bundle
     @Override
     public void SetInit() {
         tvMoney = findViewById(R.id.textView6);
@@ -183,11 +219,13 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         id_detail = bundle.getInt("ID_DETAIL");
         isCategory = bundle.getInt("IS_CATEGORY");
     }
+    //endregion
 
+    //region Load data from server to layout
     @Override
     public void LoadDataToLayout() {
-        String sMoney = String.valueOf(item.get_MONEY());
         String isPlus = isCategory == 1 ? "+ " : "- ";
+        String sMoney = Formatter.getCurrencyStr(String.valueOf(item.get_MONEY())) + " VND";
         tvMoney.setText(isPlus + " " + sMoney);
         tvDescription.setText(item.get_DESCRIPTION());
         tvNameCategory.setText(item.get_NAME());
@@ -208,7 +246,7 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
 
     @Override
     public void LoadDataToLayoutNoAudio() {
-        String sMoney = String.valueOf(item.get_MONEY());
+        String sMoney = Formatter.getCurrencyStr(String.valueOf(item.get_MONEY())) + " VND";
         String isPlus = isCategory == 1 ? "+ " : "- ";
         tvMoney.setText(isPlus + " " + sMoney);
         tvDescription.setText(item.get_DESCRIPTION());
@@ -226,7 +264,22 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         tvTime.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void LoadFromServer() {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isCategory == 1) {
+                    presenter.fetchIncomeDatFromServer();
+                } else {
+                    presenter.fetchOutcomeDataFromServer();
+                }
+            }
+        }, 3000);
+    }
+    //endregion
 
+    //region Fetch income, outcome from server
     @Override
     public void FetchIncomeDataFromServer() {
         StringRequest request = new StringRequest(Request.Method.POST,
@@ -234,7 +287,8 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
             @Override
             public void onResponse(String response) {
                 try {
-                    Log.i("INCOME", response);
+                    Log.i("RESPONSERECORĐETAIL", response);
+
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
 
@@ -284,7 +338,7 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(RecordDetailActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -308,6 +362,8 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
             @Override
             public void onResponse(String response) {
                 try {
+                    Log.i("RESPONSERECORDDETAIL", response);
+
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
 
@@ -359,7 +415,7 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(RecordDetailActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -375,21 +431,11 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         RequestQueue requestQueue = Volley.newRequestQueue(RecordDetailActivity.this);
         requestQueue.add(request);
     }
+    //endregion
 
-    @Override
-    public void LoadFromServer() {
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (isCategory == 1) {
-                    presenter.fetchIncomeDatFromServer();
-                } else {
-                    presenter.fetchOutcomeDataFromServer();
-                }
-            }
-        }, 3000);
-    }
+    //region Xử lí Media
 
+    //Chuẩn bị media
     @Override
     public void PrepareMedia(String url) {
         try {
@@ -398,14 +444,15 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
             tvEnd.setText(presenter.getTimeMedia(mediaPlayer.getDuration()));
             isLoading = false;
         } catch (IOException e) {
-            Snackbar snackbar = Snackbar.make(mSnackbarLayout,e.getMessage(),Snackbar.LENGTH_SHORT);
+            Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi không tìm thấy nguồn thu âm",Snackbar.LENGTH_SHORT);
             snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
             snackbar.show();
+            isLoading = false;
             /*Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();*/
         }
     }
 
-
+    //Lấy thời gian của media
     @Override
     public String GetTimeMedia(long millionsecond) {
         String timeString = "";
@@ -430,6 +477,7 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         return timeString;
     }
 
+    //1 runnable để cập nhật thanh seekbar khi media đang phát
     private Runnable updater = new Runnable() {
         @Override
         public void run() {
@@ -441,6 +489,7 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         }
     };
 
+    //Cập nhật seekbar khi media đang phát
     @Override
     public void UpdateSeekbar() {
         if (flag == true) {
@@ -451,6 +500,7 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         }
     }
 
+    //Xử lí button pause
     @Override
     public void GetPauseClick() {
         if (mediaPlayer.isPlaying()) {
@@ -465,6 +515,7 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         }
     }
 
+    //Xử lí seekbar touch
     @Override
     public boolean GetSeekbarTouch(View view) {
         seekBar = (SeekBar) view;
@@ -474,6 +525,7 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         return false;
     }
 
+    //Xử lí layout khi media complete
     @Override
     public void SetCompleteMedia() {
         flag = false;
@@ -485,6 +537,7 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         presenter.prepareMedia(item.get_AUDIO());
     }
 
+    //Xử lí button next 5s
     @Override
     public void SetNext5Second() {
         if (flag == true) {
@@ -500,6 +553,7 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         }
     }
 
+    //Xử lý button back 5s
     @Override
     public void SetBack5Second() {
         if (flag == true) {
@@ -514,6 +568,7 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         }
     }
 
+    //Giải phóng media khi quay lại
     @Override
     public void SetRealseMedia() {
         mediaPlayer.stop();
@@ -522,14 +577,6 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         flag = false;
     }
 
-    @Override
-    public void onBackPressed() {
-        if(isLoading == false) {
-            super.onBackPressed();
-            presenter.setReleaseMedia();
-        }
-        else{
-            super.onBackPressed();
-        }
-    }
+    //endregion
+
 }

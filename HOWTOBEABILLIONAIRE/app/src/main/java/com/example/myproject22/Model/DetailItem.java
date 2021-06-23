@@ -3,6 +3,8 @@ package com.example.myproject22.Model;
 import java.util.Date;
 
 public class DetailItem {
+
+    //region Component
     private int _ID_DETAIL;
     private Double _MONEY;
     private String _DESCRIPTION;
@@ -12,7 +14,10 @@ public class DetailItem {
     private String _IMAGE;
     private String _IMAGECATEGORY;
     private String _AUDIO;
+    private Date _DATEFULL;
+    //endregion
 
+    //region Constructor
     public DetailItem(Double _MONEY, String _DESCRIPTION, String _DATE, String _NAME, String _IMAGE, String _IMAGECATEGORY, String _AUDIO, Date _DATEFULL) {
         this._MONEY = _MONEY;
         this._DESCRIPTION = _DESCRIPTION;
@@ -24,17 +29,6 @@ public class DetailItem {
         this._DATEFULL = _DATEFULL;
     }
 
-    public Date get_DATEFULL() {
-        return _DATEFULL;
-    }
-
-    public void set_DATEFULL(Date _DATEFULL) {
-        this._DATEFULL = _DATEFULL;
-    }
-
-    private Date _DATEFULL;
-
-
     public DetailItem(int _ID_DETAIL,Double _MONEY, String _DESCRIPTION, String _DATE, String _NAME, int _TYPE, String _IMAGE, String _IMAGECATEGORY, String _AUDIO, Date _DATEFULL) {
         this._ID_DETAIL = _ID_DETAIL;
         this._MONEY = _MONEY;
@@ -45,6 +39,16 @@ public class DetailItem {
         this._IMAGE = _IMAGE;
         this._IMAGECATEGORY = _IMAGECATEGORY;
         this._AUDIO = _AUDIO;
+        this._DATEFULL = _DATEFULL;
+    }
+    //endregion
+
+    //region Get and Set
+    public Date get_DATEFULL() {
+        return _DATEFULL;
+    }
+
+    public void set_DATEFULL(Date _DATEFULL) {
         this._DATEFULL = _DATEFULL;
     }
 
@@ -119,4 +123,6 @@ public class DetailItem {
     public void set_ID_DETAIL(int _ID_DETAIL) {
         this._ID_DETAIL = _ID_DETAIL;
     }
+    //endregion
+
 }

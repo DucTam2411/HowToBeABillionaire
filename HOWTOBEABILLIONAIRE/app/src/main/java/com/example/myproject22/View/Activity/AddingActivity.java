@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -95,16 +96,21 @@ import static com.example.myproject22.Presenter.AddingMoneyPresentent.encodeToba
 import static com.example.myproject22.Presenter.AddingMoneyPresentent.isNumeric;
 
 public class AddingActivity extends AppCompatActivity implements AddingMoneyInterface {
-    //Khởi tạo các component để thực hiện event
 
-    //Component về camera
+    //region Khởi tạo các component để thực hiện event
+
+    //Presenter
+    AddingMoneyPresentent addingMoneyPresentent;
+
+    //region Component về camera
     private ImageButton btnImage;
     private TextView tvImage;
     private Bitmap bmImage;
     private File photoFile = null;
     String mCurrentPhotoPath;
+    //endregion
 
-    //Component về record và audio
+    //region Component về record và audio
     private ImageButton btnPlay;
     private ImageButton btnRecord;
     private WaveVisualizer mVisualizer;
@@ -116,8 +122,9 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     private String recordFile = "NO";
     private long starttime = 0;
     private long stoptime = 0;
+    //endregion
 
-    //Component về list category
+    //region Component về list category
     private RecyclerView categoryRecycler;
     private RecyclerView categoryRecycler1;
     private BottomSheetBehavior bottomSheetBehavior;
@@ -126,40 +133,43 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     private ProgressBar progressBar2;
     TextView tvChooseImage;
     MaterialButton btnAddCategory;
+    //endregion
 
-    //Component về tiền
+    //region Component về tiền
     private EditText etMoney;
     private SeekBar seekBar;
     private EditText etDescription;
     private TextInputLayout til_money;
+    //endregion
 
+    //region Component saving
     private ImageButton btnSaving;
     private ProgressBar progressBar3;
-
     //Sncakbar
     private CoordinatorLayout mSnackbarLayout;
+    //endregion
 
-    //Các array list để lấy danh sách
+    //region Các array list để lấy danh sách
     private ArrayList<CategoryClass> arrayList = new ArrayList<>();
     private ArrayList<CategoryClass> arrayList1 = new ArrayList<>();
     private CategoryClass categoryClass;
+    //endregion
 
-
-    //Const mặc định để xét permission
+    //region Const mặc định để xét permission
     private static final int PERMISSION_IMAGE = 1000;
     private static final int PERMISSION_EXTERNAL_STORAGE = 1001;
     private static final int PERMISSION_AUDIO = 1002;
+    //endregion
 
-    //Presenter
-    AddingMoneyPresentent addingMoneyPresentent;
-
-    //Parameter for saving
+    //region Parameter for saving
     int isCategory = 0;
     Boolean isMax = false;
-
     private int id_user;
     private int id_income;
     private int id_outcome;
+    //endregion
+
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,11 +177,13 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_adding);
 
+        //region Khởi tạo present và các giá trị ban đầu
         addingMoneyPresentent = new AddingMoneyPresentent(this);
         addingMoneyPresentent.getDataBundle();
         addingMoneyPresentent.setInit();
+        //endregion
 
-
+        //region Xử lí các button
         btnImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -194,6 +206,27 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
             }
         });
 
+        btnSaving.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressBar3.setVisibility(View.VISIBLE);
+                String money = etMoney.getText().toString().trim();
+                String description = etDescription.getText().toString().trim();
+
+                String category = tvChooseImage.getText().toString().trim();
+                int category_id = addingMoneyPresentent.findIdByName(category);
+
+                String image = addingMoneyPresentent.getStringImage();
+                String audio = addingMoneyPresentent.getStringAudio();
+
+                addingMoneyPresentent.savingMoneyData(money, description, category_id, image, audio);
+
+                /*Toast.makeText(AddingActivity.this, String.valueOf(id_user) + "\n" + String.valueOf(id_income) + "\n" + String.valueOf(id_outcome), Toast.LENGTH_SHORT).show();*/
+            }
+        });
+        //endregion
+
+        //region Xử lí seekbar
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -219,7 +252,9 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
 
             }
         });
+        //endregion
 
+        //region Xử lí các edit text của money, description
         //Hide keyboard
         etMoney.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -255,36 +290,10 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
             }
         });
 
-        btnSaving.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progressBar3.setVisibility(View.VISIBLE);
-                String money = etMoney.getText().toString().trim();
-                String description = etDescription.getText().toString().trim();
-
-                String category = tvChooseImage.getText().toString().trim();
-                int category_id = addingMoneyPresentent.findIdByName(category);
-
-                String image = addingMoneyPresentent.getStringImage();
-                String audio = addingMoneyPresentent.getStringAudio();
-
-                addingMoneyPresentent.savingMoneyData(money, description, category_id, image, audio);
-
-                /*Toast.makeText(AddingActivity.this, String.valueOf(id_user) + "\n" + String.valueOf(id_income) + "\n" + String.valueOf(id_outcome), Toast.LENGTH_SHORT).show();*/
-            }
-        });
+        //endregion
     }
 
-    @Override
-    public void GetDataBundle() {
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-
-        id_user = bundle.getInt("ID_USER");
-        id_income = bundle.getInt("ID_INCOME");
-        id_outcome = bundle.getInt("ID_OUTCOME");
-    }
-
+    //region Override những hàm của activity
     @Override
     protected void onResume() {
         super.onResume();
@@ -295,173 +304,6 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         LoadCategory();
     }
 
-    @Override
-    public void LoadCategory() {
-        progressBar1.setVisibility(View.VISIBLE);
-        progressBar2.setVisibility(View.VISIBLE);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                addingMoneyPresentent.fetchIncomeCategoryFromServer();
-                addingMoneyPresentent.fetchOutcomeCategoryFromServer();
-            }
-        }, 3000);
-    }
-
-    @Override
-    public void FetchIncomeCategory() {
-        StringRequest request = new StringRequest(Request.Method.POST,
-                urlString + "getIncomeCategory.php", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    String success = jsonObject.getString("success");
-
-                    JSONArray jsonArray = jsonObject.getJSONArray("data");
-
-                    if (success.equals("1")) {
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject object = jsonArray.getJSONObject(i);
-
-                            String id = object.getString("ID_CATEGORY");
-                            String name = object.getString("NAME");
-                            String image_category = object.getString("IMAGE");
-
-                            String url_image = urlString + "ImagesCategory/" + image_category;
-
-                            categoryClass = new CategoryClass(Integer.parseInt(id), name, url_image);
-                            arrayList.add(categoryClass);
-                        }
-
-                        CategoryAdapter adapter = new CategoryAdapter(AddingActivity.this, arrayList, bottomSheetBehavior, tvChooseImage, btnAddCategory, id_user);
-                        categoryRecycler.setAdapter(adapter);
-
-                        LinearLayoutManager layoutManager = new LinearLayoutManager(AddingActivity.this);
-                        layoutManager.setOrientation(RecyclerView.HORIZONTAL);
-                        categoryRecycler.setLayoutManager(layoutManager);
-                        categoryRecycler.setVisibility(View.VISIBLE);
-                        progressBar1.setVisibility(View.GONE);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
-                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                snackbar.show();
-                /*Toast.makeText(AddingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
-                progressBar1.setVisibility(View.GONE);
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("id_user", String.valueOf(id_user));
-                return params;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(AddingActivity.this);
-        requestQueue.add(request);
-    }
-
-    @Override
-    public void FetchOutcomeCategory() {
-        StringRequest request = new StringRequest(Request.Method.POST,
-                urlString + "getOutcomeCategory.php", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    String success = jsonObject.getString("success");
-
-                    JSONArray jsonArray = jsonObject.getJSONArray("data");
-
-                    if (success.equals("1")) {
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject object = jsonArray.getJSONObject(i);
-
-                            String id = object.getString("ID_CATEGORY");
-                            String name = object.getString("NAME");
-                            String image_category = object.getString("IMAGE");
-
-                            String url_image = urlString + "ImagesCategory/" + image_category;
-
-                            categoryClass = new CategoryClass(Integer.parseInt(id), name, url_image);
-                            arrayList1.add(categoryClass);
-                        }
-
-                        LinearLayoutManager layoutManager1 = new LinearLayoutManager(AddingActivity.this);
-                        layoutManager1.setOrientation(RecyclerView.HORIZONTAL);
-
-                        CategoryAdapter adapter1 = new CategoryAdapter(AddingActivity.this, arrayList1, bottomSheetBehavior, tvChooseImage, btnAddCategory, id_user);
-                        categoryRecycler1.setAdapter(adapter1);
-                        categoryRecycler1.setLayoutManager(layoutManager1);
-                        categoryRecycler1.setVisibility(View.VISIBLE);
-                        progressBar2.setVisibility(View.GONE);
-                    }
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
-                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                snackbar.show();
-                /*Toast.makeText(AddingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
-                progressBar2.setVisibility(View.GONE);
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("id_user", String.valueOf(id_user));
-                return params;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(AddingActivity.this);
-        requestQueue.add(request);
-    }
-
-    @Override
-    public void ResetSound() {
-        if (isRecord == true) {
-            addingMoneyPresentent.stopRecord();
-        }
-        if (isPlaying == true) {
-            addingMoneyPresentent.stopAudio();
-        }
-        DeleteImage();
-        DeleteRecord();
-    }
-
-    @Override
-    public void DeleteRecord() {
-        if (!recordFile.equals("NO")) {
-            String recordPath = AddingActivity.this.getExternalFilesDir("/").getAbsolutePath();
-            String folder = recordPath + "/" + recordFile;
-            File file = new File(folder);
-            if (file.exists()) {
-                file.delete();
-            }
-        }
-    }
-
-    @Override
-    public void DeleteImage() {
-        if (photoFile != null) {
-            if (photoFile.exists()) {
-                photoFile.delete();
-            }
-        }
-    }
     @Override
     protected void onStart() {
         super.onStart();
@@ -475,37 +317,13 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     }
 
     @Override
-    public Boolean GetNoMoneyData(String money) {
-        if(money.isEmpty()){
-            til_money.setError("Nhập thông tin tiền");
-            progressBar3.setVisibility(View.GONE);
-            return false;
-        }
-        else if(!money.matches("[0-9]+")){
-            til_money.setError("Nhập chính xác tiền");
-            progressBar3.setVisibility(View.GONE);
-            return false;
-        }
-        else if(money.length() > 15){
-            til_money.setError("Số tiền nhập quá lớn");
-            progressBar3.setVisibility(View.GONE);
-            return false;
-        }
-        else{
-            til_money.setError(null);
-            return true;
-        }
+    public void onBackPressed() {
+        super.onBackPressed();
+        ResetSound();
     }
+    //endregion
 
-    @Override
-    public void GetNoCategoryData() {
-        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Chọn loại thu chi.",Snackbar.LENGTH_SHORT);
-        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-        snackbar.show();
-        /*Toast.makeText(getApplicationContext(), "Chọn loại thu chi.", Toast.LENGTH_SHORT).show();*/
-        progressBar3.setVisibility(View.GONE);
-    }
-
+    //region Xử lí khởi tạo và lấy bundle và keyboard
     @Override
     public void SetInit() {
         btnSaving = findViewById(R.id.imageButton2);
@@ -558,136 +376,182 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     }
 
     @Override
-    public void ChooseImage() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(AddingActivity.this);
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.alert_dialog_picture, null);
-        builder.setCancelable(true);
-        builder.setView(dialogView);
+    public void GetDataBundle() {
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
 
-        ImageButton ivCamera = dialogView.findViewById(R.id.ivCamera);
-        ImageButton ivGallery = dialogView.findViewById(R.id.ivGallery);
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
-
-        ivCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dexter.withContext(AddingActivity.this).withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
-                        if(multiplePermissionsReport.areAllPermissionsGranted())
-                        {
-                            addingMoneyPresentent.takeImageFromCamera();
-                        }
-                        else{
-                            Snackbar snackbar = Snackbar.make(mSnackbarLayout,"All permissions are not granted",Snackbar.LENGTH_SHORT);
-                            snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                            snackbar.show();
-                            /*Toast.makeText(AddingActivity.this, "All permissions are not granted", Toast.LENGTH_SHORT).show();*/
-                            Intent intent = new Intent();
-                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            Uri uri = Uri.fromParts("package", getPackageName(), null);
-                            intent.setData(uri);
-                            startActivity(intent);
-                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
-                        permissionToken.continuePermissionRequest();
-                    }
-                }).check();
-                dialog.dismiss();
-            }
-        });
-
-        ivGallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dexter.withContext(AddingActivity.this).withPermission(Manifest.permission.READ_EXTERNAL_STORAGE).withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-                        addingMoneyPresentent.takeImageFromGallery();
-                    }
-
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Permission is not granted",Snackbar.LENGTH_SHORT);
-                        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                        snackbar.show();
-                        /*Toast.makeText(AddingActivity.this, "Permission is not granted", Toast.LENGTH_SHORT).show();*/
-                        Intent intent = new Intent();
-                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", getPackageName(), null);
-                        intent.setData(uri);
-                        startActivity(intent);
-                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                        permissionToken.continuePermissionRequest();
-                    }
-                }).check();
-                dialog.dismiss();
-            }
-        });
+        id_user = bundle.getInt("ID_USER");
+        id_income = bundle.getInt("ID_INCOME");
+        id_outcome = bundle.getInt("ID_OUTCOME");
     }
 
     @Override
-    public void CaptureRecord() {
-        if (isRecord) {
-            //Stop recording
-            addingMoneyPresentent.stopRecord();
-        } else {
-            Dexter.withContext(AddingActivity.this).withPermissions(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
-                @Override
-                public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
-                    if(multiplePermissionsReport.areAllPermissionsGranted()){
-                        DeleteRecord();
-                        addingMoneyPresentent.startRecord();
-                    }
-                    else{
-                        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"All permissions are not granted",Snackbar.LENGTH_SHORT);
-                        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                        snackbar.show();
-                        /*Toast.makeText(AddingActivity.this, "All permissions are not granted", Toast.LENGTH_SHORT).show();*/
-                        Intent intent = new Intent();
-                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", getPackageName(), null);
-                        intent.setData(uri);
-                        startActivity(intent);
-                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
-                    }
-                }
+    public void HideKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+    //endregion
 
-                @Override
-                public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
-                    permissionToken.continuePermissionRequest();
-                }
-            }).check();
-        }
+    //region Xử lí dữ liệu category (thu và chi)
+    @Override
+    public void LoadCategory() {
+        progressBar1.setVisibility(View.VISIBLE);
+        progressBar2.setVisibility(View.VISIBLE);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                addingMoneyPresentent.fetchIncomeCategoryFromServer();
+                addingMoneyPresentent.fetchOutcomeCategoryFromServer();
+            }
+        }, 3000);
     }
 
     @Override
-    public void CaptureAudio() {
-        if (!recordFile.equals("NO")) {
-            if (isPlaying) {
-                addingMoneyPresentent.stopAudio();
-            } else {
-                addingMoneyPresentent.startAudio();
+    public void FetchIncomeCategory() {
+        StringRequest request = new StringRequest(Request.Method.POST,
+                urlString + "getIncomeCategory.php", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    Log.i("RESPONEADDINGACITVITY", response);
+
+                    JSONObject jsonObject = new JSONObject(response);
+                    String success = jsonObject.getString("success");
+
+                    JSONArray jsonArray = jsonObject.getJSONArray("data");
+
+                    if (success.equals("1")) {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject object = jsonArray.getJSONObject(i);
+
+                            String id = object.getString("ID_CATEGORY");
+                            String name = object.getString("NAME");
+                            String image_category = object.getString("IMAGE");
+
+                            String url_image = urlString + "ImagesCategory/" + image_category;
+
+                            categoryClass = new CategoryClass(Integer.parseInt(id), name, url_image);
+                            arrayList.add(categoryClass);
+                        }
+
+                        CategoryAdapter adapter = new CategoryAdapter(AddingActivity.this, arrayList, bottomSheetBehavior, tvChooseImage, btnAddCategory, id_user);
+                        categoryRecycler.setAdapter(adapter);
+
+                        LinearLayoutManager layoutManager = new LinearLayoutManager(AddingActivity.this);
+                        layoutManager.setOrientation(RecyclerView.HORIZONTAL);
+                        categoryRecycler.setLayoutManager(layoutManager);
+                        categoryRecycler.setVisibility(View.VISIBLE);
+                        progressBar1.setVisibility(View.GONE);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-        } else {
-            Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Không có bản ghi âm nào đã được ghi ở hiện tại",Snackbar.LENGTH_SHORT);
-            snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-            snackbar.show();
-            /*Toast.makeText(this, "No Audio is saving now", Toast.LENGTH_SHORT).show();*/
-        }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+                /*Toast.makeText(AddingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
+                progressBar1.setVisibility(View.GONE);
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("id_user", String.valueOf(id_user));
+                return params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(AddingActivity.this);
+        requestQueue.add(request);
     }
 
+    @Override
+    public void FetchOutcomeCategory() {
+        StringRequest request = new StringRequest(Request.Method.POST,
+                urlString + "getOutcomeCategory.php", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    Log.i("RESPONEADDINGACITVITY", response);
+
+                    JSONObject jsonObject = new JSONObject(response);
+                    String success = jsonObject.getString("success");
+
+                    JSONArray jsonArray = jsonObject.getJSONArray("data");
+
+                    if (success.equals("1")) {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject object = jsonArray.getJSONObject(i);
+
+                            String id = object.getString("ID_CATEGORY");
+                            String name = object.getString("NAME");
+                            String image_category = object.getString("IMAGE");
+
+                            String url_image = urlString + "ImagesCategory/" + image_category;
+
+                            categoryClass = new CategoryClass(Integer.parseInt(id), name, url_image);
+                            arrayList1.add(categoryClass);
+                        }
+
+                        LinearLayoutManager layoutManager1 = new LinearLayoutManager(AddingActivity.this);
+                        layoutManager1.setOrientation(RecyclerView.HORIZONTAL);
+
+                        CategoryAdapter adapter1 = new CategoryAdapter(AddingActivity.this, arrayList1, bottomSheetBehavior, tvChooseImage, btnAddCategory, id_user);
+                        categoryRecycler1.setAdapter(adapter1);
+                        categoryRecycler1.setLayoutManager(layoutManager1);
+                        categoryRecycler1.setVisibility(View.VISIBLE);
+                        progressBar2.setVisibility(View.GONE);
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
+                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                snackbar.show();
+                /*Toast.makeText(AddingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
+                progressBar2.setVisibility(View.GONE);
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("id_user", String.valueOf(id_user));
+                return params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(AddingActivity.this);
+        requestQueue.add(request);
+    }
+
+    @Override
+    public int FindIdByName(String name) {
+        for (int i = 0; i < arrayList.size(); i++) {
+            if (name.equals(arrayList.get(i).Get_NAME())) {
+                isCategory = 1;
+                return arrayList.get(i).Get_ID();
+            }
+        }
+        for (int i = 0; i < arrayList1.size(); i++) {
+            if (name.equals(arrayList1.get(i).Get_NAME())) {
+                isCategory = -1;
+                return arrayList1.get(i).Get_ID();
+            }
+        }
+        return 0;
+    }
+
+    //endregion
+
+    //region Kiểm tra điều kiện
     @Override
     public void IsValidNumber(CharSequence s) {
         if (s.length() > 15) {
@@ -720,20 +584,118 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     }
 
     @Override
-    public int FindIdByName(String name) {
-        for (int i = 0; i < arrayList.size(); i++) {
-            if (name.equals(arrayList.get(i).Get_NAME())) {
-                isCategory = 1;
-                return arrayList.get(i).Get_ID();
-            }
+    public Boolean GetNoMoneyData(String money) {
+        if(money.isEmpty()){
+            til_money.setError("Nhập thông tin tiền");
+            progressBar3.setVisibility(View.GONE);
+            return false;
         }
-        for (int i = 0; i < arrayList1.size(); i++) {
-            if (name.equals(arrayList1.get(i).Get_NAME())) {
-                isCategory = -1;
-                return arrayList1.get(i).Get_ID();
-            }
+        else if(!money.matches("[0-9]+")){
+            til_money.setError("Nhập chính xác tiền");
+            progressBar3.setVisibility(View.GONE);
+            return false;
         }
-        return 0;
+        else if(money.length() > 15){
+            til_money.setError("Số tiền nhập quá lớn");
+            progressBar3.setVisibility(View.GONE);
+            return false;
+        }
+        else{
+            til_money.setError(null);
+            return true;
+        }
+    }
+
+    @Override
+    public void GetNoCategoryData() {
+        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Chọn loại thu chi.",Snackbar.LENGTH_SHORT);
+        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+        snackbar.show();
+        /*Toast.makeText(getApplicationContext(), "Chọn loại thu chi.", Toast.LENGTH_SHORT).show();*/
+        progressBar3.setVisibility(View.GONE);
+    }
+
+    //endregion
+
+    //region Xử lí hình ảnh
+    @Override
+    public void ChooseImage() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(AddingActivity.this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.alert_dialog_picture, null);
+        builder.setCancelable(true);
+        builder.setView(dialogView);
+
+        ImageButton ivCamera = dialogView.findViewById(R.id.ivCamera);
+        ImageButton ivGallery = dialogView.findViewById(R.id.ivGallery);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        ivCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dexter.withContext(AddingActivity.this).withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
+                        if(multiplePermissionsReport.areAllPermissionsGranted())
+                        {
+                            addingMoneyPresentent.takeImageFromCamera();
+                        }
+                        else{
+                            /*Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Bạn chưa cấp đủ quyền truy cập.",Snackbar.LENGTH_SHORT);
+                            snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                            snackbar.show();*/
+                            Toast.makeText(AddingActivity.this, "Bạn chưa cấp đủ quyền truy cập.", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent();
+                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", getPackageName(), null);
+                            intent.setData(uri);
+                            startActivity(intent);
+                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
+                        permissionToken.continuePermissionRequest();
+                    }
+                }).check();
+                dialog.dismiss();
+            }
+        });
+
+        ivGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dexter.withContext(AddingActivity.this).withPermission(Manifest.permission.READ_EXTERNAL_STORAGE).withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+                        addingMoneyPresentent.takeImageFromGallery();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+                        /*Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Permission is not granted",Snackbar.LENGTH_SHORT);
+                        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                        snackbar.show();*/
+                        Toast.makeText(AddingActivity.this, "Bạn chưa cấp quyền truy cập.", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        startActivity(intent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
+                        permissionToken.continuePermissionRequest();
+                    }
+                }).check();
+                dialog.dismiss();
+            }
+        });
     }
 
     @Override
@@ -758,146 +720,6 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         return image;
     }
 
-    @Override
-    public Boolean IsNullAudio() {
-        if (recordFile.equals("NO")) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public String GetStringAudio() {
-        String audio = "";
-        if (addingMoneyPresentent.isNullAudio()) {
-            audio = "NULL";
-        } else {
-            byte[] audio_byte = addingMoneyPresentent.convert3gbToByte();
-            audio = convertByteToString(audio_byte);
-            Log.i("AUDIOTEST", audio);
-        }
-
-        return audio;
-    }
-
-    //Stop record
-    @Override
-    public void StopRecord() {
-        mediaRecorder.stop();
-        stoptime = System.nanoTime();
-        mediaRecorder.release();
-        mediaRecorder = null;
-        mVisualizer.setVisibility(View.INVISIBLE);
-        btnRecord.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_surround_sound_24, null));
-        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Stop record in  " + String.valueOf((stoptime - starttime) / 1000000000) + "s",Snackbar.LENGTH_SHORT);
-        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-        snackbar.show();
-        /*Toast.makeText(this, "Stop record in  " + String.valueOf((stoptime - starttime) / 1000000000) + "s", Toast.LENGTH_SHORT).show();*/
-        isRecord = false;
-    }
-
-    //Start record
-    @Override
-    public void StartRecord() {
-        String recordPath = AddingActivity.this.getExternalFilesDir("/").getAbsolutePath();
-        SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss", Locale.forLanguageTag("vi_VN"));
-        Date now = new Date();
-        recordFile = "Record_" + format.format(now) + ".3gp";
-
-        mediaRecorder = new MediaRecorder();
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mediaRecorder.setOutputFile(recordPath + "/" + recordFile);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
-        try {
-            mediaRecorder.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        mediaRecorder.start();
-        starttime = System.nanoTime();
-
-        mVisualizer.setVisibility(View.VISIBLE);
-        btnRecord.setImageDrawable(getResources().getDrawable(R.drawable.icon_pause, null));
-        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Start record",Snackbar.LENGTH_INDEFINITE);
-        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-        snackbar.setAction("STOP RECORD", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addingMoneyPresentent.stopRecord();
-            }
-        });
-        snackbar.show();
-        /*Toast.makeText(this, "Start record", Toast.LENGTH_SHORT).show();*/
-        isRecord = true;
-    }
-
-    //Start audio
-    @Override
-    public void StartAudio() {
-        if(isRecord == true){
-            StopRecord();
-        }
-        mediaPlayer = new MediaPlayer();
-        Boolean isSDPresent = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
-        if (isSDPresent) {
-            String outputFile = AddingActivity.this.getExternalFilesDir("/").getAbsolutePath() + "/" + recordFile;
-
-            /*Toast.makeText(this, "Start current record in " + String.valueOf((stoptime - starttime) / 1000000000) + "s", Toast.LENGTH_SHORT).show();*/
-            try {
-                mediaPlayer.setDataSource(outputFile);
-                mediaPlayer.prepare();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Start current record in " + String.valueOf((stoptime - starttime) / 1000000000) + "s",Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-            snackbar.setAction("STOP AUDIO", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    addingMoneyPresentent.stopAudio();
-                }
-            });
-            snackbar.show();
-
-            int audioSessionId = mediaPlayer.getAudioSessionId();
-            mVisualizer.setAudioSessionId(audioSessionId);
-
-            mediaPlayer.start();
-
-            mVisualizer.setVisibility(View.VISIBLE);
-            btnPlay.setImageDrawable(getResources().getDrawable(R.drawable.icon_pause, null));
-
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    StopAudio();
-                }
-            });
-            isPlaying = true;
-        }
-    }
-
-    //Stop audio
-    @Override
-    public void StopAudio() {
-        mediaPlayer.release();
-        mediaPlayer = null;
-        isPlaying = false;
-        mVisualizer.setVisibility(View.INVISIBLE);
-        btnPlay.setImageDrawable(getResources().getDrawable(R.drawable.icon_play, null));
-
-        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Stop current record",Snackbar.LENGTH_SHORT);
-        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-        snackbar.show();
-
-        /*Toast.makeText(this, "Stop current record", Toast.LENGTH_SHORT).show();*/
-    }
-
     //Take image from gallery
     @Override
     public void TakeImageFromGallery() {
@@ -914,7 +736,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         try {
             photoFile = createImageFile();
         } catch (IOException e) {
-            Snackbar snackbar = Snackbar.make(mSnackbarLayout,e.getMessage(),Snackbar.LENGTH_SHORT);
+            Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi chỉnh sửa hình ảnh",Snackbar.LENGTH_SHORT);
             snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
             snackbar.show();
             /*Toast.makeText(AddingActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -984,6 +806,186 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         }
     }
 
+    //endregion
+
+    //region Xử lí record và audio
+
+    //region Xử lí record
+    @Override
+    public void CaptureRecord() {
+        if (isRecord) {
+            //Stop recording
+            addingMoneyPresentent.stopRecord();
+        } else {
+            Dexter.withContext(AddingActivity.this).withPermissions(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
+                @Override
+                public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
+                    if(multiplePermissionsReport.areAllPermissionsGranted()){
+                        DeleteRecord();
+                        addingMoneyPresentent.startRecord();
+                    }
+                    else{
+                        /*Snackbar snackbar = Snackbar.make(mSnackbarLayout,"All permissions are not granted",Snackbar.LENGTH_SHORT);
+                        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                        snackbar.show();*/
+                        Toast.makeText(AddingActivity.this, "Bạn chưa cấp đủ quyền truy cập.", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        startActivity(intent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+                    }
+                }
+
+                @Override
+                public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
+                    permissionToken.continuePermissionRequest();
+                }
+            }).check();
+        }
+    }
+
+    //Stop record
+    @Override
+    public void StopRecord() {
+        mediaRecorder.stop();
+        stoptime = System.nanoTime();
+        mediaRecorder.release();
+        mediaRecorder = null;
+        mVisualizer.setVisibility(View.INVISIBLE);
+        btnRecord.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_surround_sound_24, null));
+        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"DỪng ghi âm. Đã ghi âm trong " + String.valueOf((stoptime - starttime) / 1000000000) + "s",Snackbar.LENGTH_SHORT);
+        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+        snackbar.show();
+        /*Toast.makeText(this, "Stop record in  " + String.valueOf((stoptime - starttime) / 1000000000) + "s", Toast.LENGTH_SHORT).show();*/
+        isRecord = false;
+    }
+
+    //Start record
+    @Override
+    public void StartRecord() {
+        String recordPath = AddingActivity.this.getExternalFilesDir("/").getAbsolutePath();
+        SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss", Locale.forLanguageTag("vi_VN"));
+        Date now = new Date();
+        recordFile = "Record_" + format.format(now) + ".3gp";
+
+        mediaRecorder = new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setOutputFile(recordPath + "/" + recordFile);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        try {
+            mediaRecorder.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        mediaRecorder.start();
+        starttime = System.nanoTime();
+
+        mVisualizer.setVisibility(View.VISIBLE);
+        btnRecord.setImageDrawable(getResources().getDrawable(R.drawable.icon_pause, null));
+        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Bắt đầu ghi âm",Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+        snackbar.setAction("Dừng", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addingMoneyPresentent.stopRecord();
+            }
+        });
+        snackbar.setActionTextColor(Color.RED);
+        snackbar.show();
+        /*Toast.makeText(this, "Start record", Toast.LENGTH_SHORT).show();*/
+        isRecord = true;
+    }
+
+    //endregion
+
+    //region Xử lí audio
+    @Override
+    public void CaptureAudio() {
+        if (!recordFile.equals("NO")) {
+            if (isPlaying) {
+                addingMoneyPresentent.stopAudio();
+            } else {
+                addingMoneyPresentent.startAudio();
+            }
+        } else {
+            Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Không có bản ghi âm nào đã được ghi ở hiện tại",Snackbar.LENGTH_SHORT);
+            snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+            snackbar.show();
+            /*Toast.makeText(this, "No Audio is saving now", Toast.LENGTH_SHORT).show();*/
+        }
+    }
+
+    //Start audio
+    @Override
+    public void StartAudio() {
+        if(isRecord == true){
+            StopRecord();
+        }
+        mediaPlayer = new MediaPlayer();
+        Boolean isSDPresent = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+        if (isSDPresent) {
+            String outputFile = AddingActivity.this.getExternalFilesDir("/").getAbsolutePath() + "/" + recordFile;
+
+            /*Toast.makeText(this, "Start current record in " + String.valueOf((stoptime - starttime) / 1000000000) + "s", Toast.LENGTH_SHORT).show();*/
+            try {
+                mediaPlayer.setDataSource(outputFile);
+                mediaPlayer.prepare();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Bắt đầu phát đoạn ghi âm " + String.valueOf((stoptime - starttime) / 1000000000) + "s",Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+            snackbar.setAction("Dừng", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addingMoneyPresentent.stopAudio();
+                }
+            });
+            snackbar.setActionTextColor(Color.RED);
+            snackbar.show();
+
+            int audioSessionId = mediaPlayer.getAudioSessionId();
+            mVisualizer.setAudioSessionId(audioSessionId);
+
+            mediaPlayer.start();
+
+            mVisualizer.setVisibility(View.VISIBLE);
+            btnPlay.setImageDrawable(getResources().getDrawable(R.drawable.icon_pause, null));
+
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    StopAudio();
+                }
+            });
+            isPlaying = true;
+        }
+    }
+
+    //Stop audio
+    @Override
+    public void StopAudio() {
+        mediaPlayer.release();
+        mediaPlayer = null;
+        isPlaying = false;
+        mVisualizer.setVisibility(View.INVISIBLE);
+        btnPlay.setImageDrawable(getResources().getDrawable(R.drawable.icon_play, null));
+
+        Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Dừng phát đoạn ghi âm",Snackbar.LENGTH_SHORT);
+        snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+        snackbar.show();
+
+        /*Toast.makeText(this, "Stop current record", Toast.LENGTH_SHORT).show();*/
+    }
+    //endregion
+
+    //region Xử lí file audio
     //Convert 3gp to byte[] (file name from recordFile)
     @Override
     public byte[] Convert3gbToByte() {
@@ -1008,6 +1010,68 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         return audio;
     }
 
+    @Override
+    public Boolean IsNullAudio() {
+        if (recordFile.equals("NO")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public String GetStringAudio() {
+        String audio = "";
+        if (addingMoneyPresentent.isNullAudio()) {
+            audio = "NULL";
+        } else {
+            byte[] audio_byte = addingMoneyPresentent.convert3gbToByte();
+            audio = convertByteToString(audio_byte);
+            Log.i("AUDIOTEST", audio);
+        }
+
+        return audio;
+    }
+    //endregion
+
+    //endregion
+
+    //region Xử lí file sau khi saving
+    @Override
+    public void ResetSound() {
+        if (isRecord == true) {
+            addingMoneyPresentent.stopRecord();
+        }
+        if (isPlaying == true) {
+            addingMoneyPresentent.stopAudio();
+        }
+        DeleteImage();
+        DeleteRecord();
+    }
+
+    @Override
+    public void DeleteRecord() {
+        if (!recordFile.equals("NO")) {
+            String recordPath = AddingActivity.this.getExternalFilesDir("/").getAbsolutePath();
+            String folder = recordPath + "/" + recordFile;
+            File file = new File(folder);
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+    }
+
+    @Override
+    public void DeleteImage() {
+        if (photoFile != null) {
+            if (photoFile.exists()) {
+                photoFile.delete();
+            }
+        }
+    }
+    //endregion
+
+    //region Xử lí saving
     @Override
     public void SavingMoneyData(String money, String description, int category_id, String image, String audio) {
         if (image.equals("NULL") && audio.equals("NULL")) {
@@ -1041,29 +1105,31 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         }
     }
 
-    //Upload income detail to server (all attribute or not image or not audio or not both)
+    //region Upload income detail to server (all attribute or not image or not audio or not both)
     public void UploadIncomeToServer(String money, String description, int category_id, String image, String audio) {
         String currentDateandTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         StringRequest request = new StringRequest(Request.Method.POST,
                 urlString + "insertIncomeDetail.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,response,Snackbar.LENGTH_SHORT);
-                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                snackbar.show();
-                /*Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();*/
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new income detailed success")) {
-                    Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddingActivity.this, "Thêm thu nhập thành công", Toast.LENGTH_SHORT).show();
                     ResetSound();
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+                }
+                else{
+                    Log.i("RESPONEMONEY", response);
+                    Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Thêm thu nhập thất bại",Snackbar.LENGTH_SHORT);
+                    snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                    snackbar.show();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(AddingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -1094,22 +1160,24 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 urlString + "insertIncomeDetailNoAudio.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,response,Snackbar.LENGTH_SHORT);
-                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                snackbar.show();
-                /*Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();*/
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new income detailed success")) {
-                    Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddingActivity.this, "Thêm thu nhập thành công", Toast.LENGTH_SHORT).show();
                     ResetSound();
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+                }
+                else{
+                    Log.i("RESPONEMONEY", response);
+                    Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Thêm thu nhập thất bại",Snackbar.LENGTH_SHORT);
+                    snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                    snackbar.show();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(AddingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -1139,22 +1207,24 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 urlString + "insertIncomeDetailNoImage.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,response,Snackbar.LENGTH_SHORT);
-                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                snackbar.show();
-                /*Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();*/
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new income detailed success")) {
-                    Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddingActivity.this, "Thêm thu nhập thành công", Toast.LENGTH_SHORT).show();
                     ResetSound();
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+                }
+                else{
+                    Log.i("RESPONEMONEY", response);
+                    Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Thêm thu nhập thất bại",Snackbar.LENGTH_SHORT);
+                    snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                    snackbar.show();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(AddingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -1184,23 +1254,25 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 urlString + "insertIncomeDetailNoBoth.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.i("TESTADD", response);
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,response,Snackbar.LENGTH_SHORT);
-                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                snackbar.show();
                 /*Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();*/
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new income detailed success")) {
-                    Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddingActivity.this, "Thêm thu nhập thành công", Toast.LENGTH_SHORT).show();
                     ResetSound();
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+                }
+                else{
+                    Log.i("RESPONEMONEY", response);
+                    Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Thêm thu nhập thất bại",Snackbar.LENGTH_SHORT);
+                    snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                    snackbar.show();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(AddingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -1222,30 +1294,34 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         RequestQueue requestQueue = Volley.newRequestQueue(AddingActivity.this);
         requestQueue.add(request);
     }
+    //endregion
 
-    //Upload outcome detail to server (all attribute or not image or not audio or not both)
+    //region Upload outcome detail to server (all attribute or not image or not audio or not both)
     public void UploadOutcomeToServer(String money, String description, int category_id, String image, String audio) {
         String currentDateandTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         StringRequest request = new StringRequest(Request.Method.POST,
                 urlString + "insertOutcomeDetail.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,response,Snackbar.LENGTH_SHORT);
-                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                snackbar.show();
                 /*Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();*/
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new outcome detailed success")) {
-                    Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddingActivity.this, "Thêm chi tiêu thành công", Toast.LENGTH_SHORT).show();
                     ResetSound();
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+                }
+                else{
+                    Log.i("RESPONEMONEY", response);
+                    Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Thêm chi tiêu thất bại",Snackbar.LENGTH_SHORT);
+                    snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                    snackbar.show();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(AddingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -1276,22 +1352,24 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 urlString + "insertOutcomeDetailNoAudio.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,response,Snackbar.LENGTH_SHORT);
-                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                snackbar.show();
-                /*Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();*/
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new outcome detailed success")) {
-                    Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddingActivity.this, "Thêm chi tiêu thành công", Toast.LENGTH_SHORT).show();
                     ResetSound();
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+                }
+                else{
+                    Log.i("RESPONEMONEY", response);
+                    Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Thêm chi tiêu thất bại",Snackbar.LENGTH_SHORT);
+                    snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                    snackbar.show();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(AddingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -1321,22 +1399,24 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 urlString + "insertOutcomeDetailNoImage.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,response,Snackbar.LENGTH_SHORT);
-                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                snackbar.show();
-                /*Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();*/
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new outcome detailed success")) {
-                    Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddingActivity.this, "Thêm chi tiêu thành công", Toast.LENGTH_SHORT).show();
                     ResetSound();
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+                }
+                else{
+                    Log.i("RESPONEMONEY", response);
+                    Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Thêm chi tiêu thất bại",Snackbar.LENGTH_SHORT);
+                    snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                    snackbar.show();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(AddingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -1366,23 +1446,24 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 urlString + "insertOutcomeDetailNoBoth.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.i("TESTADD", response);
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,response,Snackbar.LENGTH_SHORT);
-                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                snackbar.show();
-                /*Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();*/
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new outcome detailed success")) {
-                    Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddingActivity.this, "Thêm chi tiêu thành công", Toast.LENGTH_SHORT).show();
                     ResetSound();
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+                }
+                else{
+                    Log.i("RESPONEMONEY", response);
+                    Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Thêm chi tiêu thất bại",Snackbar.LENGTH_SHORT);
+                    snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                    snackbar.show();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(AddingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -1404,18 +1485,9 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         RequestQueue requestQueue = Volley.newRequestQueue(AddingActivity.this);
         requestQueue.add(request);
     }
+    //endregion
 
-    @Override
-    public void HideKeyboard(View view) {
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        ResetSound();
-    }
+    //endregion
 
 }
 

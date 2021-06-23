@@ -45,6 +45,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,19 +60,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.myproject22.Model.ConnectionClass.urlString;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link IncomeCategoryGraphFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeAdapter.EventListener {
-    String urlString = "https://howtobeabillionaire.000webhostapp.com/";
 
-    private ArrayList<IncomeClass> income = new ArrayList<>();
-
-    private int id_user;
-    private int id_income;
-
+    //region Default Fragment
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -82,12 +81,6 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
 
     public IncomeCategoryGraphFragment() {
         // Required empty public constructor
-    }
-
-    public IncomeCategoryGraphFragment(int id_user, int id_income) {
-        // Required empty public constructor
-        this.id_user = id_user;
-        this.id_income = id_income;
     }
 
     /**
@@ -112,7 +105,19 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+    //endregion
 
+    //region Constructor để lấy dữ liệu
+    public IncomeCategoryGraphFragment(int id_user, int id_income) {
+        // Required empty public constructor
+        this.id_user = id_user;
+        this.id_income = id_income;
+    }
+    //endregion
+
+    //region Khởi tạo component
+
+    //region Component
     private ProgressBar pb1;
     private ProgressBar pb2;
     private ArrayList<WeekItem> weeks = new ArrayList<>();
@@ -120,11 +125,45 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
     private WeekIncomeAdapter adapter;
     private PieChart pieChart;
     private HorizontalBarChart weekchart;
+    //endregion
+
+    //region parameter
+    private ArrayList<IncomeClass> income = new ArrayList<>();
+    private int id_user;
+    private int id_income;
+    //endregion
+
+    //endregion
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        SetInit(view);
+    }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_income_category_graph, container, false);
+    }
+
+    //region Load dữ liệu khi nhấn vào fragment income
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                FetchDateFromServer();
+            }
+        }, 1000);
+    }
+    //endregion
+
+    //region Set init
+    public void SetInit(View view){
         pb1 = view.findViewById(R.id.pb1);
         pb2 = view.findViewById(R.id.pb2);
         pb1.bringToFront();
@@ -137,19 +176,9 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
         weekchart.setVisibility(View.INVISIBLE);
         weekRecycler = view.findViewById(R.id.week_recycler);
     }
+    //endregion
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                FetchDateFromServer();
-            }
-        }, 1000);
-    }
-
+    //region Fetch Date from server (tìm ngày bắt đầu)
     public void FetchDateFromServer() {
         weeks = new ArrayList<>();
         StringRequest request = new StringRequest(Request.Method.POST,
@@ -157,7 +186,8 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
             @Override
             public void onResponse(String response) {
                 try {
-                    Log.i("TEST1",response);
+                    Log.i("RESPONSEGRAPH",response);
+
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
 
@@ -191,13 +221,14 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                Snackbar.make(weekRecycler, "Lỗi kết nối internet", Snackbar.LENGTH_SHORT)
+                        .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
+                        .show();
             }
         }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                Log.i("TEST1", String.valueOf(id_user));
                 params.put("id_user", String.valueOf(id_user));
                 return params;
             }
@@ -205,71 +236,96 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         requestQueue.add(request);
     }
+    //endregion
 
+    //region Xử lí để tìm ngày bắt đầu và ngày kết thúc
+
+    //Công thức tìm ngày
     public static long CalculateDateUse(Date fromDate, Date toDate) {
         if (fromDate == null || toDate == null)
             return 0;
         return (long) ((toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24));
     }
 
+    //Tìm chuỗi ngày weekrecycleview
     public void GetArrayWeek(String sDate) {
+
+        //region Chuẩn bị
         SimpleDateFormat curFormater = new SimpleDateFormat("yyyy-MM-dd");
         Calendar cal = Calendar.getInstance();
-        Date now = cal.getTime();
-        Date dateto = new Date();
+        Date now = cal.getTime(); //Lấy thời gian hiện tại
+        //endregion
+
+        //region So sánh theo kiểu (lấy ngày hiện tại so với sDate để tìm tổng số tuần)
         try {
-            Date datefrom = curFormater.parse(sDate);
-            int i = 1;
+            Date datefrom = curFormater.parse(sDate); // Chuyển đổi kiểu dữ liệu sang Date
+            int i = 1;  //Đếm số tuần
             do{
-                Date datetemp = datefrom;
+
+                //Kiểu dữ liệu để lưu String trong WeekItem
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+                //Kiểu dữ liệu để lưu Date trong mysql
                 SimpleDateFormat formattest = new SimpleDateFormat("yyyy-MM-dd");
-                String date_string = simpleDateFormat.format(datefrom);
+
+                //Format String trong WeekItem
                 String date_from = formattest.format(datefrom);
+                String date_string = simpleDateFormat.format(datefrom);
                 String s ="Tuần " + i + " " + date_string;
+
+                //Tìm tuần tiếp theo để so sánh
                 Calendar c = Calendar.getInstance();
                 c.setTime(datefrom);
                 c.add(Calendar.DATE, 7);
                 datefrom = c.getTime();
 
-                Calendar c1 = Calendar.getInstance();
-                c1.setTime(datetemp);
-                c1.add(Calendar.DATE, 7);
-                dateto = c1.getTime();
-                String date_to = formattest.format(dateto);
+                //Gán thời gian sau khi cộng để tìm date_to
+                String date_to = formattest.format(date_from);
                 WeekItem weekItem = new WeekItem(s, date_from, date_to);
                 weeks.add(weekItem);
+
                 Log.i("GetData", s + "\n" + date_string + "\n" + date_to);
                 i++;
+
             }while(CalculateDateUse(datefrom, now) > 0);
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        //endregion
     }
+    //endregion
 
+    //region Xử lí biểu đồ tròn (PieChart)
     public void dataPiechart() {
-        pieChart.invalidate();
+        //Kiểu tra incomelist có khác null không
         int m = income.size();
         if (m > 0) {
+
+            //region Xử lí PieEntry
             ArrayList<PieEntry> Entries = new ArrayList<>();
             for (int i = 0; i < m; i++) {
                 IncomeClass item = income.get(i);
                 PieEntry incomePE = new PieEntry(item.getMoney().floatValue(), item.getCategory());
                 Entries.add(incomePE);
             }
+            //endregion
 
-            //thiet ke pie chart
+            //region Xử lí PieDataSet
             PieDataSet dataSet = new PieDataSet(Entries, "Danh mục");
             dataSet.setColors(ColorTemplate.LIBERTY_COLORS); // lib is best until now
+            //endregion
+
+            //region Xử lí PieData
             PieData data = new PieData(dataSet);
             data.setDrawValues(false); // no text
             data.setValueTextSize(16f);
             data.setValueTextColor(Color.WHITE);
             data.setValueTypeface(Typeface.MONOSPACE);
             data.setValueFormatter(new PercentFormatter(pieChart));
+            //endregion
 
+            //region Xử lí PieChart
             pieChart.setDrawHoleEnabled(true);
-
             pieChart.setData(data);
             pieChart.setUsePercentValues(true); // set precent
             pieChart.setEntryLabelColor(Color.BLACK);
@@ -277,7 +333,9 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
             pieChart.setCenterTextSize(14f);
             pieChart.setCenterTextTypeface(Typeface.MONOSPACE);
             pieChart.getDescription().setEnabled(false);
+            //endregion
 
+            //region Xử lý Lengend
             Legend l = pieChart.getLegend();
             l.setTextColor(Color.WHITE);
             l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
@@ -286,19 +344,29 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
             l.setWordWrapEnabled(true);
             l.setDrawInside(true);
             l.setEnabled(true);
+            //endregion
 
+            //region Xử lí animate PieChart
             pieChart.animateY(1200, Easing.EaseInBack);
             pieChart.animate();
+            //endregion
 
+            //region Hiện piechart khi đã loadxong
+            pieChart.invalidate();
             pb1.setVisibility(View.GONE);
             pieChart.setVisibility(View.VISIBLE);
+            //endregion
         }
     }
+    //endregion
 
+    //region Xử lí biểu đồ ngang (BarChart)
     public void dataBarchart() {
-        weekchart.invalidate();
+        //Kiểm tra income list có khác null không
         int m = income.size();
         if (m > 0) {
+
+            //region Xử lí BarEntry
             ArrayList<BarEntry> dataList = new ArrayList<>();
             ArrayList<String> danhMucList = new ArrayList<>();
             for (int i = 0; i < m; i++) {
@@ -310,25 +378,35 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
                 dataList.add(incomeBE);
                 danhMucList.add(c);
             }
+            //endregion
 
-
+            //region Xử lí BarDataSet
             BarDataSet barDataSet = new BarDataSet(dataList, "Tiền theo tháng");
             barDataSet.setColors(ColorTemplate.LIBERTY_COLORS);
             barDataSet.setValueTextColor(Color.WHITE);
             barDataSet.setValueTextSize(20f);
             barDataSet.setValueTypeface(Typeface.MONOSPACE);
-            BarData barData = new BarData(barDataSet);
+            //endregion
 
+            //region Xử lí BarData
+            BarData barData = new BarData(barDataSet);
             barData.setBarWidth(0.2f);
+            //endregion
+
+            //region Xử lí weekchart
             weekchart.setFitBars(true);
             weekchart.setData(barData);
             weekchart.getDescription().setText("");
             weekchart.setHighlightFullBarEnabled(true);
+            //endregion
 
+            //region Xử lí YAxis (Cột Y)
             YAxis yAxis = weekchart.getAxisLeft();
             yAxis.setTextColor(Color.WHITE);
             yAxis.setTextSize(10);
+            //endregion
 
+            //region Xử lí XAxis (Hàng X)
             // set XAxis value formater
             XAxis xAxis = weekchart.getXAxis();
             xAxis.setValueFormatter(new IndexAxisValueFormatter(danhMucList));
@@ -341,25 +419,25 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
             xAxis.setGranularity(1f);
             xAxis.setDrawLabels(true);
             xAxis.setLabelCount(danhMucList.size());
+            //endregion
 
+            //region Xử lý Lengend
             Legend l2 = weekchart.getLegend();
             l2.setTextColor(Color.WHITE);
             l2.setTextSize(15);
+            //endregion
 
+            //region Hiện BarChart khi đã load xong
+            weekchart.invalidate();
             pb2.setVisibility(View.GONE);
             weekchart.setVisibility(View.VISIBLE);
+            //endregion
 
         }
     }
+    //endregion
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_income_category_graph, container, false);
-        return v;
-    }
-
+    //region Fetch Income from server (Dựa vào ngày bắt đầu và ngày kết thúc)
     @Override
     public void FetchIncomeFromServer(String datestart, String dateend) {
         income = new ArrayList<>();
@@ -368,7 +446,8 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
             @Override
             public void onResponse(String response) {
                 try {
-                    Log.i("TESTER11", response);
+                    Log.i("RESPONSEGRAPH", response);
+
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
                     JSONArray jsonArray = jsonObject.getJSONArray("data");
@@ -399,14 +478,15 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(IncomeCategoryGraphFragment.this.getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                Snackbar.make(weekRecycler, "Lỗi kết nối internet", Snackbar.LENGTH_SHORT)
+                        .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
+                        .show();
             }
         }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put("id_income", String.valueOf(id_income));
-                Log.i("TESTER11",datestart +"\n" + dateend);
                 params.put("datestart", datestart);
                 params.put("dateend", dateend);
                 return params;
@@ -415,11 +495,16 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
         RequestQueue requestQueue = Volley.newRequestQueue(IncomeCategoryGraphFragment.this.getActivity());
         requestQueue.add(request);
     }
+    //endregion
 
+    //region Ẩn chart khi không có dữ liệu
     public void InvisibleChart(){
         pb1.setVisibility(View.GONE);
         pb2.setVisibility(View.GONE);
         pieChart.setVisibility(View.INVISIBLE);
         weekchart.setVisibility(View.INVISIBLE);
     }
+    //endregion
+
+
 }

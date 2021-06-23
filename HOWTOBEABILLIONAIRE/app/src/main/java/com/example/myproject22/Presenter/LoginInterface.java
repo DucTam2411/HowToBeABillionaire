@@ -2,20 +2,35 @@ package com.example.myproject22.Presenter;
 
 import android.view.View;
 
+import com.example.myproject22.View.Activity.LoginActivity;
+
 public interface LoginInterface {
+
+    //region Create and Set
     //Set init
     public void SetInIt();
+    //Hide keyboard
+    public void HideKeyboard(View view);
+    //endregion
 
-    //Check null reference
+    //region Check Internet
+    public Boolean IsConnect(LoginActivity loginActivity);
+    public void ShowCustomDialog();
+    //endregion
+
+    //region Condition
     public Boolean GetNoUserName(String username);
     public Boolean GetNoPassword(String password);
+    //endregion
 
-    //Handle Click Event
+    //region Handle Click Event
     public void BtnSignIn();
     public void TextViewClick();
     public void TextViewForgetClick();
-    public void HideKeyboard(View view);
+    //endregion
 
-    //Login From Server
+    //region Login From Server
     public void LoginFromServer(String username, String password);
+    //endregion
+
 }

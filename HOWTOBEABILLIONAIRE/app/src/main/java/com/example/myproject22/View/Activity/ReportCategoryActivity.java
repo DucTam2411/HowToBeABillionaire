@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -50,13 +51,17 @@ import static com.example.myproject22.Model.ConnectionClass.urlString;
 
 public class ReportCategoryActivity extends AppCompatActivity implements ReportCategoryInterface {
 
-    //Component
+    //region Khởi tạo component
+
+    //region Component
     private RecyclerView recyclerView;
     private GridLayoutManager gridLayoutManager;
     private Toolbar toolbar;
     private ProgressBar progressBar;
     private CoordinatorLayout mSnackbarLayout;
+    //endregion
 
+    //region Paramater
     //Get Id_income, Id_outcome
     private int id_income;
     private int id_outcome;
@@ -65,13 +70,17 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
     private Boolean isIncome = false;
     private Boolean isOutcome = false;
 
-    //Create array list to control income list and outcome from server
+    //Presenter
+    private ReportCategoryPresenter presenter;
+    //endregion
+
+    //region Create array list to control income list and outcome from server
     private ArrayList<DayItem> incomeDate = new ArrayList<>();
     private ArrayList<DayItem> outcomeDate = new ArrayList<>();
     private ArrayList<DayItem> categoryDate = new ArrayList<>();
+    //endregion
 
-    //Presenter
-    private ReportCategoryPresenter presenter;
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,13 +88,16 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_report);
 
+        //region Khởi tạo presenter và khởi tạo giá trị ban đầu
         presenter = new ReportCategoryPresenter(this);
         presenter.getBundleData();
         presenter.setInit();
         presenter.loadData();
-
+        //endregion
 
     }
+
+    //region SetInit và lấy bundle data
 
     @Override
     public void SetInit() {
@@ -111,6 +123,10 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
             id_outcome = bundle.getInt("ID_OUTCOME");
         }
     }
+
+    //endregion
+
+    //region Load data từ server vào layout
 
     @Override
     public void LoadRecycleView() {
@@ -154,12 +170,30 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
     }
 
     @Override
+    public void LoadData() {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                presenter.fetchIncomeInServer();
+                presenter.fetchOutcomeInServer();
+            }
+        }, 1000);
+    }
+
+    //endregion
+
+    //region Fetch income, outcome từ server
+
+    @Override
     public void FetchIncomeInServer() {
         StringRequest request = new StringRequest(Request.Method.POST,
                 urlString + "getNumberRecordIncomeByDate.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
+                    Log.i("RESPONSEREPORTCATEGORY",response);
+
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
 
@@ -199,7 +233,7 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(ReportCategoryActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -223,6 +257,8 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
             @Override
             public void onResponse(String response) {
                 try {
+                    Log.i("RESPONSEREPORTCATEGORY",response);
+
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
 
@@ -259,7 +295,7 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,error.getMessage(),Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(ReportCategoryActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -276,15 +312,6 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
         requestQueue.add(request);
     }
 
-    @Override
-    public void LoadData() {
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                presenter.fetchIncomeInServer();
-                presenter.fetchOutcomeInServer();
-            }
-        }, 1000);
-    }
+    //endregion
+
 }
