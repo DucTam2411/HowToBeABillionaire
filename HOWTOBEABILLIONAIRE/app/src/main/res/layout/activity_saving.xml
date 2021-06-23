@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mylayout"
     android:layout_width="match_parent"
-    android:theme="@style/Theme.MaterialComponents"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:theme="@style/Theme.MaterialComponents"
     tools:context=".View.Activity.SavingActivity">
 
 
@@ -18,122 +17,16 @@
         android:src="@drawable/background5" />
 
 
-
-     <!--   <com.google.android.material.card.MaterialCardView
-            android:id="@+id/materialCardView"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            app:cardBackgroundColor="@android:color/transparent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_user"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <TextView
-                        android:id="@+id/tv_username"
-                        android:layout_width="200dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="36dp"
-                        android:layout_marginTop="16dp"
-                        android:fontFamily="monospace"
-                        android:text="Lalaland"
-                        android:textSize="18dp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            app:tint="@color/white"
-                            android:layout_marginStart="36dp"
-                            android:src="@drawable/time_icon" />
-
-                        <TextView
-                            android:id="@+id/tv_userdate"
-                            android:layout_width="180dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="6dp"
-                            android:fontFamily="monospace"
-                            android:text="Joined June 2010" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-
-                <FrameLayout
-                    android:layout_width="95dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="28dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/profile_image"
-                        android:layout_width="95dp"
-                        android:layout_height="95dp"
-                        android:src="@drawable/avatar"
-                        app:civ_border_color="#FF000000"
-                        app:civ_border_width="2dp" />
-
-                    <ImageView
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:layout_gravity="center_horizontal|bottom"
-                        android:layout_margin="20dp"
-                        android:background="@android:color/transparent"
-                        android:scrollY="0dp"
-                        android:src="@drawable/outline_auto_fix_normal_white_48" />
-
-                </FrameLayout>
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.google.android.material.card.MaterialCardView>-->
-
-
-   <!-- <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="monospace"
-        android:text="Thông số"
-        android:textSize="22dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/ln_date"
-        app:layout_constraintStart_toStartOf="parent" />-->
-
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/ln_date"
+        android:id="@+id/cardDate"
         android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="15dp"
         android:layout_weight="1"
         android:background="@drawable/custom_background"
         android:backgroundTint="@color/transForBackground"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:layout_constraintStart_toStartOf="@+id/constraintLayout"
-        app:layout_constraintTop_toBottomOf="@+id/blurLayout">
+        app:layout_constraintStart_toStartOf="@+id/cardChart"
+        app:layout_constraintTop_toBottomOf="@+id/cardUser">
 
         <ProgressBar
             android:id="@+id/pb_savingdate"
@@ -192,14 +85,14 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/ln_savingmoney"
+        android:id="@+id/card_savingmoney"
         android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/transForBackground"
         android:layout_weight="1"
         android:background="@drawable/custom_background"
-        app:layout_constraintBottom_toBottomOf="@+id/ln_date"
-        app:layout_constraintEnd_toEndOf="@+id/constraintLayout">
+        android:backgroundTint="@color/transForBackground"
+        app:layout_constraintBottom_toBottomOf="@+id/cardDate"
+        app:layout_constraintEnd_toEndOf="@+id/cardChart">
 
         <ProgressBar
             android:id="@+id/pb_savingmoney"
@@ -233,15 +126,15 @@
                 android:id="@+id/tvTotalSaving"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
                 android:fontFamily="monospace"
-                android:text="213tr"
+                android:text="21113tr"
                 android:textSize="23dp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@id/iv_saving3"
+                app:layout_constraintStart_toEndOf="@+id/iv_saving3"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -261,16 +154,18 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+        android:id="@+id/cardChart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="20dp"
         android:background="@drawable/custom_background"
         android:backgroundTint="@color/transForBackground"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView12"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardDate">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ln_saving"
@@ -329,18 +224,15 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    <io.alterac.blurkit.BlurLayout
-        android:id="@+id/blurLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cardUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
-        android:backgroundTint="@color/transForBackground"
-        android:layout_marginTop="30dp"
         android:background="@drawable/round_border"
-        app:blk_cornerRadius="@dimen/card_radius"
-        app:blk_downscaleFactor="0.1"
-        app:blk_fps="0"
+        android:backgroundTint="@color/transForBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
@@ -394,8 +286,8 @@
                 android:id="@+id/view"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="20dp"
                 android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginRight="20dp"
                 android:background="#F0EEEBEB"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -420,9 +312,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:fontFamily="@font/athiti_light"
+                android:paddingBottom="10dp"
                 android:text="Số tiền tiết kiệm"
                 android:textColor="@color/white"
-                android:paddingBottom="10dp"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="@+id/tv_userdate"
                 app:layout_constraintTop_toBottomOf="@+id/textView2" />
@@ -457,7 +349,72 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    </io.alterac.blurkit.BlurLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+    <LinearLayout
+        android:id="@+id/cardNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/round_background"
+        android:backgroundTint="@color/transForBackground"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView12"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageButton
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:onClick="GoalClicked"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_goal"
+            android:tint="@color/icon_click_selector" />
+
+        <ImageButton
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:onClick="OldRecordClicked"
+
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_record"
+            android:tint="@color/icon_click_selector" />
+
+        <ImageButton
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:onClick="AddRecordClicked"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_add"
+
+            android:tint="@color/icon_click_selector" />
+
+        <ImageButton
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:onClick="GraphClicked"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_piechart"
+            android:tint="@color/icon_click_selector" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

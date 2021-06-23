@@ -9,7 +9,7 @@
     app:cardBackgroundColor="@android:color/transparent">
 
     <io.alterac.blurkit.BlurLayout
-        android:id="@+id/blurLayout"
+        android:id="@+id/cardUser"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:background="@drawable/round_border"

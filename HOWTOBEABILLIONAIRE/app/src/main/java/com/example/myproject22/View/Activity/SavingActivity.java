@@ -5,21 +5,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -30,12 +23,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.akexorcist.roundcornerprogressbar.TextRoundCornerProgressBar;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -44,13 +35,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
-import com.example.myproject22.Model.SavingDatabaseHelper;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.example.myproject22.Model.UserClass;
 import com.example.myproject22.R;
 import com.example.myproject22.Presenter.SavingInterface;
 import com.example.myproject22.Presenter.SavingPresenter;
-import com.example.myproject22.View.Fragment.IncomeCategoryGraphFragment;
-import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -77,23 +67,19 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.example.myproject22.Model.ConnectionClass.urlString;
-import static com.example.myproject22.Util.FormatImage.ByteToBitmap;
 
 public class SavingActivity extends AppCompatActivity implements SavingInterface {
-
 
     // for debugg
     double ivSize = 0;
@@ -112,8 +98,17 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     private ProgressBar pb_savingmoney;
     private ConstraintLayout cl_savingdate;
     private ConstraintLayout cl_savingmoney;
-    private ConstraintLayout cl_user;
     private UserClass userClass;
+
+
+    private ConstraintLayout cardSavingMoney;
+    private ConstraintLayout cardSavingDate;
+    private ConstraintLayout cardChart;
+    private LinearLayout cardNavigation;
+    // private  ConstraintLayout cardUser;
+
+    private ConstraintLayout cardUser;
+
     //endregion
 
 
@@ -137,8 +132,6 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     //endregion
 
 
-
-
     //region BARCHART
     ArrayList<String> ngayTrongTuan = new ArrayList<String>();
     ArrayList<BarEntry> recordTietKiem = new ArrayList<>();
@@ -159,6 +152,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         mSavingPresenter.initView();
         mSavingPresenter.getBundleData();
         mSavingPresenter.createDataBarChart();
+
 
 
       /*  View overlay = findViewById(R.id.mylayout);
@@ -227,7 +221,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         tvDayStreak = findViewById(R.id.tvDayStreak);
         tvTotalSaving = findViewById(R.id.tvTotalSaving);
 
-        //cl_user = findViewById(R.id.cl_user);
+
         tvUserName = findViewById(R.id.tv_username);
         tvUserDate = findViewById(R.id.tv_userdate);
         ivProfile = findViewById(R.id.profile_image);
@@ -253,7 +247,15 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         cl_savingdate.setVisibility(View.INVISIBLE);
         weekchart.setVisibility(View.INVISIBLE);
 
+        // for animations
+        cardSavingDate = findViewById(R.id.cardDate);
+        cardSavingMoney = findViewById(R.id.card_savingmoney);
+        cardUser = findViewById(R.id.cardUser);
+        cardChart = findViewById(R.id.cardChart);
+        cardNavigation = findViewById(R.id.cardNavigation);
 
+        // i will set it back in ANIMATION
+        setAllInvisible();
     }
 
     @Override
@@ -269,24 +271,6 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
 
     //region BUTTON HANDLE
 
-    @Override
-    public void LoadUser(UserClass userClass) {
-
-        tvUserName.setText(userClass.getFULLNAME());
-
-        String date_temp = userClass.getDATESTART();
-        String[] slipdate = date_temp.split(" ");
-        String[] slipday = slipdate[0].split("-");
-        String date_string = "Đã tham gia vào \nngày " + slipday[2] + "/" + slipday[1] + "/" + slipday[0];
-        tvUserDate.setText(date_string);
-
-        if (!userClass.getIMAGE().equals("null")) {
-            Glide.with(SavingActivity.this).load(userClass.getIMAGE()).into(ivProfile);
-        }
-
-        /*   cl_user.setVisibility(View.VISIBLE);AAAA*/
-    }
-
 
     public void onModifyGoalClicked(View view) {
         Intent intent = new Intent(this, GoalActivity.class);
@@ -294,6 +278,33 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
 
+
+    public void GraphClicked(View view) {
+        Intent intent = new Intent(this, ReportCategoryGraphActivity.class);
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+
+    }
+
+    public void AddRecordClicked(View view) {
+        Intent intent = new Intent(this, AddingActivity.class);
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+
+    }
+
+    public void OldRecordClicked(View view) {
+        Intent intent = new Intent(this, ReportCategoryActivity.class);
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+    }
+
+    public void GoalClicked(View view) {
+        Intent intent = new Intent(this, GoalActivity.class);
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+
+    }
 
     //endregion
 
@@ -481,6 +492,52 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     //endregion
 
 
+    //region ANIMATIONS
+
+    public void setAllInvisible() {
+        cardChart.setVisibility(View.INVISIBLE);
+        cardSavingMoney.setVisibility(View.INVISIBLE);
+        cardUser.setVisibility(View.INVISIBLE);
+        cardSavingDate.setVisibility(View.INVISIBLE);
+        cardNavigation.setVisibility(View.INVISIBLE);
+    }
+
+    public void setAllVisible() {
+        cardChart.setVisibility(View.VISIBLE);
+        cardSavingMoney.setVisibility(View.VISIBLE);
+        cardUser.setVisibility(View.VISIBLE);
+        cardSavingDate.setVisibility(View.VISIBLE);
+        cardNavigation.setVisibility(View.VISIBLE);
+    }
+
+    public void loadAnimation() {
+
+        setAllVisible();
+        int slide_time = 2000;
+        YoYo.with(Techniques.SlideInRight)
+                .duration(slide_time)
+                .playOn(cardUser);
+
+        YoYo.with(Techniques.SlideInRight)
+                .duration(slide_time)
+                .playOn(cardSavingDate);
+
+        YoYo.with(Techniques.SlideInRight)
+                .duration(slide_time)
+                .playOn(cardSavingMoney);
+
+        YoYo.with(Techniques.SlideInRight)
+                .duration(slide_time)
+                .playOn(cardChart);
+
+        YoYo.with(Techniques.SlideInUp)
+                .duration(slide_time + 300)
+                .playOn(cardNavigation);
+    }
+
+    //endregion
+
+
     //region DATABASE HANDLE
     @Override
     public void UpdateUserImageToServer(String image) {
@@ -576,6 +633,8 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     }
 
     public void FetchArrayDateFromServer() {
+
+
         arrayDate = new ArrayList<>();
         count_date = 0;
         StringRequest request = new StringRequest(Request.Method.POST,
@@ -636,6 +695,11 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
 
     @Override
     public void FetchMoneySavingFromServer() {
+
+        YoYo.with(Techniques.Pulse)
+                .duration(1000)
+                .playOn(cl_savingmoney);
+
         StringRequest request = new StringRequest(Request.Method.POST,
                 urlString + "getMoneySaving.php", new Response.Listener<String>() {
             @Override
@@ -682,6 +746,8 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
 
     @Override
     public void FetchUserFromServer() {
+
+
         StringRequest request = new StringRequest(Request.Method.POST,
                 urlString + "getUser.php", new Response.Listener<String>() {
             @Override
@@ -737,9 +803,13 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     public void LoadDataFromServer() {
         String date_start = SavingPresenter.StringFromDate(SavingPresenter.FindMondayFromDate(new Date()));
         String date_end = SavingPresenter.StringFromDate(SavingPresenter.FindEndOfWeek(SavingPresenter.FindMondayFromDate(new Date())));
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+
+                loadAnimation();
+
                 mSavingPresenter.fetchUserFromServer();
                 mSavingPresenter.fetchArrayDateFromServer();
                 mSavingPresenter.fetchMoneySavingFromServer();
@@ -750,6 +820,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
 
     @Override
     public void LoadDataFromServerToBarChart() {
+
 
         //get data from database
         BarDataSet barDataSet = new BarDataSet(recordTietKiem, "Ngày trong tuần");
@@ -794,6 +865,24 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         weekchart.setVisibility(View.VISIBLE);
         weekchart.animateY(1000);
 
+    }
+
+    @Override
+    public void LoadUser(UserClass userClass) {
+
+        tvUserName.setText(userClass.getFULLNAME());
+
+        String date_temp = userClass.getDATESTART();
+        String[] slipdate = date_temp.split(" ");
+        String[] slipday = slipdate[0].split("-");
+        String date_string = "Đã tham gia vào \nngày " + slipday[2] + "." + slipday[1] + "." + slipday[0];
+        tvUserDate.setText(date_string);
+
+        if (!userClass.getIMAGE().equals("null")) {
+            Glide.with(SavingActivity.this).load(userClass.getIMAGE()).into(ivProfile);
+        }
+
+        /*   cl_user.setVisibility(View.VISIBLE);AAAA*/
     }
 
 

@@ -240,7 +240,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
                                 int id_outcome = object.getInt("ID_OUTCOME");
                                 int id_saving = object.getInt("ID_SAVING");
 
-                                Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                                Intent intent = new Intent(LoginActivity.this, SavingActivity.class);
                                 Bundle bundle = new Bundle();
                                 bundle.putInt("ID_USER", id_user);
                                 bundle.putInt("ID_INCOME", id_income);

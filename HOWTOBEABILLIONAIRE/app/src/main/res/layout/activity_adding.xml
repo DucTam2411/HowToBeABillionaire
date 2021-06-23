@@ -136,7 +136,7 @@
     </io.alterac.blurkit.BlurLayout>
 
     <io.alterac.blurkit.BlurLayout
-        android:id="@+id/blurLayout"
+        android:id="@+id/cardUser"
         android:layout_width="370dp"
         android:layout_height="100dp"
         android:layout_marginTop="20dp"
@@ -225,9 +225,9 @@
         android:layout_marginTop="20dp"
         android:background="@drawable/border"
         app:blk_cornerRadius="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/blurLayout"
-        app:layout_constraintStart_toStartOf="@+id/blurLayout"
-        app:layout_constraintTop_toBottomOf="@+id/blurLayout">
+        app:layout_constraintEnd_toEndOf="@+id/cardUser"
+        app:layout_constraintStart_toStartOf="@+id/cardUser"
+        app:layout_constraintTop_toBottomOf="@+id/cardUser">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout

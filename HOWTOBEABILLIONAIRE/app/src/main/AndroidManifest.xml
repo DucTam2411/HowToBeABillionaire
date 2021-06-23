@@ -38,7 +38,7 @@
         <activity android:name=".View.Activity.AddingActivity" />
         <activity android:name=".View.Activity.ReportCategoryGraphActivity" /> <!-- phan cua Quan -->
         <!-- Giao dien chinh -->
-        <activity android:name=".View.Activity.DashboardActivity"></activity> <!-- Phan cua Tam -->
+        <!-- Phan cua Tam -->
         <activity android:name=".View.Activity.GoalActivity" />
         <activity android:name=".View.Activity.SavingActivity" >
             <intent-filter>
