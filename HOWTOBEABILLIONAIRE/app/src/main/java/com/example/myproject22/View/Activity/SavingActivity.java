@@ -310,7 +310,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         // set XAxis value formater
         XAxis xAxis = weekchart.getXAxis();
         xAxis.setValueFormatter(new IndexAxisValueFormatter(ngayTrongTuan));
-
+        xAxis.setTextColor(Color.WHITE);
         xAxis.setPosition(XAxis.XAxisPosition.TOP);
         xAxis.setDrawAxisLine(false);
         xAxis.setDrawGridLines(true);
