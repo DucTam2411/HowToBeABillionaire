@@ -323,7 +323,7 @@ public class UpdatePasswordActivity extends AppCompatActivity implements UpdateP
             public void onResponse(String response) {
                 pb_password.setVisibility(View.GONE);
                 if (response.equals("Update password success")) {
-                    Toast.makeText(UpdatePasswordActivity.this, "Cập nhật mật khẩu thành công", Toast.LENGTH_SHORT).show();
+                    setResult(UserAcitvity.RESULT_PASSWORD_SUCCESS);
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 } else if(response.equals("Password wrong")){
@@ -358,6 +358,15 @@ public class UpdatePasswordActivity extends AppCompatActivity implements UpdateP
 
         RequestQueue requestQueue = Volley.newRequestQueue(UpdatePasswordActivity.this);
         requestQueue.add(request);
+    }
+    //endregion
+
+    //region Xử lí override Activity
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
     //endregion
 

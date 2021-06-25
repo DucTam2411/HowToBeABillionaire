@@ -25,7 +25,6 @@ public interface SavingInterface {
     //region Fetch data from server
     public void FetchSavingDetailFromServer(String date_start, String date_end);
     public void FetchArrayDateFromServer();
-    public void FetchMoneySavingFromServer();
     public void FetchUserFromServer();
     //endregion
 

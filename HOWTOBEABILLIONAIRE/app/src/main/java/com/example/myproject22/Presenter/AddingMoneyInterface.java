@@ -15,6 +15,10 @@ public interface AddingMoneyInterface {
     public void HideKeyboard(View view);
     //endregion
 
+    //region Loading Data to server
+    public void LoadDataToServer();
+    //endregion
+
     //region Category
     //Load income and spending category
     public void LoadCategory();

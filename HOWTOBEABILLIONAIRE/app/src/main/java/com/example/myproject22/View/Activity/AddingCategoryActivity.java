@@ -40,6 +40,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.myproject22.Model.SharePreferenceClass;
 import com.example.myproject22.Presenter.AddingCategoryInterface;
 import com.example.myproject22.Presenter.AddingCategoryPresenter;
 import com.example.myproject22.R;
@@ -103,6 +104,9 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
     //Presenter
     AddingCategoryPresenter presentent;
 
+    //SharePreference
+    private SharePreferenceClass settings;
+
     //endregion
 
     @Override
@@ -110,6 +114,10 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_adding_category);
+
+        //region SharePreference
+        settings = new SharePreferenceClass(this);
+        //endregion
 
         //region Khởi tạo presenter và các giá trị ban đầu
         presentent = new AddingCategoryPresenter(this);
@@ -437,16 +445,13 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
             public void onResponse(String response) {
                 progressBar.setVisibility(View.GONE);
                 if (response.equals("Add new income category success")) {
-                    Toast.makeText(AddingCategoryActivity.this, "Thêm danh mục mới thành công", Toast.LENGTH_SHORT).show();
+                    settings.setIsUpdateCategory(true);
                     DeleteImage();
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_in_left);
                 } else {
                     Log.i("RESPONSECATEGORY", response);
-                    Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Tên danh mục đã tồn tại. Vui lòng chọn tên danh mục khác.",Snackbar.LENGTH_SHORT);
-                    snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                    snackbar.show();
-                    /*Toast.makeText(AddingCategoryActivity.this, "Tên danh mục đã tồn tại. Vui lòng chọn tên danh mục khác.", Toast.LENGTH_SHORT).show();*/
+                    til_category.setError("Tên danh mục đã tồn tại. Vui lòng chọn tên danh mục khác");
                 }
             }
         }, new Response.ErrorListener() {
@@ -531,6 +536,7 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
     public void onBackPressed() {
         super.onBackPressed();
         DeleteImage();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
     //endregion
 

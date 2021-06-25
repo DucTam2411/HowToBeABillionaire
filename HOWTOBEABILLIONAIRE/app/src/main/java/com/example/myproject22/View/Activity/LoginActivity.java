@@ -1,5 +1,6 @@
 package com.example.myproject22.View.Activity;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
@@ -81,6 +82,13 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
     private Boolean isRememeber = false;
     //endregion
 
+    //region Const
+    private static final int REQUEST_SIGN_UP = 1001;
+    private static final int REQUEST_FORGOT = 1101;
+    public static final int RESULT_SIGN_UP_SUCCESS = 1002;
+    public static final int RESULT_FORGOT_SUCCESS = 1102;
+    //endregion
+
     //endregion
 
     @Override
@@ -97,6 +105,8 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         //region Share Preference
 
         settings = new SharePreferenceClass(this);
+        settings.setIsUpdateUser(false);
+        settings.setIsUpdateCategory(false);
 
         //Kiểm tra lần đầu đăng nhập
         if (settings.isFirstTime()) {
@@ -126,7 +136,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
                     int id_outcome = settings.getIdOutcome();
                     int id_saving = settings.getIdSaving();
 
-                    Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, SavingActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putInt("ID_USER", id_user);
                     bundle.putInt("ID_INCOME", id_income);
@@ -238,10 +248,6 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
                 settings.setRemember(isChecked);
             }
         });
-        //endregion
-
-        //region Xử lí notification
-        SetNotification();
         //endregion
 
     }
@@ -382,7 +388,6 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
                     JSONArray jsonArray = jsonObject.getJSONArray("data");
 
                     if (success.equals("Login Success")) {
-                        Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                         if (jsonArray.length() > 0) {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject object = jsonArray.getJSONObject(i);
@@ -413,8 +418,12 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
 
                                 //endregion
 
+                                //region Xử lí notification
+                                SetNotification();
+                                //endregion
+
                                 //region Intent
-                                Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                                Intent intent = new Intent(LoginActivity.this, SavingActivity.class);
                                 Bundle bundle = new Bundle();
                                 bundle.putInt("ID_USER", id_user);
                                 bundle.putInt("ID_INCOME", id_income);
@@ -472,25 +481,52 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
     @Override
     public void TextViewClick() {
         Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_SIGN_UP);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
 
     @Override
     public void TextViewForgetClick() {
         Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_FORGOT);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode){
+            case REQUEST_SIGN_UP:
+            {
+                if(resultCode == RESULT_SIGN_UP_SUCCESS){
+                    Snackbar.make(tvSignUp, "Đăng ký tài khoản thành công", Snackbar.LENGTH_SHORT)
+                            .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
+                            .show();
+                }
+                break;
+            }
+            case REQUEST_FORGOT:
+            {
+                if(resultCode == RESULT_FORGOT_SUCCESS){
+                    Snackbar.make(tvSignUp, "Thay đổi mật khẩu mới thành công", Snackbar.LENGTH_SHORT)
+                            .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
+                            .show();
+                }
+                break;
+            }
+        }
+    }
+
     //endregion
 
     //region Set Notification
     public void SetNotification() {
         Calendar calendar = Calendar.getInstance();
         Log.i("TEST1", calendar.toString());
-        calendar.set(Calendar.HOUR_OF_DAY, 9);
-        calendar.set(Calendar.MINUTE, 32);
-        calendar.set(Calendar.SECOND, 30);
+        calendar.set(Calendar.HOUR_OF_DAY, 20);
+        calendar.set(Calendar.MINUTE, 25);
+        calendar.set(Calendar.SECOND, 0);
 
         Intent intent = new Intent(getApplicationContext(), Notification_recevier.class);
 

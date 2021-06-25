@@ -1,6 +1,7 @@
 package com.example.myproject22.View.Activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -75,6 +76,7 @@ import static com.example.myproject22.Model.ConnectionClass.urlString;
 
 public class UserAcitvity extends AppCompatActivity implements UserInterface {
 
+
     //region Khởi tạo giá trị ban đầu
 
     //region Component
@@ -101,6 +103,16 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
     private SharePreferenceClass settings;
     //endregion
 
+    //region Const Update User
+    private static final int REQUEST_UPDATE_USER = 1001;
+    private static final int REQUEST_UPDATE_PASSWORD = 1101;
+    public static final int RESULT_PASSWORD_SUCCESS = 1002;
+    public static final int RESULT_SUCCESS = 1002;
+    public static final int RESULT_FAIL = 1003;
+    private Boolean neededToReload = true;
+    private Boolean isUpdate = false;
+    //endregion
+
     //endregion
 
     @Override
@@ -117,6 +129,7 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
         presenter = new UserPresenter(this);
         presenter.setInit();
         presenter.getBundleData();
+        presenter.loadDataToLayout();
         //endregion
 
         //region Xử lí button click
@@ -154,7 +167,10 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
     @Override
     protected void onResume() {
         super.onResume();
-        presenter.loadDataToLayout();
+
+        if(neededToReload){
+            presenter.loadDataToLayout();
+        }
     }
 
     //region Set Init, get bundle
@@ -190,9 +206,40 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
     public void BtnUpdateUser() {
         Intent intent = new Intent(UserAcitvity.this, UpdateUserActivity.class);
         intent.putExtra("ID_USER", id_user);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_UPDATE_USER);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode){
+            case REQUEST_UPDATE_USER:
+            {
+                if(resultCode == RESULT_SUCCESS){
+                    Snackbar.make(btnLogout, "Cập nhật thông tin thành công", Snackbar.LENGTH_SHORT)
+                            .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
+                            .show();
+                    neededToReload = true;
+                }
+                else{
+                    neededToReload = false;
+                }
+                break;
+            }
+            case REQUEST_UPDATE_PASSWORD:
+            {
+                if(resultCode == RESULT_PASSWORD_SUCCESS){
+                    Snackbar.make(btnLogout, "Cập nhật mật khẩu thành công", Snackbar.LENGTH_SHORT)
+                            .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
+                            .show();
+                }
+                break;
+            }
+        }
+    }
+
     //endregion
 
     //region Button Thay đổi mật khẩu
@@ -200,7 +247,7 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
     public void BtnPassword() {
         Intent intent = new Intent(UserAcitvity.this, UpdatePasswordActivity.class);
         intent.putExtra("ID_USER", id_user);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_UPDATE_PASSWORD);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
     //endregion
@@ -466,6 +513,24 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
                 });
         AlertDialog alert = alertDialogBuilder.create();
         alert.show();
+    }
+    //endregion
+
+    //region Xử lí override Activity
+    @Override
+    public void onBackPressed() {
+
+        isUpdate = settings.getIsUpdateUser();
+        settings.setIsUpdateUser(false);
+        if(isUpdate == false){
+            setResult(SavingActivity.RESULT_UPDATE_FAIL);
+        }
+        else{
+            setResult(SavingActivity.RESULT_UPDATE_SUCCESS);
+        }
+
+        super.onBackPressed();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
     //endregion
 

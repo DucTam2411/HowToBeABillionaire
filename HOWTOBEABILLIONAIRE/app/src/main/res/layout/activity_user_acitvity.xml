@@ -25,7 +25,7 @@
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/materialCardView"
             android:layout_width="match_parent"
-            android:layout_height="140dp"
+            android:layout_height="180dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -34,7 +34,7 @@
                 android:id="@+id/cl_user"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="25dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -52,7 +52,7 @@
                         android:layout_width="200dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="36dp"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="15dp"
                         android:fontFamily="monospace"
                         android:text="Lalaland"
                         android:textSize="18dp"
@@ -113,18 +113,17 @@
 
 
                 <FrameLayout
-                    android:layout_width="95dp"
+                    android:layout_width="120dp"
                     android:layout_height="match_parent"
                     android:layout_marginTop="10dp"
-                    android:layout_marginEnd="20dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/ln_user"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/profile_image"
-                        android:layout_width="95dp"
-                        android:layout_height="95dp"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
                         android:src="@drawable/avatar"
                         app:civ_border_color="#FF000000"
                         app:civ_border_width="2dp" />

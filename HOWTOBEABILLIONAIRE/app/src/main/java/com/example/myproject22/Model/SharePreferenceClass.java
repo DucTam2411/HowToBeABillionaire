@@ -145,4 +145,27 @@ public class SharePreferenceClass {
 
     //endregion
 
+    //region Is Update User
+    public void setIsUpdateUser(Boolean isUpdateUser){
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putBoolean("IS_UPDATE_USER", isUpdateUser);
+        editor.commit();
+    }
+
+    public Boolean getIsUpdateUser() {
+        return mSharedPref.getBoolean("IS_UPDATE_USER", false);
+    }
+    //endregion
+
+    //region Is Update Category
+    public void setIsUpdateCategory(Boolean isUpdateCategory){
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putBoolean("IS_UPDATE_CATEGORY", isUpdateCategory);
+        editor.commit();
+    }
+
+    public  Boolean getIsUpdateCategory(){
+        return mSharedPref.getBoolean("IS_UPDATE_CATEGORY", false);
+    }
+    //endregion
 }

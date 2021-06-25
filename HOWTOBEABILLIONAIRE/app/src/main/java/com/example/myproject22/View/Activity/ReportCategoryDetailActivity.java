@@ -338,4 +338,13 @@ public class ReportCategoryDetailActivity extends AppCompatActivity implements R
 
     //endregion
 
+    //region Xử lí override Activity
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+    }
+    //endregion
+
 }

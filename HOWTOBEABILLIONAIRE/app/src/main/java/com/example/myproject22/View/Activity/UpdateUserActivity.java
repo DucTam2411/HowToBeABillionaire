@@ -37,6 +37,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.example.myproject22.Model.SharePreferenceClass;
 import com.example.myproject22.Model.UserClass;
 import com.example.myproject22.Presenter.SavingPresenter;
 import com.example.myproject22.Presenter.UpdateUserInterface;
@@ -97,6 +98,10 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
     private UserClass userClass;
     //endregion
 
+    //region Share Preference
+    private SharePreferenceClass settings;
+    //endregion
+
     //region Xử lí profile image
     private File photoFile = null;
     private String mCurrentPhotoPath;
@@ -114,6 +119,10 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_update_user);
+
+        //region SharePreference
+        settings = new SharePreferenceClass(this);
+        //endregion
 
         //region Khởi tạo present và các giá trị ban đầu
         presenter = new UpdateUserPresenter(this);
@@ -220,8 +229,10 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
 
     @Override
     public void onBackPressed() {
+        setResult(UserAcitvity.RESULT_FAIL);
         super.onBackPressed();
         DeleteImage();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
 
     //endregion
@@ -371,10 +382,16 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
 
     @Override
     public void BtnCancelClick() {
+        setResult(UserAcitvity.RESULT_FAIL);
         finish();
         DeleteImage();
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_in_left);
     }
+
+
+    //endregion
+
+    //region Xử lý image
 
     @Override
     public void ChooseImage() {
@@ -455,9 +472,7 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
             }
         });
     }
-    //endregion
 
-    //region Xử lý image
     //Take image from gallery
     @Override
     public void TakeImageFromGallery() {
@@ -621,7 +636,10 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
             public void onResponse(String response) {
                 pb_user.setVisibility(View.INVISIBLE);
                 if(response.equals("Update user success")){
-                    Toast.makeText(UpdateUserActivity.this, "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
+
+                    settings.setIsUpdateUser(true);
+                    setResult(UserAcitvity.RESULT_SUCCESS);
+
                     finish();
                     DeleteImage();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_in_left);
@@ -664,7 +682,10 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
             public void onResponse(String response) {
                 pb_user.setVisibility(View.INVISIBLE);
                 if(response.equals("Update user success")){
-                    Toast.makeText(UpdateUserActivity.this, "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
+
+                    settings.setIsUpdateUser(true);
+                    setResult(UserAcitvity.RESULT_SUCCESS);
+
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_in_left);
                 }

@@ -28,6 +28,12 @@ public class AddingMoneyPresentent {
 
     //endregion
 
+    //region Loading Data to server
+    public void loadDataToServer() {
+        anInterface.LoadDataToServer();
+    }
+    //endregion
+
     //region Category
 
     public void loadingIncomeCategory(){

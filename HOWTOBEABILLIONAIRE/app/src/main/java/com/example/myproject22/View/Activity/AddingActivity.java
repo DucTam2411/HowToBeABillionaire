@@ -50,6 +50,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myproject22.Model.CategoryClass;
+import com.example.myproject22.Model.SharePreferenceClass;
 import com.example.myproject22.Presenter.AddingMoneyInterface;
 import com.example.myproject22.Presenter.AddingMoneyPresentent;
 import com.example.myproject22.R;
@@ -169,6 +170,10 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     private int id_outcome;
     //endregion
 
+    //region SharePreference
+    private SharePreferenceClass settings;
+    //endregion
+
     //endregion
 
     @Override
@@ -177,10 +182,15 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_adding);
 
+        //region SharePreference
+        settings = new SharePreferenceClass(this);
+        //endregion
+
         //region Khởi tạo present và các giá trị ban đầu
         addingMoneyPresentent = new AddingMoneyPresentent(this);
         addingMoneyPresentent.getDataBundle();
         addingMoneyPresentent.setInit();
+        addingMoneyPresentent.loadDataToServer();
         //endregion
 
         //region Xử lí các button
@@ -294,14 +304,19 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     }
 
     //region Override những hàm của activity
+
+
     @Override
     protected void onResume() {
         super.onResume();
-        categoryRecycler.setVisibility(View.INVISIBLE);
-        categoryRecycler1.setVisibility(View.INVISIBLE);
-        arrayList = new ArrayList<>();
-        arrayList1 = new ArrayList<>();
-        LoadCategory();
+
+        if(settings.getIsUpdateCategory()){
+            settings.setIsUpdateCategory(false);
+            Snackbar.make(mSnackbarLayout, "Thêm danh mục mới thành công", Snackbar.LENGTH_SHORT)
+                    .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
+                    .show();
+            addingMoneyPresentent.loadDataToServer();
+        }
     }
 
     @Override
@@ -318,8 +333,11 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         ResetSound();
+        setResult(SavingActivity.RESULT_ADD_FAIL);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+
+        super.onBackPressed();
     }
     //endregion
 
@@ -389,6 +407,17 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     public void HideKeyboard(View view) {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+    //endregion
+
+    //region Xử lí loading Category
+    @Override
+    public void LoadDataToServer(){
+        categoryRecycler.setVisibility(View.INVISIBLE);
+        categoryRecycler1.setVisibility(View.INVISIBLE);
+        arrayList = new ArrayList<>();
+        arrayList1 = new ArrayList<>();
+        LoadCategory();
     }
     //endregion
 
@@ -1114,8 +1143,8 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
             public void onResponse(String response) {
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new income detailed success")) {
-                    Toast.makeText(AddingActivity.this, "Thêm thu nhập thành công", Toast.LENGTH_SHORT).show();
                     ResetSound();
+                    setResult(SavingActivity.RESULT_ADD_INCOME);
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
@@ -1162,8 +1191,8 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
             public void onResponse(String response) {
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new income detailed success")) {
-                    Toast.makeText(AddingActivity.this, "Thêm thu nhập thành công", Toast.LENGTH_SHORT).show();
                     ResetSound();
+                    setResult(SavingActivity.RESULT_ADD_INCOME);
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
@@ -1209,8 +1238,8 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
             public void onResponse(String response) {
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new income detailed success")) {
-                    Toast.makeText(AddingActivity.this, "Thêm thu nhập thành công", Toast.LENGTH_SHORT).show();
                     ResetSound();
+                    setResult(SavingActivity.RESULT_ADD_INCOME);
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
@@ -1257,8 +1286,8 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 /*Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();*/
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new income detailed success")) {
-                    Toast.makeText(AddingActivity.this, "Thêm thu nhập thành công", Toast.LENGTH_SHORT).show();
                     ResetSound();
+                    setResult(SavingActivity.RESULT_ADD_INCOME);
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
@@ -1306,8 +1335,8 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 /*Toast.makeText(AddingActivity.this, response, Toast.LENGTH_SHORT).show();*/
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new outcome detailed success")) {
-                    Toast.makeText(AddingActivity.this, "Thêm chi tiêu thành công", Toast.LENGTH_SHORT).show();
                     ResetSound();
+                    setResult(SavingActivity.RESULT_ADD_OUTCOME);
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
@@ -1354,8 +1383,8 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
             public void onResponse(String response) {
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new outcome detailed success")) {
-                    Toast.makeText(AddingActivity.this, "Thêm chi tiêu thành công", Toast.LENGTH_SHORT).show();
                     ResetSound();
+                    setResult(SavingActivity.RESULT_ADD_OUTCOME);
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
@@ -1372,7 +1401,6 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
-                /*Toast.makeText(AddingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
                 progressBar3.setVisibility(View.GONE);
             }
         }) {
@@ -1401,8 +1429,8 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
             public void onResponse(String response) {
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new outcome detailed success")) {
-                    Toast.makeText(AddingActivity.this, "Thêm chi tiêu thành công", Toast.LENGTH_SHORT).show();
                     ResetSound();
+                    setResult(SavingActivity.RESULT_ADD_OUTCOME);
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
@@ -1419,7 +1447,6 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
                 Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
-                /*Toast.makeText(AddingActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
                 progressBar3.setVisibility(View.GONE);
             }
         }) {
@@ -1448,8 +1475,8 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
             public void onResponse(String response) {
                 progressBar3.setVisibility(View.GONE);
                 if (response.equals("Add new outcome detailed success")) {
-                    Toast.makeText(AddingActivity.this, "Thêm chi tiêu thành công", Toast.LENGTH_SHORT).show();
                     ResetSound();
+                    setResult(SavingActivity.RESULT_ADD_OUTCOME);
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }

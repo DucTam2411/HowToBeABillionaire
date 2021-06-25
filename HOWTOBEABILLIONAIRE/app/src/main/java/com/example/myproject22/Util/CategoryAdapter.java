@@ -101,7 +101,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
                 Bundle bundle = new Bundle();
                 bundle.putInt("ID_USER", id_user);
                 intent.putExtras(bundle);
-                v.getContext().startActivity(intent);
+                ((Activity)v.getContext()).startActivity(intent);
                 ((Activity)v.getContext()).overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
             }
         });

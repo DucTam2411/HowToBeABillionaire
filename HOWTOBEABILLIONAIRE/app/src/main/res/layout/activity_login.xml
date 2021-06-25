@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="64dp"
+            android:layout_marginStart="60dp"
             android:layout_marginTop="150dp">
 
             <ProgressBar
@@ -32,16 +32,16 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:text="LOGIN"
+                android:text="Đăng nhập"
                 android:textSize="30sp"
-                android:layout_marginStart="100dp"/>
+                android:layout_marginStart="80dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_user"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:hint="USERNAME"
+                android:hint="Tên đăng nhập"
                 app:endIconMode="clear_text"
                 app:helperTextEnabled="true"
                 app:errorEnabled="true"
@@ -61,7 +61,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:hint="PASSWORD"
+                android:hint="Mật khẩu"
                 app:endIconMode="password_toggle"
                 app:helperTextEnabled="true"
                 app:errorEnabled="true"
@@ -84,12 +84,12 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/tvForget"
                 app:layout_constraintStart_toStartOf="parent"
-                android:text="LOGIN"
+                android:text="Đăng nhập"
                 app:strokeWidth="1dp"
                 android:textAllCaps="false"
                 android:textSize="20sp"
                 android:layout_marginTop="20dp"
-                android:layout_marginStart="100dp"/>
+                android:layout_marginStart="80dp"/>
 
             <TextView
                 android:id="@+id/tvRegister"
@@ -100,7 +100,7 @@
                 android:text="@string/signup"
                 android:textSize="16sp"
                 android:layout_marginTop="15dp"
-                android:layout_marginStart="50dp"/>
+                android:layout_marginStart="5dp"/>
 
             <CheckBox
                 android:id="@+id/cb_remember"
@@ -108,7 +108,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/til_password"
                 app:layout_constraintStart_toStartOf="parent"
-                android:text="Remember"
+                android:text="Tự động điền"
                 android:textSize="16sp"
                 android:layout_marginTop="0dp"
                 android:layout_marginStart="10dp"/>
@@ -119,8 +119,9 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/til_password"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:text="Forget Password"
+                android:text="Quên mật khẩu ?"
                 android:textSize="16sp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginStart="80dp"/>
 

@@ -89,7 +89,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:hint="FULLNAME"
+            android:hint="Họ và tên"
             app:endIconMode="clear_text"
             app:errorEnabled="true"
             android:layout_marginTop="10dp"

@@ -49,10 +49,6 @@ public class SavingPresenter {
         mSavingInterface.FetchArrayDateFromServer();
     }
 
-    public void fetchMoneySavingFromServer(){
-        mSavingInterface.FetchMoneySavingFromServer();
-    }
-
     public void fetchUserFromServer(){
         mSavingInterface.FetchUserFromServer();
     }

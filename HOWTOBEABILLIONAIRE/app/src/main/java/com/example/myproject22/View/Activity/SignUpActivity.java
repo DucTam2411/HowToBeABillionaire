@@ -656,7 +656,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
                 /*Toast.makeText(SignUpActivity.this, response, Toast.LENGTH_SHORT).show();*/
                 pb_signup.setVisibility(View.GONE);
                 if (response.equals("Sign Up success")) {
-                    Toast.makeText(SignUpActivity.this, "Đăng ký tài khoản thành công", Toast.LENGTH_SHORT).show();
+                    setResult(LoginActivity.RESULT_SIGN_UP_SUCCESS);
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_in_left);
                 }
@@ -765,8 +765,12 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
     public void onBackPressed() {
         super.onBackPressed();
         DeleteImage();
+
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
 
     //endregion
+
+
 
 }

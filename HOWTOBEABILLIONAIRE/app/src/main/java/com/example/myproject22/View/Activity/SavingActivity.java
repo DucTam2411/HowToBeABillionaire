@@ -104,24 +104,20 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     double ivSize = 0;
 
     //region Component cho tiet kiem
-    private int id_saving = 3;
-    private int id_user = 9;
     private TextView tvDayStreak;
     private TextView tvTotalSaving;
     private TextView tvUserName;
     private TextView tvUserDate;
+    private TextView tvUserUse;
     private CircleImageView ivProfile;
-    private ProgressBar pb_saving;
-    private ProgressBar pb_savingdate;
-    private ProgressBar pb_savingmoney;
     private ConstraintLayout cl_savingdate;
     private ConstraintLayout cl_savingmoney;
-    private ConstraintLayout cl_user;
-    private MaterialCardView cardView;
     private BarChart weekchart;
+    private ProgressBar pb_total;
+    //endregion
 
 
-    // TAM ANIMATION COMPONENTS
+    //region TAM ANIMATION COMPONENTS
     private ConstraintLayout cardSavingMoney;
     private ConstraintLayout cardSavingDate;
     private ConstraintLayout cardChart;
@@ -134,6 +130,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     //region Xử lí thời gian và tiền
     private ArrayList<Date> arrayDate = new ArrayList<>();
     private int count_date = 0;
+    private int count_use = 0;
     private String money_string = "";
     //endregion
 
@@ -149,7 +146,35 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     //endregion
 
     // region Presenter
+    private int id_saving = 3;
+    private int id_user = 9;
+    private int id_income = 3;
+    private int id_outcome = 3;
     private SavingPresenter mSavingPresenter;
+    //endregion
+
+    //region Const
+
+    //region Adding Money
+    private static final int REQUEST_ADD_MONEY = 1000;
+    public static final int RESULT_ADD_INCOME = 1001;
+    public static final int RESULT_ADD_OUTCOME = 1002;
+    public static final int RESULT_ADD_FAIL = 1003;
+    //endregion
+
+    //region Update User
+    private static final int REQUEST_UPDATE_USER = 1100;
+    public static final int RESULT_UPDATE_SUCCESS = 1101;
+    public static final int RESULT_UPDATE_FAIL = 1102;
+    //endregion
+
+    private Boolean neededToReload;
+    //endregion
+
+    //region Check Time
+    private Boolean isUserCheck = false;
+    private Boolean isTimeCheck = false;
+    private Boolean isChartCheck = false;
     //endregion
 
     //endregion
@@ -169,37 +194,42 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         }
 
         //region Khởi tạo presenter và các giá trị mặc định
+        neededToReload = false;
         mSavingPresenter = new SavingPresenter(this);
         mSavingPresenter.initView();
         mSavingPresenter.getBundleData();
         mSavingPresenter.createDataBarChart();
+        mSavingPresenter.loadDataFromServer();
         //endregion
-
-
 
       /*  View overlay = findViewById(R.id.mylayout);
         overlay.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 | View.SYSTEM_UI_FLAG_FULLSCREEN);*/
 
-
-
-       /* //region Xử lí cardview click
-        cardView.setOnClickListener(new View.OnClickListener() {
+       //region Xử lí cardview click
+        cardUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSavingPresenter.btnUserClick();
             }
-        });*/
+        });
 
     }
 
     //region Xử lí các hàm override từ Activity
+
     @Override
     protected void onResume() {
         super.onResume();
-       mSavingPresenter.loadDataFromServer();
+
+        Log.i("TEST1",  neededToReload + "");
+        if(neededToReload){
+            mSavingPresenter.loadDataFromServer();
+        }
     }
+
+
     //endregion
 
     //region Set init, get bundle
@@ -212,14 +242,12 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         tvTotalSaving = findViewById(R.id.tvTotalSaving);
         tvUserName = findViewById(R.id.tv_username);
         tvUserDate = findViewById(R.id.tv_userdate);
+        tvUserUse = findViewById(R.id.tvDayUse);
         ivProfile = findViewById(R.id.profile_image);
-        pb_saving = findViewById(R.id.pb_saving);
-        pb_savingdate = findViewById(R.id.pb_savingdate);
-        pb_savingmoney = findViewById(R.id.pb_savingmoney);
         cl_savingdate = findViewById(R.id.cl_savingdate);
         cl_savingmoney = findViewById(R.id.cl_savingmoney);
-        cl_user = findViewById(R.id.cl_user);
-        cardView = findViewById(R.id.materialCardView);
+        pb_total = findViewById(R.id.pb_total);
+        pb_total.bringToFront();
         //endregion
 
 
@@ -236,10 +264,12 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
 
     @Override
     public void GetBundleData() {
-     /*   Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();*/
-        id_user = 9;
-        id_saving = 3;
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        id_user = bundle.getInt("ID_USER");
+        id_income = bundle.getInt("ID_INCOME");
+        id_outcome = bundle.getInt("ID_OUTCOME");
+        id_saving = bundle.getInt("ID_SAVING");
     }
     //endregion
 
@@ -320,7 +350,6 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         //endregion
 
         //region Hiện barchart khi đã load xong
-        pb_saving.setVisibility(View.GONE);
         weekchart.setVisibility(View.VISIBLE);
         weekchart.animateY(1000);
         //endregion
@@ -341,7 +370,13 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
             Glide.with(SavingActivity.this).load(userClass.getIMAGE()).into(ivProfile);
         }
 
-     /*   cl_user.setVisibility(View.VISIBLE);*/
+        Double total = userClass.getINCOME() - userClass.getOUTCOME();
+        money_string = SavingPresenter.GetStringMoney(total);
+
+        tvTotalSaving.setText(money_string);
+
+        cl_savingmoney.setVisibility(View.VISIBLE);
+        /*cl_user.setVisibility(View.VISIBLE);*/
     }
     //endregion
 
@@ -353,13 +388,18 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                loadAnimation();
                 mSavingPresenter.fetchUserFromServer();
                 mSavingPresenter.fetchArrayDateFromServer();
-                mSavingPresenter.fetchMoneySavingFromServer();
                 mSavingPresenter.fetchSavingDetailFromServer(date_start,date_end);
             }
         }, 1000);
+
+        /*new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                loadAnimation();
+            }
+        }, 3000);*/
     }
     //endregion
 
@@ -383,6 +423,9 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                     JSONArray jsonArray = jsonObject.getJSONArray("data");
 
                     if (success.equals("1")) {
+
+                        isChartCheck = true;
+
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
 
@@ -407,6 +450,10 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                     e.printStackTrace();
                 }
                 mSavingPresenter.loadDataFromServerToBarChart();
+
+                if(isTimeCheck == true && isUserCheck == true){
+                    loadAnimation();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -434,6 +481,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     public void FetchArrayDateFromServer(){
         arrayDate = new ArrayList<>();
         count_date = 0;
+        count_use = 0;
         StringRequest request = new StringRequest(Request.Method.POST,
                 urlString + "getSavingDetailDate.php", new Response.Listener<String>() {
             @Override
@@ -447,6 +495,9 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                     JSONArray jsonArray = jsonObject.getJSONArray("data");
 
                     if (success.equals("1")) {
+
+                        isTimeCheck = true;
+
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
 
@@ -456,6 +507,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                             if(arrayDate.size() == 0){
                                 arrayDate.add(date);
                                 count_date++;
+                                count_use++;
                             } else{
                                 Date last_array = arrayDate.get(arrayDate.size() - 1);
                                 if(SavingPresenter.CalculateDateUse(last_array, date) > 1){
@@ -463,65 +515,20 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                                 }
                                 arrayDate.add(date);
                                 count_date++;
+                                count_use++;
                             }
                         }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                pb_savingdate.setVisibility(View.GONE);
                 tvDayStreak.setText(String.valueOf(count_date));
+                tvUserUse.setText(String.valueOf(count_use));
                 cl_savingdate.setVisibility(View.VISIBLE);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(weekchart, "Lỗi kết nối internet", Snackbar.LENGTH_SHORT);
-                snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
-                snackbar.show();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("id_saving", String.valueOf(id_saving));
-                return params;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(SavingActivity.this);
-        requestQueue.add(request);
-    }
-    //endregion
 
-    //region Lấy dữ liệu tiền từ saving (để tìm tiến tiết kiệm)
-    @Override
-    public void FetchMoneySavingFromServer(){
-        StringRequest request = new StringRequest(Request.Method.POST,
-                urlString + "getMoneySaving.php", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    Log.i("RESPONSESAVING", response);
-
-                    JSONObject jsonObject = new JSONObject(response);
-                    String success = jsonObject.getString("success");
-
-                    JSONArray jsonArray = jsonObject.getJSONArray("data");
-
-                    if (success.equals("1")) {
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject object = jsonArray.getJSONObject(i);
-
-                            Double money_saving = object.getDouble("TOTAL_SAVING");
-                            money_string = SavingPresenter.GetStringMoney(money_saving);
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                if(isChartCheck == true && isUserCheck == true){
+                    loadAnimation();
                 }
-                pb_savingmoney.setVisibility(View.GONE);
-                tvTotalSaving.setText(money_string);
-                cl_savingmoney.setVisibility(View.VISIBLE);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -542,6 +549,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         requestQueue.add(request);
     }
     //endregion
+
 
     //region Lấy thông tin user từ bảng user
     @Override
@@ -559,6 +567,9 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                     JSONArray jsonArray = jsonObject.getJSONArray("data");
 
                     if (success.equals("1")) {
+
+                        isUserCheck = true;
+
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
 
@@ -566,12 +577,15 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                             String date_string = object.getString("DATESTART");
                             String image_string = object.getString("USERIMAGE");
 
+                            Double income = object.getDouble("INCOME");
+                            Double outcome = object.getDouble("OUTCOME");
+
                             if(!image_string.equals("null")){
                                 String url_image = urlString + "ImagesUser/" + image_string;
-                                userClass = new UserClass(fullname, date_string, url_image);
+                                userClass = new UserClass(fullname, date_string, url_image, income ,outcome);
                             }
                             else{
-                                userClass = new UserClass(fullname,date_string,image_string);
+                                userClass = new UserClass(fullname,date_string,image_string, income, outcome);
                             }
                         }
                     }
@@ -579,6 +593,10 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                     e.printStackTrace();
                 }
                 mSavingPresenter.loadUser(userClass);
+
+                if(isChartCheck == true && isTimeCheck == true){
+                    loadAnimation();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -607,7 +625,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     public void BtnUserClick() {
         Intent intent = new Intent(SavingActivity.this, UserAcitvity.class);
         intent.putExtra("ID_USER", id_user);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_UPDATE_USER);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
 
@@ -615,20 +633,93 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     }
 
     public void OldRecordClicked(View view) {
+        Intent intent = new Intent(SavingActivity.this, ReportCategoryActivity.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("ID_INCOME", id_income);
+        bundle.putInt("ID_OUTCOME", id_outcome);
+        intent.putExtras(bundle);
+
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
 
     public void AddRecordClicked(View view) {
+        Intent intent = new Intent(SavingActivity.this, AddingActivity.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("ID_USER", id_user);
+        bundle.putInt("ID_INCOME", id_income);
+        bundle.putInt("ID_OUTCOME", id_outcome);
+        intent.putExtras(bundle);
+
+        startActivityForResult(intent, REQUEST_ADD_MONEY);
+
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
 
     public void GraphClicked(View view) {
+        Intent intent = new Intent(SavingActivity.this, ReportCategoryGraphActivity.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("ID_USER", id_user);
+        bundle.putInt("ID_INCOME", id_income);
+        bundle.putInt("ID_OUTCOME", id_outcome);
+        intent.putExtras(bundle);
+
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
 
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode){
+            case REQUEST_ADD_MONEY:
+            {
+                if(resultCode == RESULT_ADD_INCOME){
+                    setAllInvisible();
+                    Snackbar snackbar = Snackbar.make(cardNavigation, "Thêm một thu nhập thành công", BaseTransientBottomBar.LENGTH_SHORT);
+                    snackbar.setAnchorView(R.id.cardNavigation);
+                    snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                    snackbar.show();
+                    neededToReload = true;
+                }
+                else if(resultCode == RESULT_ADD_OUTCOME){
+                    setAllInvisible();
+                    Snackbar snackbar = Snackbar.make(cardNavigation, "Thêm một chi tiêu thành công", BaseTransientBottomBar.LENGTH_SHORT);
+                    snackbar.setAnchorView(R.id.cardNavigation);
+                    snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
+                    snackbar.show();
+                    neededToReload = true;
+                }
+                else{
+                    neededToReload = false;
+                }
+                break;
+            }
+            case REQUEST_UPDATE_USER:
+            {
+                if(resultCode == RESULT_UPDATE_SUCCESS){
+                    setAllInvisible();
+                    neededToReload = true;
+                }
+                else{
+                    neededToReload = false;
+                }
+                Log.i("TEST2", neededToReload + "");
+                break;
+            }
+        }
+    }
+
     //endregion
-
-
 
     //region ANIMATION
     public void setAllInvisible() {
+        pb_total.setVisibility(View.VISIBLE);
         cardChart.setVisibility(View.INVISIBLE);
         cardSavingMoney.setVisibility(View.INVISIBLE);
         cardUser.setVisibility(View.INVISIBLE);
@@ -637,6 +728,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     }
 
     public void setAllVisible() {
+        pb_total.setVisibility(View.GONE);
         cardChart.setVisibility(View.VISIBLE);
         cardSavingMoney.setVisibility(View.VISIBLE);
         cardUser.setVisibility(View.VISIBLE);

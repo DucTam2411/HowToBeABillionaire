@@ -46,7 +46,11 @@
             android:parentActivityName=".View.Activity.LoginActivity"/>
 
         <activity android:name=".View.Activity.LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity
@@ -62,24 +66,12 @@
 
         <activity android:name=".View.Activity.AddingActivity" />
 
-        <activity android:name=".View.Activity.ReportCategoryGraphActivity" >
-           <!-- <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
-        </activity> <!-- phan cua Quan -->
+        <activity android:name=".View.Activity.ReportCategoryGraphActivity" />
         <!-- Giao dien chinh -->
         <activity android:name=".View.Activity.DashboardActivity">
         </activity> <!-- Phan cua Tam -->
         <activity android:name=".View.Activity.GoalActivity" />
-        <activity android:name=".View.Activity.SavingActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".View.Activity.SavingActivity" />
 
         <receiver android:name=".View.Service.Notification_recevier"/>
 

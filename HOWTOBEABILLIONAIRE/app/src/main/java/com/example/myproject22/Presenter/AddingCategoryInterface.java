@@ -16,6 +16,8 @@ public interface AddingCategoryInterface {
     public void HideKeyboard(View view);
     //endregion
 
+
+
     //region Image
     //Load Image from Camera of Gallery
     public void ChooseImage();

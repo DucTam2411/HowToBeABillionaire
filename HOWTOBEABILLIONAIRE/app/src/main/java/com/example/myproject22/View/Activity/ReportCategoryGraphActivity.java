@@ -52,4 +52,13 @@ public class ReportCategoryGraphActivity extends AppCompatActivity  {
         id_outcome = bundle.getInt("ID_OUTCOME", 1);
     }
     //endregion
+
+    //region Xử lí override Activity
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+    }
+    //endregion
 }

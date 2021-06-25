@@ -95,12 +95,12 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
             }
         });
 
-        tv_signup_forgot.setOnClickListener(new View.OnClickListener() {
+        /*tv_signup_forgot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 presenter.textViewClick();
             }
-        });
+        });*/
         //endregion
 
         //region Xử lí các edittext
@@ -204,9 +204,10 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
         et_password_forgot = findViewById(R.id.et_password_forgot);
         et_password_confirm_forgot = findViewById(R.id.et_password_forgot_confirm);
         btn_forgot = findViewById(R.id.btnForgotPassword);
-        tv_signup_forgot = findViewById(R.id.tvRegister_forgot);
         pb_forgot = findViewById(R.id.pb_password_forgot);
         mSnackbarLayout = findViewById(R.id.cl_snackbar);
+
+        /*tv_signup_forgot = findViewById(R.id.tvRegister_forgot);*/
     }
 
     @Override
@@ -343,7 +344,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
             public void onResponse(String response) {
                 pb_forgot.setVisibility(View.GONE);
                 if (response.length() == 25) {
-                    Toast.makeText(ForgotPasswordActivity.this, "Thay đổi mật khâu thành công", Toast.LENGTH_SHORT).show();
+                    setResult(LoginActivity.RESULT_FORGOT_SUCCESS);
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 }
@@ -388,4 +389,12 @@ public class ForgotPasswordActivity extends AppCompatActivity implements ForgotP
 
     //endregion
 
+    //region Xử lí override Activity
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+    }
+    //endregion
 }
