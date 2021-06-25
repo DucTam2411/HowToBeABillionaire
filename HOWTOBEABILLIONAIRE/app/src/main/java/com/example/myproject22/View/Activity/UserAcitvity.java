@@ -168,6 +168,7 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
         super.onResume();
 
         if(neededToReload){
+            neededToReload = false;
             presenter.loadDataToLayout();
         }
     }

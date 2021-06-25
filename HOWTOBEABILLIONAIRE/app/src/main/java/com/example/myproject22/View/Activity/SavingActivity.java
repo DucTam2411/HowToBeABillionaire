@@ -112,6 +112,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     private CircleImageView ivProfile;
     private ConstraintLayout cl_savingdate;
     private ConstraintLayout cl_savingmoney;
+    private ConstraintLayout cl_user;
     private BarChart weekchart;
     private ProgressBar pb_total;
     //endregion
@@ -175,6 +176,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     private Boolean isUserCheck = false;
     private Boolean isTimeCheck = false;
     private Boolean isChartCheck = false;
+    private Boolean isFirstCheck = false;
     //endregion
 
     //endregion
@@ -231,6 +233,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
 
         Log.i("TEST1",  neededToReload + "");
         if(neededToReload){
+            neededToReload = false;
             mSavingPresenter.loadDataFromServer();
         }else{
             setAllVisible();
@@ -254,6 +257,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         ivProfile = findViewById(R.id.profile_image);
         cl_savingdate = findViewById(R.id.cl_savingdate);
         cl_savingmoney = findViewById(R.id.cl_savingmoney);
+        cl_user = findViewById(R.id.cl_user);
         pb_total = findViewById(R.id.pb_total);
         pb_total.bringToFront();
         //endregion
@@ -384,7 +388,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         tvTotalSaving.setText(money_string);
 
         cl_savingmoney.setVisibility(View.VISIBLE);
-        /*cl_user.setVisibility(View.VISIBLE);*/
+        cl_user.setVisibility(View.VISIBLE);
     }
     //endregion
 
@@ -459,7 +463,8 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                 }
                 mSavingPresenter.loadDataFromServerToBarChart();
 
-                if(isTimeCheck == true && isUserCheck == true){
+                if(isTimeCheck == false && isUserCheck == false && isFirstCheck == false){
+                    isFirstCheck = true;
                     loadAnimation();
                 }
             }
@@ -534,9 +539,11 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                 tvUserUse.setText(String.valueOf(count_use));
                 cl_savingdate.setVisibility(View.VISIBLE);
 
-                if(isChartCheck == true && isUserCheck == true){
+                if(isChartCheck == false && isUserCheck == false && isFirstCheck == false){
+                    isFirstCheck = true;
                     loadAnimation();
                 }
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -602,7 +609,8 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                 }
                 mSavingPresenter.loadUser(userClass);
 
-                if(isChartCheck == true && isTimeCheck == true){
+                if(isTimeCheck == false && isChartCheck == false && isFirstCheck == false){
+                    isFirstCheck = true;
                     loadAnimation();
                 }
             }
@@ -696,6 +704,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                     isChartCheck = false;
                     isTimeCheck = false;
                     isUserCheck = false;
+                    isFirstCheck = false;
                 }
                 else if(resultCode == RESULT_ADD_OUTCOME){
                     Snackbar snackbar = Snackbar.make(cardNavigation, "Thêm một chi tiêu thành công", BaseTransientBottomBar.LENGTH_SHORT);
@@ -706,6 +715,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                     isChartCheck = false;
                     isTimeCheck = false;
                     isUserCheck = false;
+                    isFirstCheck = false;
                 }
                 else{
                     neededToReload = false;
@@ -719,6 +729,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                     isChartCheck = false;
                     isTimeCheck = false;
                     isUserCheck = false;
+                    isFirstCheck = false;
                 }
                 else{
                     neededToReload = false;
@@ -739,6 +750,11 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         cardUser.setVisibility(View.INVISIBLE);
         cardSavingDate.setVisibility(View.INVISIBLE);
         cardNavigation.setVisibility(View.INVISIBLE);
+
+        cl_user.setVisibility(View.INVISIBLE);
+        cl_savingmoney.setVisibility(View.INVISIBLE);
+        cl_savingdate.setVisibility(View.INVISIBLE);
+        weekchart.setVisibility(View.INVISIBLE);
     }
 
     public void setAllVisible() {
@@ -748,6 +764,13 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         cardUser.setVisibility(View.VISIBLE);
         cardSavingDate.setVisibility(View.VISIBLE);
         cardNavigation.setVisibility(View.VISIBLE);
+
+        if(!neededToReload){
+            cl_user.setVisibility(View.VISIBLE);
+            cl_savingmoney.setVisibility(View.VISIBLE);
+            cl_savingdate.setVisibility(View.VISIBLE);
+            weekchart.setVisibility(View.VISIBLE);
+        }
     }
 
     public void loadAnimation() {
