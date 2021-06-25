@@ -1,6 +1,8 @@
 package com.example.myproject22.Util;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +27,7 @@ public class WeekOutcomeAdapter extends  RecyclerView.Adapter<WeekOutcomeAdapter
     Context context;
     EventListener listener; //Gọi hàm từ fragment
     private static long mLastClickTime = 0;
+    private int row_index = 0;
     //endregion
 
     public WeekOutcomeAdapter(ArrayList<WeekItem> weeks, Context context, EventListener listener) {
@@ -50,6 +53,11 @@ public class WeekOutcomeAdapter extends  RecyclerView.Adapter<WeekOutcomeAdapter
 
         //region Gán dữ liệu
         week.setText(weeks.get(position).getName());
+        if(position == weeks.size() - 1){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                cardView.setCardBackgroundColor(context.getColor(R.color.teal_200));
+            }
+        }
         //endregion
 
         //region Handle Click
@@ -62,9 +70,24 @@ public class WeekOutcomeAdapter extends  RecyclerView.Adapter<WeekOutcomeAdapter
                 if(SystemClock.elapsedRealtime() - mLastClickTime < 1000)
                 { return;}
                 mLastClickTime = SystemClock.elapsedRealtime();
+
+                row_index = position;
+                notifyDataSetChanged();
+
                 listener.FetchOutcomeFromServer(datestart,dateend);
             }
         });
+        //endregion
+
+        //region Change Color
+        if(row_index == position){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                cardView.setCardBackgroundColor(context.getColor(R.color.teal_200));
+            }
+        }
+        else{
+            cardView.setCardBackgroundColor(Color.TRANSPARENT);
+        }
         //endregion
     }
 

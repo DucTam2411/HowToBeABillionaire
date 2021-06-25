@@ -1,26 +1,26 @@
 package com.example.myproject22.View.Activity;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
+import android.app.AlarmManager;
+import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,10 +33,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.myproject22.Model.ConnectionClass;
-import com.example.myproject22.Model.DayItem;
+import com.example.myproject22.Model.SharePreferenceClass;
 import com.example.myproject22.Presenter.LoginInterface;
 import com.example.myproject22.Presenter.LoginPresenter;
 import com.example.myproject22.R;
+import com.example.myproject22.Util.NetworkUtil;
+import com.example.myproject22.View.Service.Notification_recevier;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -47,15 +49,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class LoginActivity extends AppCompatActivity implements LoginInterface {
 
     //region Khởi tạo Component
+
+    //region Component
     private TextInputLayout til_username;
     private TextInputLayout tif_password;
     private TextInputEditText et_username;
@@ -65,9 +67,20 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
     private TextView tvForget;
     private ProgressBar pb_signin;
     private CoordinatorLayout mSnackbarLayout;
+    private CheckBox cbRemember;
+    //endregion
 
-    //Presenter
+    //region Presenter
     private LoginPresenter presenter;
+    //endregion
+
+    //region Share Preference
+    private SharePreferenceClass settings;
+    private String username = "";
+    private String password = "";
+    private Boolean isRememeber = false;
+    //endregion
+
     //endregion
 
     @Override
@@ -79,10 +92,57 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         //region Khởi tạo presenter và kiểm tra kết nối internet
         presenter = new LoginPresenter(this);
         presenter.setInit();
+        //endregion
 
-        if(!presenter.isConnect(this)){
-            presenter.showCustomDialog();
+        //region Share Preference
+
+        settings = new SharePreferenceClass(this);
+
+        //Kiểm tra lần đầu đăng nhập
+        if (settings.isFirstTime()) {
+            settings.setFirstTime(false);
+
+            Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
         }
+        //Nếu đã sử dụng rồi thì kiểm tra đã đăng xuất chưa
+        else {
+            if(presenter.isConnect(this)) {
+                //Nếu đăng xuất thì kiểm tra có ghi nhớ mật khẩu không
+                if (settings.isLogOut()) {
+                    if (settings.isRemember()) {
+                        isRememeber = true;
+                        username = settings.getUsername();
+                        password = settings.getPassword();
+                        Log.i("TEST1", username + " " + password);
+
+                    }
+                }
+                //Nếu chưa đăng xuất thì tự động đăng nhập
+                else {
+                    int id_user = settings.getIdUser();
+                    int id_income = settings.getIdIncome();
+                    int id_outcome = settings.getIdOutcome();
+                    int id_saving = settings.getIdSaving();
+
+                    Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("ID_USER", id_user);
+                    bundle.putInt("ID_INCOME", id_income);
+                    bundle.putInt("ID_OUTCOME", id_outcome);
+                    bundle.putInt("ID_SAVING", id_saving);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+                }
+            }
+            else{
+                presenter.showCustomDialog();
+            }
+        }
+
         //endregion
 
         //region Xử lí các textview sự kiện và button đăng nhập
@@ -115,8 +175,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     presenter.hideKeyboard(v);
-                }
-                else{
+                } else {
                     til_username.setError(null);
                 }
             }
@@ -130,7 +189,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() > 0){
+                if (s.length() > 0) {
                     til_username.setError(null);
                 }
             }
@@ -149,7 +208,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() > 0)
+                if (s.length() > 0)
                     tif_password.setError(null);
             }
 
@@ -164,56 +223,75 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     presenter.hideKeyboard(v);
-                }
-                else{
+                } else {
                     tif_password.setError(null);
                 }
             }
         });
 
         //endregion
+
+        //region Xử lí Checkbox
+        cbRemember.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                settings.setRemember(isChecked);
+            }
+        });
+        //endregion
+
+        //region Xử lí notification
+        SetNotification();
+        //endregion
+
     }
 
     //region Xử lí override từ activity
+    //region Xử lí override
     @Override
     protected void onResume() {
         super.onResume();
-
-        if(!presenter.isConnect(this)){
-            presenter.showCustomDialog();
-        }
+        cbRemember.setChecked(isRememeber);
+        et_username.setText(username);
+        et_password.setText(password);
     }
+    //endregion
 
     //region Kiểm tra kết nối internet
     @Override
-    public Boolean IsConnect(LoginActivity loginActivity){
+    public Boolean IsConnect(LoginActivity loginActivity) {
         ConnectivityManager connectivityManager = (ConnectivityManager) loginActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo wifiinfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         NetworkInfo mobieinfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
-        if((wifiinfo != null && wifiinfo.isConnected()) || (mobieinfo != null && mobieinfo.isConnected())){
+        if ((wifiinfo != null && wifiinfo.isConnected()) || (mobieinfo != null && mobieinfo.isConnected())) {
             return true;
         } else {
-            return  false;
+            return false;
         }
     }
 
     @Override
-    public void ShowCustomDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-        builder.setMessage("Vui lòng kết wifi hoặc internet để sử dụng ứng dụng")
-                .setCancelable(false)
-                .setPositiveButton("Kết nối", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
-                    }
-                });
+    public void ShowCustomDialog() {
+        Context context = LoginActivity.this;
 
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        Dialog dialog = new Dialog(context, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+        dialog.setContentView(R.layout.dialog_inconnect_network);
+
+        Button btn_retry = dialog.findViewById(R.id.btn_retry);
+        btn_retry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                Intent intent1 = new Intent(context, LoginActivity.class);
+                /*intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);*/
+                context.startActivity(intent1);
+                ((Activity) context).overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+            }
+        });
+
+            dialog.show();
     }
     //endregion
 
@@ -231,6 +309,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         tvForget = findViewById(R.id.tvForget);
         pb_signin = findViewById(R.id.pb_signin);
         mSnackbarLayout = findViewById(R.id.cl_snackbar);
+        cbRemember = findViewById(R.id.cb_remember);
     }
 
     @Override
@@ -308,11 +387,33 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject object = jsonArray.getJSONObject(i);
 
+                                //region Khởi tạo giá trị
                                 int id_user = object.getInt("ID_USER");
                                 int id_income = object.getInt("ID_INCOME");
                                 int id_outcome = object.getInt("ID_OUTCOME");
                                 int id_saving = object.getInt("ID_SAVING");
+                                //endregion
 
+                                //region Setting isRemember
+                                if (settings.isRemember()) {
+                                    String username = et_username.getText().toString().trim();
+                                    String password = et_password.getText().toString().trim();
+
+                                    settings.setUsername(username);
+                                    settings.setPassword(password);
+                                }
+                                //endregion
+
+                                //region Lưu để tự động đăng nhập
+                                settings.setIsLogOut(false);
+                                settings.setIdUser(id_user);
+                                settings.setIdIncome(id_income);
+                                settings.setIdOutcome(id_outcome);
+                                settings.setIdSaving(id_saving);
+
+                                //endregion
+
+                                //region Intent
                                 Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                                 Bundle bundle = new Bundle();
                                 bundle.putInt("ID_USER", id_user);
@@ -323,19 +424,18 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
                                 startActivity(intent);
                                 finish();
                                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+                                //endregion
                             }
                         }
-                    } else if(success.equals("Password wrong")) {
+                    } else if (success.equals("Password wrong")) {
                         tif_password.setError("Nhập sai mật khẩu");
                         /*Toast.makeText(LoginActivity.this, success, Toast.LENGTH_SHORT).show();*/
-                    }
-                    else if(success.equals("This account has not been register yet")){
+                    } else if (success.equals("This account has not been register yet")) {
                         til_username.setError("Tài khoản này chưa được khởi tạo");
                         tif_password.setError("Tài khoản này chưa được khởi tạo");
-                    }
-                    else{
+                    } else {
                         Log.i("RESPONSELOGIN", success);
-                        Snackbar snackbar = Snackbar.make(tvSignUp,"Đăng nhập thật bại",Snackbar.LENGTH_SHORT);
+                        Snackbar snackbar = Snackbar.make(tvSignUp, "Đăng nhập thật bại", Snackbar.LENGTH_SHORT);
                         snackbar.setAnchorView(btnLogin);
                         snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                         snackbar.show();
@@ -347,7 +447,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mSnackbarLayout,"Lỗi kết nối internet",Snackbar.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(mSnackbarLayout, "Lỗi kết nối internet", Snackbar.LENGTH_SHORT);
                 snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                 snackbar.show();
                 /*Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();*/
@@ -384,4 +484,21 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
     }
     //endregion
 
+    //region Set Notification
+    public void SetNotification() {
+        Calendar calendar = Calendar.getInstance();
+        Log.i("TEST1", calendar.toString());
+        calendar.set(Calendar.HOUR_OF_DAY, 9);
+        calendar.set(Calendar.MINUTE, 32);
+        calendar.set(Calendar.SECOND, 30);
+
+        Intent intent = new Intent(getApplicationContext(), Notification_recevier.class);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+
+    }
+    //endregion
 }

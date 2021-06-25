@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.example.myproject22.R;
 
@@ -101,6 +100,8 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
     }
+
+
 
     public void GetBundleData() {
         Intent intent = getIntent();

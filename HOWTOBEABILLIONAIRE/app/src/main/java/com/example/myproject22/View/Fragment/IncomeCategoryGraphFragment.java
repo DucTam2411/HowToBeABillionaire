@@ -56,6 +56,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -282,7 +284,7 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
                 Date dateto = datefrom;
                 //Gán thời gian sau khi cộng để tìm date_to
                 String date_to = formattest.format(dateto);
-                WeekItem weekItem = new WeekItem(s, date_from, date_to);
+                WeekItem weekItem = new WeekItem(i, s, date_from, date_to);
                 weeks.add(weekItem);
 
                 Log.i("GetData", s + "\n" + date_string + "\n" + date_to);
@@ -292,6 +294,22 @@ public class IncomeCategoryGraphFragment extends Fragment implements WeekIncomeA
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        //endregion
+
+        //region Sắp xếp
+        Collections.sort(weeks, new Comparator<WeekItem>() {
+            @Override
+            public int compare(WeekItem o1, WeekItem o2) {
+                if(o1.getNum() < o2.getNum()){
+                    return  1;
+                } else {
+                    if(o1.getNum() == o2.getNum())
+                        return  0;
+                    else
+                        return -1;
+                }
+            }
+        });
         //endregion
     }
     //endregion

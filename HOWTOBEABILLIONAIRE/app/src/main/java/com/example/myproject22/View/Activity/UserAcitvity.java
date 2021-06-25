@@ -38,6 +38,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.example.myproject22.Model.SharePreferenceClass;
 import com.example.myproject22.Model.UserClass;
 import com.example.myproject22.Presenter.UserInterface;
 import com.example.myproject22.Presenter.UserPresenter;
@@ -96,6 +97,10 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
     private UserPresenter presenter;
     //endregion
 
+    //region Share Preference
+    private SharePreferenceClass settings;
+    //endregion
+
     //endregion
 
     @Override
@@ -103,6 +108,10 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_user_acitvity);
+
+        //region Share Preference
+        settings = new SharePreferenceClass(this);
+        //endregion
 
         //region Khởi tạo presenter và thiết lập các giá trị ban đầu
         presenter = new UserPresenter(this);
@@ -242,6 +251,9 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
                 .setPositiveButton("Vâng", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
+                        settings.setIsLogOut(true);
+
                         Intent i = new Intent(UserAcitvity.this, LoginActivity.class);
                         // set the new task and clear flags
                         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -405,7 +417,7 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
                 if(!locat.isEmpty()){
                     locat = locat + " ";
                 }
-                String find_string = "geo:0,0?z=15&q=" + locat + "atm";
+                String find_string = "geo:0,0?z=15&q=" + locat + "bank";
                 Uri uri = Uri.parse(find_string);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 intent.setPackage("com.google.android.apps.maps");
@@ -421,7 +433,7 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
                 if(!locat.isEmpty()){
                     locat = locat + " ";
                 }
-                String find_string = "geo:0,0?z=15&q=" + locat + "bank";
+                String find_string = "geo:0,0?z=15&q=" + locat + "atm";
                 Uri uri = Uri.parse(find_string);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 intent.setPackage("com.google.android.apps.maps");

@@ -14,9 +14,9 @@ import com.google.android.material.tabs.TabLayout;
 public class ReportCategoryGraphActivity extends AppCompatActivity  {
 
     //region Parameter
-    private int id_user =0 ;
-    private int id_income = 0;
-    private int id_outcome = 0;
+    private int id_user = 1 ;
+    private int id_income = 1;
+    private int id_outcome = 1;
     //endregion
 
     @Override
@@ -47,9 +47,9 @@ public class ReportCategoryGraphActivity extends AppCompatActivity  {
     public void GetBundleData(){
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        id_user = bundle.getInt("ID_USER");
-        id_income = bundle.getInt("ID_INCOME");
-        id_outcome = bundle.getInt("ID_OUTCOME");
+        id_user = bundle.getInt("ID_USER",1);
+        id_income = bundle.getInt("ID_INCOME", 1);
+        id_outcome = bundle.getInt("ID_OUTCOME", 1);
     }
     //endregion
 }

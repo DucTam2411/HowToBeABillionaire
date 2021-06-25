@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.myproject22">
 
     <uses-feature
@@ -19,6 +20,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    
+    <uses-permission android:name="com.android.permission.SET_ALARM"/>
 
     <application
         android:allowBackup="true"
@@ -63,20 +66,20 @@
 
         <activity android:name=".View.Activity.AddingActivity" />
 
-        <activity android:name=".View.Activity.ReportCategoryGraphActivity" /> <!-- phan cua Quan -->
-        <!-- Giao dien chinh -->
-        <activity android:name=".View.Activity.DashboardActivity">
-
-            <!--
-            <intent-filter>
+        <activity android:name=".View.Activity.ReportCategoryGraphActivity" >
+           <!-- <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
+            </intent-filter>-->
+        </activity> <!-- phan cua Quan -->
+        <!-- Giao dien chinh -->
+        <activity android:name=".View.Activity.DashboardActivity">
         </activity> <!-- Phan cua Tam -->
         <activity android:name=".View.Activity.GoalActivity" />
         <activity android:name=".View.Activity.SavingActivity" />
+
+        <receiver android:name=".View.Service.Notification_recevier"/>
 
         <meta-data
             android:name="preloaded_fonts"

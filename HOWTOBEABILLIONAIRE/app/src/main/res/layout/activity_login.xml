@@ -102,6 +102,17 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="50dp"/>
 
+            <CheckBox
+                android:id="@+id/cb_remember"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/til_password"
+                app:layout_constraintStart_toStartOf="parent"
+                android:text="Remember"
+                android:textSize="16sp"
+                android:layout_marginTop="0dp"
+                android:layout_marginStart="10dp"/>
+
             <TextView
                 android:id="@+id/tvForget"
                 android:layout_width="wrap_content"
@@ -110,7 +121,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:text="Forget Password"
                 android:textSize="16sp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="12dp"
                 android:layout_marginStart="80dp"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

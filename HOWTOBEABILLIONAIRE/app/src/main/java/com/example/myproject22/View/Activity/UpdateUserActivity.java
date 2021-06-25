@@ -266,7 +266,7 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
             @Override
             public void onResponse(String response) {
                 try {
-                    Log.i("TESTER", response);
+                    Log.i("RESPONSEUPDATEUSER", response);
                     JSONObject jsonObject = new JSONObject(response);
                     String success = jsonObject.getString("success");
 

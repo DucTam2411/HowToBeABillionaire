@@ -3,13 +3,15 @@ package com.example.myproject22.Model;
 public class WeekItem {
 
     //region Component
+    private int num;
     private String name;
     private String datestart;
     private String dateend;
     //endregion
 
     //region Constructor
-    public WeekItem(String name, String datestart, String dateend) {
+    public WeekItem(int num, String name, String datestart, String dateend) {
+        this.num = num;
         this.name = name;
         this.datestart = datestart;
         this.dateend = dateend;
@@ -17,6 +19,15 @@ public class WeekItem {
     //endregion
 
     //region Get and Set
+
+    public int getNum(){
+        return num;
+    }
+
+    public void setNum(int num){
+        this.num = num;
+    }
+
     public String getName() {
         return name;
     }
