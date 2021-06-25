@@ -72,7 +72,6 @@ public class SavingPresenter {
     public void loadUser(UserClass userClass){
         mSavingInterface.LoadUser(userClass);
     }
-
     //endregion
 
     //region Handle Button Click
@@ -190,15 +189,5 @@ public class SavingPresenter {
 
     //endregion
 
-    //region Của Tâm
-    public void LoadGetTietKiemData() {
-        mSavingInterface.LoadChiTietTietKiem();
-    }
-    public void LoadTietKiem(){
-        mSavingInterface.LoadTietKiem();
-    }
-    public void LoadMucTieu(){
-        mSavingInterface.LoadMucTieu();
-    }
-    //endregion
+
 }
