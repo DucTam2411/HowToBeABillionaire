@@ -168,7 +168,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     public static final int RESULT_UPDATE_FAIL = 1102;
     //endregion
 
-    private Boolean neededToReload;
+    private Boolean neededToReload = true;
     //endregion
 
     //region Check Time
@@ -194,12 +194,10 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         }
 
         //region Khởi tạo presenter và các giá trị mặc định
-        neededToReload = false;
         mSavingPresenter = new SavingPresenter(this);
         mSavingPresenter.initView();
         mSavingPresenter.getBundleData();
         mSavingPresenter.createDataBarChart();
-        mSavingPresenter.loadDataFromServer();
         //endregion
 
       /*  View overlay = findViewById(R.id.mylayout);
@@ -219,6 +217,14 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
 
     //region Xử lí các hàm override từ Activity
 
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        setAllInvisible();
+    }
+    
     @Override
     protected void onResume() {
         super.onResume();
@@ -680,7 +686,6 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
             case REQUEST_ADD_MONEY:
             {
                 if(resultCode == RESULT_ADD_INCOME){
-                    setAllInvisible();
                     Snackbar snackbar = Snackbar.make(cardNavigation, "Thêm một thu nhập thành công", BaseTransientBottomBar.LENGTH_SHORT);
                     snackbar.setAnchorView(R.id.cardNavigation);
                     snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
@@ -688,7 +693,6 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                     neededToReload = true;
                 }
                 else if(resultCode == RESULT_ADD_OUTCOME){
-                    setAllInvisible();
                     Snackbar snackbar = Snackbar.make(cardNavigation, "Thêm một chi tiêu thành công", BaseTransientBottomBar.LENGTH_SHORT);
                     snackbar.setAnchorView(R.id.cardNavigation);
                     snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
@@ -703,7 +707,6 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
             case REQUEST_UPDATE_USER:
             {
                 if(resultCode == RESULT_UPDATE_SUCCESS){
-                    setAllInvisible();
                     neededToReload = true;
                 }
                 else{
