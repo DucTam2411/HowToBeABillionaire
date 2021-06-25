@@ -289,7 +289,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginRight="20dp"
-                android:background="#F0EEEBEB"
+                android:background="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_userdate" />
@@ -306,44 +306,21 @@
                 app:layout_constraintStart_toStartOf="@+id/tv_userdate"
                 app:layout_constraintTop_toBottomOf="@+id/view" />
 
-            <TextView
-                android:id="@+id/tvDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:fontFamily="@font/athiti_light"
-                android:paddingBottom="10dp"
-                android:text="Số tiền tiết kiệm"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="@+id/tv_userdate"
-                app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/tvDayUse"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="30dp"
                 android:fontFamily="@font/athiti_semibold"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:text="1900"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="@+id/textView2"
-                app:layout_constraintEnd_toEndOf="@+id/tvMoney"
-                app:layout_constraintStart_toStartOf="@+id/tvMoney"
-                app:layout_constraintTop_toTopOf="@+id/textView2"
-                app:layout_constraintVertical_bias="0.0" />
-
-            <TextView
-                android:id="@+id/tvMoney"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:fontFamily="@font/athiti_semibold"
-                android:text="2.400.123 VND"
-                android:textColor="@color/white"
-                app:layout_constraintBottom_toBottomOf="@+id/tvDescription"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tvDescription"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toTopOf="@+id/textView2" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -355,7 +332,7 @@
     <LinearLayout
         android:id="@+id/cardNavigation"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="95dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:background="@drawable/round_background"
@@ -365,55 +342,131 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <ImageButton
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="10dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:onClick="GoalClicked"
-            android:scaleType="fitCenter"
-            android:src="@drawable/icon_goal"
-            android:tint="@color/icon_click_selector" />
+            android:orientation="vertical">
 
-        <ImageButton
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="10dp"
+            <ImageButton
+                android:layout_width="20dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@android:color/transparent"
+                android:onClick="GoalClicked"
+                android:scaleType="fitCenter"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:src="@drawable/icon_goal"
+                android:tint="@color/icon_click_selector" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/roboto_mono"
+                android:text="Mục tiêu"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:onClick="OldRecordClicked"
+            android:orientation="vertical">
 
-            android:scaleType="fitCenter"
-            android:src="@drawable/icon_record"
-            android:tint="@color/icon_click_selector" />
+            <ImageButton
+                android:layout_width="20dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@android:color/transparent"
+                android:onClick="OldRecordClicked"
+                android:scaleType="fitCenter"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:src="@drawable/icon_record"
+                android:tint="@color/icon_click_selector" />
 
-        <ImageButton
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="10dp"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/roboto_mono"
+                android:text="Nhật ký"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:onClick="AddRecordClicked"
-            android:scaleType="fitCenter"
-            android:src="@drawable/icon_add"
-            android:tint="@color/icon_click_selector" />
+            android:orientation="vertical">
 
-        <ImageButton
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="10dp"
+            <ImageButton
+                android:layout_width="20dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@android:color/transparent"
+                android:onClick="AddRecordClicked"
+                android:scaleType="fitCenter"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:src="@drawable/icon_add"
+                android:tint="@color/icon_click_selector" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/roboto_mono"
+                android:text="Thêm mới"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:onClick="GraphClicked"
-            android:scaleType="fitCenter"
-            android:src="@drawable/icon_piechart"
-            android:tint="@color/icon_click_selector" />
+            android:orientation="vertical">
 
+            <ImageButton
+                android:layout_width="20dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@android:color/transparent"
+                android:onClick="GraphClicked"
+                android:scaleType="fitCenter"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:src="@drawable/icon_piechart"
+                android:tint="@color/icon_click_selector" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/roboto_mono"
+                android:text="Thống kê"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
