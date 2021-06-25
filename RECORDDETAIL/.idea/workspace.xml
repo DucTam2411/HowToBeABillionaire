@@ -5,6 +5,24 @@
       <config />
     </shared>
   </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="80c62244-de4a-4fb1-8e34-980bb3b2c2ac" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,6 +46,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="Tam" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="ProjectId" id="1uLW9eUxopjLrJ6JP7FpPNPXPIA" />
@@ -126,7 +149,22 @@
     </task>
     <servers />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="WindowStateProjectService">
+    <state x="426" y="0" key="#app" timestamp="1624617688410">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="426" y="0" key="#app/0.0.1536.864@0.0.1536.864" timestamp="1624617688410" />
     <state x="527" y="70" key="#com.intellij.ide.util.MemberChooser" timestamp="1624549925159">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
