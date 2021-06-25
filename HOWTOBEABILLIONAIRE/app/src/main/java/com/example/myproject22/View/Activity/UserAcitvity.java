@@ -129,7 +129,6 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
         presenter = new UserPresenter(this);
         presenter.setInit();
         presenter.getBundleData();
-        presenter.loadDataToLayout();
         //endregion
 
         //region Xử lí button click

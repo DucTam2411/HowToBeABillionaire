@@ -171,7 +171,7 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     private Boolean neededToReload = true;
     //endregion
 
-    //region Check Time
+    //region Check Time (Xét thời gian load xong respone để chạy animation)
     private Boolean isUserCheck = false;
     private Boolean isTimeCheck = false;
     private Boolean isChartCheck = false;
@@ -232,6 +232,8 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         Log.i("TEST1",  neededToReload + "");
         if(neededToReload){
             mSavingPresenter.loadDataFromServer();
+        }else{
+            setAllVisible();
         }
     }
 
@@ -691,6 +693,9 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                     snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                     snackbar.show();
                     neededToReload = true;
+                    isChartCheck = false;
+                    isTimeCheck = false;
+                    isUserCheck = false;
                 }
                 else if(resultCode == RESULT_ADD_OUTCOME){
                     Snackbar snackbar = Snackbar.make(cardNavigation, "Thêm một chi tiêu thành công", BaseTransientBottomBar.LENGTH_SHORT);
@@ -698,6 +703,9 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                     snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                     snackbar.show();
                     neededToReload = true;
+                    isChartCheck = false;
+                    isTimeCheck = false;
+                    isUserCheck = false;
                 }
                 else{
                     neededToReload = false;
@@ -708,6 +716,9 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
             {
                 if(resultCode == RESULT_UPDATE_SUCCESS){
                     neededToReload = true;
+                    isChartCheck = false;
+                    isTimeCheck = false;
+                    isUserCheck = false;
                 }
                 else{
                     neededToReload = false;
