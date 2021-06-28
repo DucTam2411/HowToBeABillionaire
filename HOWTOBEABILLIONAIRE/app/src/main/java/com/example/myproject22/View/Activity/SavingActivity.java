@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -18,6 +19,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -55,6 +57,7 @@ import com.example.myproject22.R;
 import com.example.myproject22.Presenter.SavingInterface;
 import com.example.myproject22.Presenter.SavingPresenter;
 import com.example.myproject22.View.Fragment.IncomeCategoryGraphFragment;
+import com.example.myproject22.View.Service.Network_receiver;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -154,6 +157,10 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     private SavingPresenter mSavingPresenter;
     //endregion
 
+    //region Broadcast
+    private Network_receiver network_receiver;
+    //endregion
+
     //region Const
 
     //region Adding Money
@@ -172,13 +179,6 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
     private Boolean neededToReload = true;
     //endregion
 
-    //region Check Time (Xét thời gian load xong respone để chạy animation)
-    private Boolean isUserCheck = false;
-    private Boolean isTimeCheck = false;
-    private Boolean isChartCheck = false;
-    private Boolean isFirstCheck = false;
-    //endregion
-
     //endregion
 
     //endregion
@@ -194,6 +194,10 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
             Window w = getWindow(); // in Activity's onCreate() for instance
             w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
+
+        //region Broadcast
+        network_receiver = new Network_receiver();
+        //endregion
 
         //region Khởi tạo presenter và các giá trị mặc định
         mSavingPresenter = new SavingPresenter(this);
@@ -240,6 +244,20 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(network_receiver, intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unregisterReceiver(network_receiver);
+    }
 
     //endregion
 
@@ -400,18 +418,12 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                loadAnimation();
                 mSavingPresenter.fetchUserFromServer();
                 mSavingPresenter.fetchArrayDateFromServer();
                 mSavingPresenter.fetchSavingDetailFromServer(date_start,date_end);
             }
         }, 1000);
-
-        /*new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                loadAnimation();
-            }
-        }, 3000);*/
     }
     //endregion
 
@@ -436,7 +448,6 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
 
                     if (success.equals("1")) {
 
-                        isChartCheck = true;
 
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
@@ -462,11 +473,6 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                     e.printStackTrace();
                 }
                 mSavingPresenter.loadDataFromServerToBarChart();
-
-                if(isTimeCheck == false && isUserCheck == false && isFirstCheck == false){
-                    isFirstCheck = true;
-                    loadAnimation();
-                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -509,8 +515,6 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
 
                     if (success.equals("1")) {
 
-                        isTimeCheck = true;
-
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
 
@@ -539,10 +543,6 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                 tvUserUse.setText(String.valueOf(count_use));
                 cl_savingdate.setVisibility(View.VISIBLE);
 
-                if(isChartCheck == false && isUserCheck == false && isFirstCheck == false){
-                    isFirstCheck = true;
-                    loadAnimation();
-                }
 
             }
         }, new Response.ErrorListener() {
@@ -583,8 +583,6 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
 
                     if (success.equals("1")) {
 
-                        isUserCheck = true;
-
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
 
@@ -609,10 +607,6 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                 }
                 mSavingPresenter.loadUser(userClass);
 
-                if(isTimeCheck == false && isChartCheck == false && isFirstCheck == false){
-                    isFirstCheck = true;
-                    loadAnimation();
-                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -701,10 +695,6 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                     snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                     snackbar.show();
                     neededToReload = true;
-                    isChartCheck = false;
-                    isTimeCheck = false;
-                    isUserCheck = false;
-                    isFirstCheck = false;
                 }
                 else if(resultCode == RESULT_ADD_OUTCOME){
                     Snackbar snackbar = Snackbar.make(cardNavigation, "Thêm một chi tiêu thành công", BaseTransientBottomBar.LENGTH_SHORT);
@@ -712,10 +702,6 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
                     snackbar.setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE);
                     snackbar.show();
                     neededToReload = true;
-                    isChartCheck = false;
-                    isTimeCheck = false;
-                    isUserCheck = false;
-                    isFirstCheck = false;
                 }
                 else{
                     neededToReload = false;
@@ -726,10 +712,6 @@ public class SavingActivity extends AppCompatActivity implements SavingInterface
             {
                 if(resultCode == RESULT_UPDATE_SUCCESS){
                     neededToReload = true;
-                    isChartCheck = false;
-                    isTimeCheck = false;
-                    isUserCheck = false;
-                    isFirstCheck = false;
                 }
                 else{
                     neededToReload = false;

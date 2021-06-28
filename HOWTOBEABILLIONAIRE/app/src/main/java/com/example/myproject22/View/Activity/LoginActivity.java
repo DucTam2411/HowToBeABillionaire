@@ -10,6 +10,7 @@ import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -24,7 +25,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -38,7 +38,7 @@ import com.example.myproject22.Model.SharePreferenceClass;
 import com.example.myproject22.Presenter.LoginInterface;
 import com.example.myproject22.Presenter.LoginPresenter;
 import com.example.myproject22.R;
-import com.example.myproject22.Util.NetworkUtil;
+import com.example.myproject22.View.Service.Network_receiver;
 import com.example.myproject22.View.Service.Notification_recevier;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -89,6 +89,10 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
     public static final int RESULT_FORGOT_SUCCESS = 1102;
     //endregion
 
+    //Broadcast reciever
+    private Network_receiver network_receiver;
+    //
+
     //endregion
 
     @Override
@@ -100,6 +104,10 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         //region Khởi tạo presenter và kiểm tra kết nối internet
         presenter = new LoginPresenter(this);
         presenter.setInit();
+        //endregion
+
+        //region Broadcast
+        network_receiver = new Network_receiver();
         //endregion
 
         //region Share Preference
@@ -118,7 +126,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         }
         //Nếu đã sử dụng rồi thì kiểm tra đã đăng xuất chưa
         else {
-            if(presenter.isConnect(this)) {
+            if(/*presenter.isConnect(this)*/ true) {
                 //Nếu đăng xuất thì kiểm tra có ghi nhớ mật khẩu không
                 if (settings.isLogOut()) {
                     if (settings.isRemember()) {
@@ -149,7 +157,7 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
                 }
             }
             else{
-                presenter.showCustomDialog();
+                /*presenter.showCustomDialog();*/
             }
         }
 
@@ -261,6 +269,22 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
         et_username.setText(username);
         et_password.setText(password);
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(network_receiver, intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unregisterReceiver(network_receiver);
+    }
+
     //endregion
 
     //region Kiểm tra kết nối internet
@@ -524,8 +548,8 @@ public class LoginActivity extends AppCompatActivity implements LoginInterface {
     public void SetNotification() {
         Calendar calendar = Calendar.getInstance();
         Log.i("TEST1", calendar.toString());
-        calendar.set(Calendar.HOUR_OF_DAY, 20);
-        calendar.set(Calendar.MINUTE, 25);
+        calendar.set(Calendar.HOUR_OF_DAY, 8);
+        calendar.set(Calendar.MINUTE, 15);
         calendar.set(Calendar.SECOND, 0);
 
         Intent intent = new Intent(getApplicationContext(), Notification_recevier.class);

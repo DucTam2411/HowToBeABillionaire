@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:orientation="vertical"
     android:clickable="true"
     android:focusableInTouchMode="true"
+    android:orientation="vertical"
     tools:context=".View.Activity.AddingActivity">
 
 
@@ -94,30 +94,37 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_money"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:counterEnabled="true"
+                app:counterMaxLength="15"
+                app:counterOverflowTextColor="@color/white"
+                app:counterTextColor="@color/white"
+                app:errorEnabled="true"
+                app:errorTextColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView8"
-                app:errorEnabled="true"
-                app:counterEnabled="true"
-                app:counterMaxLength="15"
-                app:errorTextColor="@color/white"
-                app:counterTextColor="@color/white"
-                android:layout_marginTop="10dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-            <EditText
-                android:id="@+id/editTextNumber2"
-                style="@style/Widget.AppCompat.EditText"
-                android:layout_width="280dp"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:fontFamily="@font/athiti"
-                android:inputType="textMultiLine|number"
-                android:singleLine="false"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="24sp" />
+                app:suffixText="VND"
+                app:suffixTextColor="@color/white">
+
+
+                <EditText
+                    android:id="@+id/editTextNumber2"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:fontFamily="@font/athiti"
+                    android:inputType="number"
+                    android:singleLine="false"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:theme="@style/EditTextTheme" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <ImageView
@@ -202,6 +209,7 @@
                 app:layout_constraintStart_toEndOf="@+id/btnPlay"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.7" />
+
             <ImageView
                 android:id="@+id/imageView7"
                 android:layout_width="35dp"
@@ -237,9 +245,9 @@
 
             <EditText
                 android:id="@+id/editTextTextMultiLine"
-                android:layout_margin="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_margin="10dp"
                 android:ems="10"
                 android:gravity="start|top"
                 android:hint="  Ghi chú"
@@ -252,9 +260,9 @@
 
             <ProgressBar
                 android:id="@+id/progress3"
-                android:visibility="invisible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -332,15 +340,16 @@
         android:id="@+id/cl_snackbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="5dp"
-        app:layout_constraintTop_toBottomOf="@id/blurLayout4"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/blurLayout4" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/cl_category"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent">
+
         <include layout="@layout/player_sheet" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

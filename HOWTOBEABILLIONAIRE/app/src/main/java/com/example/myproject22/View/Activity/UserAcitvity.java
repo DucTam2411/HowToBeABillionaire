@@ -11,10 +11,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,6 +47,7 @@ import com.example.myproject22.Presenter.UserInterface;
 import com.example.myproject22.Presenter.UserPresenter;
 import com.example.myproject22.R;
 import com.example.myproject22.Util.Formatter;
+import com.example.myproject22.View.Service.Network_receiver;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -103,6 +106,10 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
     private SharePreferenceClass settings;
     //endregion
 
+    //region Broadcast
+    private Network_receiver network_receiver;
+    //endregion
+
     //region Const Update User
     private static final int REQUEST_UPDATE_USER = 1001;
     private static final int REQUEST_UPDATE_PASSWORD = 1101;
@@ -123,6 +130,10 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
 
         //region Share Preference
         settings = new SharePreferenceClass(this);
+        //endregion
+
+        //region Broadcast
+        network_receiver = new Network_receiver();
         //endregion
 
         //region Khởi tạo presenter và thiết lập các giá trị ban đầu
@@ -163,6 +174,22 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
 
     }
 
+    //region Xử lí override Activity
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(network_receiver, intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unregisterReceiver(network_receiver);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -172,6 +199,8 @@ public class UserAcitvity extends AppCompatActivity implements UserInterface {
             presenter.loadDataToLayout();
         }
     }
+    //endregion
+
 
     //region Set Init, get bundle
     @Override

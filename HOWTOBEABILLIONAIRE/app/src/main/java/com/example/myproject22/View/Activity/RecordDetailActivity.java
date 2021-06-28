@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -33,6 +35,7 @@ import com.example.myproject22.Presenter.RecordDetailInterface;
 import com.example.myproject22.Presenter.RecordDetailPresenter;
 import com.example.myproject22.R;
 import com.example.myproject22.Util.Formatter;
+import com.example.myproject22.View.Service.Network_receiver;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -89,6 +92,10 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
     private Handler handler = new Handler();
     private Boolean flag = false;
     private Boolean isLoading = true;
+    //endregion
+
+    //region Broadcast
+    private Network_receiver network_receiver;
     //endregion
 
     //endregion
@@ -159,6 +166,23 @@ public class RecordDetailActivity extends AppCompatActivity implements RecordDet
         //endregion
 
     }
+
+    //region Xử lí override Activity
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(network_receiver, intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unregisterReceiver(network_receiver);
+    }
+    //endregion
 
     //region Xử lí các hàm override từ activity
     @Override

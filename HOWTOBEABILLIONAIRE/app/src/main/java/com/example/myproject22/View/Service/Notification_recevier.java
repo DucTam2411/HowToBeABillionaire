@@ -1,10 +1,12 @@
 package com.example.myproject22.View.Service;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.provider.Settings;
 
 import androidx.core.app.NotificationCompat;
 
@@ -21,11 +23,13 @@ public class Notification_recevier extends BroadcastReceiver {
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 100, reapting_intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, HTBABApp.CHANNEL_ID)
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(R.drawable.activity)
                 .setContentTitle("How To Be A Billionaire")
                 .setContentText("Đã cuối ngày rồi. Bạn hãy kiểm tra thống kê ngày hôm nay nào.")
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                .setDefaults(Notification.DEFAULT_SOUND)
                 .setAutoCancel(true);
 
         notificationManager.notify(100, builder.build());

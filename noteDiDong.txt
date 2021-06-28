@@ -1,6 +1,1 @@
-Thay đổi login (thêm sharepreference + 1 notification tạm thời chưa ổn định nói thẳng ra là lỗi)
-Thay đổi ở hàm GetArrayDateList() của incomefragment và outcomefragment
-Thay đổi weekincome + weekoutcome + WeekItem (Copy paste) mục đích à thêm màu
-Thêm SharePreferenceClass
-Thêm Notification_recieve để nhận notify
-Bổ sung + fix UserActivty
+Bổ sung Broadcast Receiver (Network)

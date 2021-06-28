@@ -9,8 +9,10 @@ import androidx.core.content.FileProvider;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -43,6 +45,7 @@ import com.example.myproject22.Presenter.SavingPresenter;
 import com.example.myproject22.Presenter.UpdateUserInterface;
 import com.example.myproject22.Presenter.UpdateUserPresenter;
 import com.example.myproject22.R;
+import com.example.myproject22.View.Service.Network_receiver;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -102,6 +105,10 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
     private SharePreferenceClass settings;
     //endregion
 
+    //region Broadcast
+    private Network_receiver network_receiver;
+    //endregion
+
     //region Xử lí profile image
     private File photoFile = null;
     private String mCurrentPhotoPath;
@@ -122,6 +129,10 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
 
         //region SharePreference
         settings = new SharePreferenceClass(this);
+        //endregion
+
+        //region Broadcast
+        network_receiver = new Network_receiver();
         //endregion
 
         //region Khởi tạo present và các giá trị ban đầu
@@ -233,6 +244,21 @@ public class UpdateUserActivity extends AppCompatActivity implements UpdateUserI
         super.onBackPressed();
         DeleteImage();
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(network_receiver, intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unregisterReceiver(network_receiver);
     }
 
     //endregion

@@ -10,8 +10,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.VoiceInteractor;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -45,6 +47,7 @@ import com.example.myproject22.Model.UserClass;
 import com.example.myproject22.Presenter.SignUpInterface;
 import com.example.myproject22.Presenter.SignUpPresenter;
 import com.example.myproject22.R;
+import com.example.myproject22.View.Service.Network_receiver;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -119,6 +122,9 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
     //Presenter
     private SignUpPresenter presenter;
 
+    //Broadcast
+    private Network_receiver network_receiver;
+
     //endregion
 
     @Override
@@ -130,6 +136,10 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
         //region Khởi tạo presenter
         presenter = new SignUpPresenter(this);
         presenter.setInit();
+        //endregion
+
+        //region Broadcast
+        network_receiver = new Network_receiver();
         //endregion
 
         //region Xử lí các button và textview click
@@ -278,6 +288,23 @@ public class SignUpActivity extends AppCompatActivity implements SignUpInterface
 
         //endregion
     }
+
+    //region Xử lí override Activity
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(network_receiver, intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unregisterReceiver(network_receiver);
+    }
+    //endregion
 
     //region Khởi tạo component và keyboard
     @Override

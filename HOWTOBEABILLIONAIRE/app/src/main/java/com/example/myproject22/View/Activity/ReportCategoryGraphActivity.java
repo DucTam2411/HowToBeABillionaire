@@ -4,11 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.WindowManager;
 
 import com.example.myproject22.R;
 import com.example.myproject22.Util.CategoryGraphPagerAdapter;
+import com.example.myproject22.View.Service.Network_receiver;
 import com.google.android.material.tabs.TabLayout;
 
 public class ReportCategoryGraphActivity extends AppCompatActivity  {
@@ -19,6 +22,10 @@ public class ReportCategoryGraphActivity extends AppCompatActivity  {
     private int id_outcome = 1;
     //endregion
 
+    //region Broadcast Receiver
+    private Network_receiver network_receiver;
+    //endregion
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +33,10 @@ public class ReportCategoryGraphActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_report_graph);
 
         GetBundleData();
+
+        //region Broadcast
+        network_receiver = new Network_receiver();
+        //endregion
 
         //region Xử lí ViewPager
         CategoryGraphPagerAdapter categoryGraphPagerAdapter = new CategoryGraphPagerAdapter(getSupportFragmentManager(), id_user, id_income, id_outcome);
@@ -59,6 +70,23 @@ public class ReportCategoryGraphActivity extends AppCompatActivity  {
         super.onBackPressed();
 
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+    }
+    //endregion
+
+    //region Xử lí override Activity
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(network_receiver, intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unregisterReceiver(network_receiver);
     }
     //endregion
 }

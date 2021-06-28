@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,6 +28,7 @@ import com.example.myproject22.Presenter.UpdatePasswordInterface;
 import com.example.myproject22.Presenter.UpdatePasswordPresenter;
 import com.example.myproject22.Presenter.UpdateUserInterface;
 import com.example.myproject22.R;
+import com.example.myproject22.View.Service.Network_receiver;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -70,6 +73,10 @@ public class UpdatePasswordActivity extends AppCompatActivity implements UpdateP
     private int id_user;
     //endregion
 
+    //region Broadcast
+    private Network_receiver network_receiver;
+    //endregion
+
     //endregion
 
     @Override
@@ -82,6 +89,10 @@ public class UpdatePasswordActivity extends AppCompatActivity implements UpdateP
         presenter = new UpdatePasswordPresenter(this);
         presenter.setInit();
         presenter.getBundleData();
+        //endregion
+
+        //region Broadcast
+        network_receiver = new Network_receiver();
         //endregion
 
         //region Xử lí các button click
@@ -198,6 +209,23 @@ public class UpdatePasswordActivity extends AppCompatActivity implements UpdateP
         });
         //endregion
     }
+
+    //region Xử lí override Activity
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(network_receiver, intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unregisterReceiver(network_receiver);
+    }
+    //endregion
 
     //region Set Init, get bundle, keyboard
     @Override

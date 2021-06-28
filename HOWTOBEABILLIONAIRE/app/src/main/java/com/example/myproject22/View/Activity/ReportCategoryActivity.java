@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,6 +33,7 @@ import com.example.myproject22.Presenter.ReportCategoryInterface;
 import com.example.myproject22.Presenter.ReportCategoryPresenter;
 import com.example.myproject22.R;
 import com.example.myproject22.Util.DayItemAdapter;
+import com.example.myproject22.View.Service.Network_receiver;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -72,6 +75,10 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
 
     //Presenter
     private ReportCategoryPresenter presenter;
+
+    //Broadcast
+    private Network_receiver network_receiver;
+
     //endregion
 
     //region Create array list to control income list and outcome from server
@@ -88,6 +95,10 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_report);
 
+        //region Broadcast
+        network_receiver = new Network_receiver();
+        //endregion
+
         //region Khởi tạo presenter và khởi tạo giá trị ban đầu
         presenter = new ReportCategoryPresenter(this);
         presenter.getBundleData();
@@ -96,6 +107,23 @@ public class ReportCategoryActivity extends AppCompatActivity implements ReportC
         //endregion
 
     }
+
+    //region Xử lí override Activity
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(network_receiver, intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unregisterReceiver(network_receiver);
+    }
+    //endregion
 
     //region SetInit và lấy bundle data
 
