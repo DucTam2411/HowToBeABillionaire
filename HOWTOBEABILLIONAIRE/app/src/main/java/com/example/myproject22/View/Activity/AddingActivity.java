@@ -178,7 +178,7 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
     private SharePreferenceClass settings;
     //endregion
 
-    //region Broadcast
+    //Broadcast
     private Network_receiver network_receiver;
 
     //endregion
@@ -341,9 +341,8 @@ public class AddingActivity extends AppCompatActivity implements AddingMoneyInte
 
     @Override
     protected void onStop() {
-        blurLayout.pauseBlur();
-
         unregisterReceiver(network_receiver);
+        blurLayout.pauseBlur();
         super.onStop();
     }
 

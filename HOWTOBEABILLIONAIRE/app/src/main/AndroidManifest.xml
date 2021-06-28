@@ -15,13 +15,13 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    
-    <uses-permission android:name="com.android.permission.SET_ALARM"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <uses-permission android:name="com.android.permission.SET_ALARM" />
 
     <application
         android:name=".View.Service.HTBABApp"
@@ -32,24 +32,27 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyProject22">
 
-        <activity android:name=".View.Activity.UpdatePasswordActivity"
-            android:parentActivityName=".View.Activity.UserAcitvity"/>
+        <activity
+            android:name=".View.Activity.UpdatePasswordActivity"
+            android:parentActivityName=".View.Activity.UserAcitvity" />
 
-        <activity android:name=".View.Activity.UpdateUserActivity"
-            android:parentActivityName=".View.Activity.UserAcitvity"/>
+        <activity
+            android:name=".View.Activity.UpdateUserActivity"
+            android:parentActivityName=".View.Activity.UserAcitvity" />
 
         <activity android:name=".View.Activity.UserAcitvity" />
 
-        <activity android:name=".View.Activity.ForgotPasswordActivity"
-            android:parentActivityName=".View.Activity.LoginActivity"/>
+        <activity
+            android:name=".View.Activity.ForgotPasswordActivity"
+            android:parentActivityName=".View.Activity.LoginActivity" />
 
-        <activity android:name=".View.Activity.SignUpActivity"
-            android:parentActivityName=".View.Activity.LoginActivity"/>
+        <activity
+            android:name=".View.Activity.SignUpActivity"
+            android:parentActivityName=".View.Activity.LoginActivity" />
 
         <activity android:name=".View.Activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -69,12 +72,34 @@
 
         <activity android:name=".View.Activity.ReportCategoryGraphActivity" />
         <!-- Giao dien chinh -->
-        <activity android:name=".View.Activity.DashboardActivity">
-        </activity> <!-- Phan cua Tam -->
-        <activity android:name=".View.Activity.GoalActivity" />
+        <activity android:name=".View.Activity.DashboardActivity"></activity> <!-- Phan cua Tam -->
         <activity android:name=".View.Activity.SavingActivity" />
 
-        <receiver android:name=".View.Service.Notification_recevier"
+
+        <!-- GOAL -->
+        <activity android:name=".View.Activity.GoalRecordActivity"></activity>
+        <activity
+            android:name=".View.Activity.NewGoalActivity"
+            android:parentActivityName=".View.Activity.GoalActivity" />
+        <activity android:name=".View.Activity.GoalActivity">
+
+        </activity>
+        <!-- END GOAL -->
+
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.myproject22.View.Activity.GoalActivity.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path" />
+        </provider>
+
+
+        <receiver
+            android:name=".View.Service.Notification_recevier"
             android:enabled="true"
             android:exported="true" />
 

@@ -1,136 +1,316 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mylayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     android:orientation="vertical"
-    android:padding="19dp"
     tools:context=".View.Activity.GoalActivity">
 
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/ivGoalImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/ivImage"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:layout_gravity="center_horizontal"
-            android:onClick="onChooseImageClick"
-            android:scaleType="centerCrop"
-            android:src="@drawable/addimage"
-            app:civ_border_color="@color/black"
-            app:civ_border_width="2dp" />
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rprogress">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tvGoalName"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:fontFamily="monospace"
-            android:text="~Let's add picture for your dream~"
-            android:textSize="16dp"
-            android:textStyle="bold" />
+            android:background="@color/backgroundTransForText"
+            android:fontFamily="@font/athiti"
+            android:padding="4dp"
+            android:paddingStart="10dp"
+            android:text="Bấm chi tiết để xem thêm"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+
+    </LinearLayout>
 
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:hint="Số tiền mục tiêu"
-            app:boxStrokeColor="@color/black"
-            app:hintTextColor="@color/black">
+    <TextView
+        android:id="@+id/tvGoalDayStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/backgroundTransForText"
+        android:drawableStart="@drawable/icon_audio"
+        android:drawablePadding="10dp"
+        android:fontFamily="@font/roboto_mono"
+        android:padding="4dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:text="XX.XX PM ngày X.X.20XX"
+        android:textColor="@color/white"
+        android:textSize="14dp"
+        app:layout_constraintStart_toStartOf="@+id/linearLayout2"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+
+    <TextView
+        android:id="@+id/tvGoalDayCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/backgroundTransForText"
+        android:drawablePadding="10dp"
+        android:fontFamily="@font/roboto_mono"
+        android:padding="4dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:text="XX ngày"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/rprogress"
+        app:layout_constraintStart_toStartOf="@+id/linearLayout2"
+        app:layout_constraintTop_toTopOf="@+id/rprogress" />
+
+    <com.akexorcist.roundcornerprogressbar.TextRoundCornerProgressBar
+        android:id="@+id/rprogress"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/round_little_border"
+        app:barrierDirection="end"
+        app:layout_constraintStart_toEndOf="@+id/tvGoalDayCount"
+        app:layout_constraintTop_toTopOf="parent"
+        app:rcBackgroundColor="#420A0A0A"
+        app:rcBackgroundPadding="4dp"
+        app:rcMax="100"
+        app:rcProgress="100"
+        app:rcProgressColor="#92171717"
+        app:rcRadius="5dp"
+        app:rcTextInsideGravity="end"
+        app:rcTextOutsideGravity="end"
+        app:rcTextPositionPriority="outside"
+        app:rcTextProgress="100%"
+        app:rcTextProgressColor="@color/white"
+        app:rcTextProgressSize="14sp" />
 
 
-            <me.abhinay.input.CurrencyEditText
-                android:id="@+id/etGoalMoney"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:inputType="numberDecimal"
-                android:maxLines="2" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/etGoalName"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:hint="Mục tiêu"
-            app:boxStrokeColor="@color/black"
-            app:hintTextColor="@color/black">
+    <ImageButton
+        android:id="@+id/btnNewGoal"
+        android:layout_width="@dimen/icon_size_in_goalWidth"
+        android:layout_height="@dimen/icon_size_in_goalHeight"
+        android:layout_marginStart="28dp"
+        android:layout_marginBottom="30dp"
+        android:background="@android:color/transparent"
+        android:onClick="NewGoalClicked"
+        android:paddingLeft="@dimen/icon_padding_in_goal"
+        android:paddingTop="@dimen/icon_padding_in_goal"
+        android:paddingRight="@dimen/icon_padding_in_goal"
+        android:paddingBottom="@dimen/icon_padding_botom"
+        android:scaleType="fitCenter"
+        android:src="@drawable/icon_add"
+        android:tint="@color/image_button_selector"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:maxLines="1" />
-        </com.google.android.material.textfield.TextInputLayout>
+    <ImageButton
+        android:id="@+id/btnGoalHistory"
+        android:layout_width="@dimen/icon_size_in_goalWidth"
+        android:layout_height="@dimen/icon_size_in_goalHeight"
+        android:layout_marginStart="56dp"
+        android:background="@android:color/transparent"
+        android:onClick="GoalHistoryClicked"
+        android:paddingLeft="@dimen/icon_padding_in_goal"
+        android:paddingTop="@dimen/icon_padding_in_goal"
+        android:paddingRight="@dimen/icon_padding_in_goal"
+        android:paddingBottom="@dimen/icon_padding_botom"
+        android:scaleType="fitCenter"
+        android:src="@drawable/icon_goal"
+        android:tint="@color/image_button_selector"
+        app:layout_constraintBottom_toBottomOf="@+id/btnNewGoal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/btnNewGoal"
+        app:layout_constraintTop_toTopOf="@+id/btnNewGoal"
+        app:layout_constraintVertical_bias="0.0" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/etDesc"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:hint="Mô tả"
-            app:boxStrokeColor="@color/black"
-            app:hintTextColor="@color/black">
+    <ImageButton
+        android:id="@+id/btnGoalDetail"
+        android:layout_width="@dimen/icon_size_in_goalWidth"
+        android:layout_height="@dimen/icon_size_in_goalHeight"
+        android:layout_marginEnd="44dp"
+        android:background="@android:color/transparent"
+        android:onClick="GoalDetailClicked"
+        android:paddingLeft="@dimen/icon_padding_in_goal"
+        android:paddingTop="@dimen/icon_padding_in_goal"
+        android:paddingRight="@dimen/icon_padding_in_goal"
+        android:paddingBottom="@dimen/icon_padding_botom"
+        android:scaleType="fitCenter"
+        android:src="@drawable/icon_detail"
+        android:tint="@color/image_button_selector"
+        app:layout_constraintBottom_toBottomOf="@+id/btnScreenShot"
+        app:layout_constraintEnd_toStartOf="@+id/btnScreenShot"
+        app:layout_constraintTop_toTopOf="@+id/btnScreenShot"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_mono"
+        android:text="Thêm mới"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/btnNewGoal"
+        app:layout_constraintEnd_toEndOf="@+id/btnNewGoal"
+        app:layout_constraintStart_toStartOf="@+id/btnNewGoal" />
+
+    <TextView
+        android:id="@+id/textView17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_mono"
+        android:text="Lịch sử"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/btnGoalHistory"
+        app:layout_constraintEnd_toEndOf="@+id/btnGoalHistory"
+        app:layout_constraintStart_toStartOf="@+id/btnGoalHistory" />
+
+    <TextView
+        android:id="@+id/textView20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_mono"
+        android:text="Chi tiết"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/btnGoalDetail"
+        app:layout_constraintEnd_toEndOf="@+id/btnGoalDetail"
+        app:layout_constraintStart_toStartOf="@+id/btnGoalDetail" />
+
+    <ImageButton
+        android:id="@+id/btnScreenShot"
+        android:layout_width="@dimen/icon_size_in_goalWidth"
+        android:layout_height="@dimen/icon_size_in_goalHeight"
+        android:layout_marginEnd="32dp"
+        android:background="@android:color/transparent"
+        android:onClick="SreenShotClicked"
+        android:paddingLeft="@dimen/icon_padding_in_goal"
+        android:paddingTop="@dimen/icon_padding_in_goal"
+        android:paddingRight="@dimen/icon_padding_in_goal"
+        android:paddingBottom="@dimen/icon_padding_botom"
+        android:scaleType="fitCenter"
+        android:src="@drawable/icon_take_image"
+        android:tint="@color/image_button_selector"
+        app:layout_constraintBottom_toBottomOf="@+id/btnNewGoal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btnNewGoal"
+        app:layout_constraintVertical_bias="1.0" />
 
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top|left"
-                android:inputType="textMultiLine"
-                android:lines="10" />
-        </com.google.android.material.textfield.TextInputLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_mono"
+        android:gravity="center"
+        android:text="Chụp ảnh"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/btnScreenShot"
+        app:layout_constraintEnd_toEndOf="@+id/btnScreenShot"
+        app:layout_constraintStart_toStartOf="@+id/btnScreenShot" />
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/materialCardView"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnScreenShot"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:strokeColor="@color/white"
+        app:strokeWidth="1.5dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:background="#50000000"
             android:orientation="horizontal">
 
-            <Button
-                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            <TextView
+                android:id="@+id/tvMoneySaving"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_weight="3"
-                android:backgroundTint="@color/green"
-                android:onClick="onChooseImageClick"
-                android:text="Thêm hình ảnh"
-                android:textColor="@color/white"
-                app:icon="@drawable/baseline_add_white_48"
-                app:iconSize="20dp"
-                app:iconTint="@color/white" />
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:fontFamily="@font/roboto_mono"
+                android:paddingStart="10dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:text="@string/MoneySavingStr"
+                android:textColor="@color/white" />
 
 
-            <Button
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="52dp"
-                android:layout_weight="4"
-                android:backgroundTint="#EE6565"
-                android:onClick="onDoneClick"
-                android:text="Hoàn thành"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:fontFamily="@font/roboto_mono"
+                android:text="/"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/tvMoneyGoal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:fontFamily="@font/roboto_mono"
+                android:paddingEnd="10dp"
+                android:text="@string/MoneyGoalStr"
                 android:textColor="@color/white" />
 
 
         </LinearLayout>
-    </LinearLayout>
 
-</ScrollView>
+    </com.google.android.material.card.MaterialCardView>
 
+    <TextView
+        android:id="@+id/tvGoalDescription"
+        android:layout_width="340dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@color/backgroundTransForText"
+        android:ellipsize="end"
+        android:fontFamily="@font/athiti"
+        android:maxLines="15"
+        android:paddingStart="5dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="10dp"
+        android:textColor="@color/white"
+        android:text="Ứng dụng này cần internet để có thể hoạt động"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="@+id/tvGoalDayStart"
+        app:layout_constraintTop_toBottomOf="@+id/tvGoalDayStart" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="205dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
