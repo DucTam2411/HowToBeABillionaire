@@ -3,9 +3,11 @@ package com.example.myproject22.View.Activity;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -44,6 +46,7 @@ import com.example.myproject22.Model.SharePreferenceClass;
 import com.example.myproject22.Presenter.AddingCategoryInterface;
 import com.example.myproject22.Presenter.AddingCategoryPresenter;
 import com.example.myproject22.R;
+import com.example.myproject22.View.Service.Network_receiver;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
@@ -107,6 +110,9 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
     //SharePreference
     private SharePreferenceClass settings;
 
+    //Broadcast
+    private Network_receiver network_receiver;
+
     //endregion
 
     @Override
@@ -117,6 +123,10 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
 
         //region SharePreference
         settings = new SharePreferenceClass(this);
+        //endregion
+
+        //region Broadcast
+        network_receiver = new Network_receiver();
         //endregion
 
         //region Khởi tạo presenter và các giá trị ban đầu
@@ -163,6 +173,23 @@ public class AddingCategoryActivity extends AppCompatActivity implements AddingC
         });
         //endregion
     }
+
+    //region Xử lí override Activity
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(network_receiver, intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unregisterReceiver(network_receiver);
+    }
+    //endregion
 
     //region Xử lí khởi tạo, lấy bundle và keyboard
     @Override
